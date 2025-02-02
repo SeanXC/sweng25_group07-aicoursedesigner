@@ -6,10 +6,10 @@ export default function HomeDashboard() {
 
   return (
     <>
-      <div style={{ height: "100vh", backgroundColor: "white" }}>
+      <div style={{ backgroundColor: "white" }}>
         <header
           style={{
-            backgroundColor: "purple",
+            backgroundColor: "#8300A1",
             color: "white",
             fontSize: "1.25rem",
             fontWeight: "bold",
@@ -24,8 +24,9 @@ export default function HomeDashboard() {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            height: "calc(100% - 64px)",
+            minHeight: "calc(100vh - 64px)",
             gap: "1.5rem",
+            overflow: "auto",
           }}
         >
           {!showCourse && (
@@ -34,7 +35,7 @@ export default function HomeDashboard() {
                 type="button"
                 onClick={() => setShowCourse(!showCourse)}
                 style={{
-                  backgroundColor: "purple",
+                  backgroundColor: "#8300A1",
                   color: "white",
                   padding: "0.75rem 1.5rem",
                   borderRadius: "8px",
@@ -50,12 +51,15 @@ export default function HomeDashboard() {
 
           {showCourse && (
             <>
+              <br />
               <div
                 style={{
                   width: "400px",
                 }}
               >
                 <div>
+                  <br />
+                  <b>Course Information</b>
                   <p>Course Name:</p>
                   <label
                     style={{
@@ -168,13 +172,142 @@ export default function HomeDashboard() {
                 </div>
                 <br />
                 <br />
+                <hr />
+                <div>
+                  <br></br>
+                  <b>Course settings</b>
+                  <p>
+                    Limit access to your course by setting visibility to private
+                    and including an enrolment key
+                  </p>
+                  <br />
+                  <p>
+                    Visability
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginRight: "1rem",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="visibility"
+                        value="public"
+                        style={{
+                          marginRight: "0.5rem",
+                          width: "20px", // Adjust the size of the radio button
+                          height: "20px", // Adjust the size of the radio button
+                          cursor: "pointer",
+                          accentColor: "#8300A1", // Add accent color to radio button
+                        }}
+                      />
+                      Public
+                    </label>
+                    <br />
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginRight: "1rem",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="visibility"
+                        value="public"
+                        style={{
+                          marginRight: "0.5rem",
+                          width: "20px",
+                          height: "20px",
+                          cursor: "pointer",
+                          accentColor: "#8300A1",
+                        }}
+                      />
+                      Private
+                    </label>
+                  </p>
+                </div>
                 <br />
+                <div>
+                  <p>Enrolment Key</p>
+                  <label
+                    style={{
+                      fontWeight: "bold",
+                      color: "#333",
+                    }}
+                  >
+                    <input name="enrolmentKey" />
+                  </label>
+                </div>
+                <br />
+                <br />
+                <div>
+                  <p>Allowed school domains (optional)</p>
+                  <label
+                    style={{
+                      fontWeight: "bold",
+                      color: "#333",
+                    }}
+                  >
+                    <input name="schoolDomains" />
+                  </label>
+                </div>
+                <br />
+                <div>
+                  <p>
+                    Reviews
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginRight: "1rem",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="reviews"
+                        value="public"
+                        style={{
+                          marginRight: "0.5rem",
+                          width: "20px",
+                          height: "20px",
+                          cursor: "pointer",
+                          accentColor: "#8300A1",
+                        }}
+                      />
+                      Enabled
+                    </label>
+                    <br />
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginRight: "1rem",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="reviews"
+                        value="public"
+                        style={{
+                          marginRight: "0.5rem",
+                          width: "20px",
+                          height: "20px",
+                          cursor: "pointer",
+                          accentColor: "#8300A1",
+                        }}
+                      />
+                      Disabled
+                    </label>
+                  </p>
+                </div>
                 <div>
                   <button
                     type="button"
                     onClick={() => setShowCourse(!showCourse)}
                     style={{
-                      backgroundColor: "purple",
+                      backgroundColor: "#8300A1",
                       color: "white",
                       padding: "0.75rem 1.5rem",
                       borderRadius: "8px",
@@ -185,6 +318,8 @@ export default function HomeDashboard() {
                   >
                     Submit
                   </button>
+                  <br />
+                  <br />
                 </div>
               </div>
             </>
