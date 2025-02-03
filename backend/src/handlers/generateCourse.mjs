@@ -11,18 +11,26 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function getCompletion() {
+async function getCompletion(courseName, courseDesc, difficulty, targetLang, nativeLang, duration) {
   try {
+    const prompt = `Generate a language course outline broken down into weekly sections, detailing learning objectives, main content etc. Course name: ${courseName}, description: ${courseDesc}, difficulty: ${difficulty}, target language: ${targetLang}, language used: ${nativeLang}, duration: ${duration} weeks.`;
     const response = await openai.chat.completions.create({
       model: "gpt-4",
-      messages: [{ role: "user", content: "Hello, how are you?" }],
+      messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
     });
 
-    console.log("ChatGPT Response:", response.choices[0].message.content);
+    console.log("ChatGPT Response:\n\n", response.choices[0].message.content);
   } catch (error) {
     console.error("Error:", error);
   }
 }
 
-getCompletion();
+getCompletion(
+  "Spanish Course",
+  "Course for English speakers",
+  "B1",
+  "Spanish",
+  "English",
+  5
+);
