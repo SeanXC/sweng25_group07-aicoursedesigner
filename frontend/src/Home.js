@@ -31,19 +31,7 @@ export default function HomeDashboard() {
         >
           {!showCourse && (
             <div>
-              <button
-                type="button"
-                onClick={() => setShowCourse(!showCourse)}
-                style={{
-                  backgroundColor: "#8300A1",
-                  color: "white",
-                  padding: "0.75rem 1.5rem",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                  border: "none",
-                  cursor: "pointer",
-                }}
-              >
+              <button type="button" onClick={() => setShowCourse(!showCourse)}>
                 Generate Course
               </button>
             </div>
@@ -195,11 +183,7 @@ export default function HomeDashboard() {
                         name="visibility"
                         value="public"
                         style={{
-                          marginRight: "0.5rem",
-                          width: "20px", // Adjust the size of the radio button
-                          height: "20px", // Adjust the size of the radio button
-                          cursor: "pointer",
-                          accentColor: "#8300A1", // Add accent color to radio button
+                          width: "20px",
                         }}
                       />
                       Public
@@ -217,11 +201,7 @@ export default function HomeDashboard() {
                         name="visibility"
                         value="public"
                         style={{
-                          marginRight: "0.5rem",
                           width: "20px",
-                          height: "20px",
-                          cursor: "pointer",
-                          accentColor: "#8300A1",
                         }}
                       />
                       Private
@@ -269,11 +249,7 @@ export default function HomeDashboard() {
                         name="reviews"
                         value="public"
                         style={{
-                          marginRight: "0.5rem",
                           width: "20px",
-                          height: "20px",
-                          cursor: "pointer",
-                          accentColor: "#8300A1",
                         }}
                       />
                       Enabled
@@ -291,11 +267,7 @@ export default function HomeDashboard() {
                         name="reviews"
                         value="public"
                         style={{
-                          marginRight: "0.5rem",
                           width: "20px",
-                          height: "20px",
-                          cursor: "pointer",
-                          accentColor: "#8300A1",
                         }}
                       />
                       Disabled
@@ -306,15 +278,7 @@ export default function HomeDashboard() {
                   <button
                     type="button"
                     onClick={() => setShowCourse(!showCourse)}
-                    style={{
-                      backgroundColor: "#8300A1",
-                      color: "white",
-                      padding: "0.75rem 1.5rem",
-                      borderRadius: "8px",
-                      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                      border: "none",
-                      cursor: "pointer",
-                    }}
+                    style={{}}
                   >
                     Submit
                   </button>
