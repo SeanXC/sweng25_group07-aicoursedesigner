@@ -1,0 +1,21 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.738.0",
+    "@aws-sdk/lib-dynamodb": "^3.738.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.7",
+    "openai": "^4.82.0",
+    "src": "file:"
+  }
+}
