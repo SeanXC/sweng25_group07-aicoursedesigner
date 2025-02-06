@@ -5,30 +5,80 @@ const StatusButton = () => {
 
     const checkConnection = async () => {
         try {
+            // const response = await fetch('https://invalid-url-example.com/api'); 
             const response = await fetch('https://nkn3eg3p6e.execute-api.eu-west-1.amazonaws.com/SecondDeploy');
             if (response.ok) {
                 const data = await response.json();
                 const body = JSON.parse(data.body); // This is to parse the body to get the actual message
 
-                // TO DO set status with the response 
+                setStatus(body.message); // set status with the response 
             } else {
-                // TO DO set status with an Error message + the actual response status for debugging
+                setStatus(`Error: ${response.status}`); // set status with an Error message + the actual response status for debugging
             }
-        } catch (error) {
+        } catch (error){
             console.log(error); // Log the error for debugging
-            // TO DO set status to some simple Not connected string 
+            setStatus('Not connected');// set status to some simple Not connected string 
 
        
         }
     };
     
-// TO DO : Create button that calls function above , have it display the "status" when it gets a response back 
+// Button that calls function above , have it display the "status" when it gets a response back 
 // 
-    return (
-        <div>
-
-        </div>
-    );
+return (
+    <div style={{ height: "100vh", backgroundColor: "white" }}>
+      <header
+        style={{
+          backgroundColor: "purple",
+          color: "white",
+          fontSize: "1.25rem",
+          fontWeight: "bold",
+          padding: "1rem 1.5rem",
+        }}
+      >
+        AWS Connection Status
+      </header>
+      <main
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          height: "calc(100% - 64px)",
+        }}
+      >
+        <button
+          onClick={checkConnection}
+          style={{
+            backgroundColor: "purple",
+            color: "white",
+            padding: "0.75rem 1.5rem",
+            borderRadius: "8px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "1rem",
+            fontWeight: "bold",
+            marginBottom: "1rem",
+          }}
+        >
+          Check Connection
+        </button>
+        <p
+          style={{
+            fontSize: "1.2rem",
+            color: "black",
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          Status: {status}
+        </p>
+      </main>
+    </div>
+  );
 };
 
+
 export default StatusButton;
+

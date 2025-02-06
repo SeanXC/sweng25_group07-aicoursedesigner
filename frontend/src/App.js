@@ -6,7 +6,7 @@ import ConnectAWS from './AWSButton';
 function App() {
   return (
     <div className="App">
-      <Home/>
+      <ConnectAWS /> 
     </div>
   );
 }
