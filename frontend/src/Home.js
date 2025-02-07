@@ -1,75 +1,295 @@
 import React, { useState } from "react";
-import UserLogin from './UserLogin';  // Import the new UserLogin component
+import "./Home.css";
 
 export default function HomeDashboard() {
-  const [showForm, setShowForm] = useState(false); // State to toggle form visibility
-
-  // Toggle visibility of the login/signup form when the User Login button is clicked
-  const handleLoginClick = () => {
-    setShowForm((prev) => !prev); // Toggle the form visibility
-  };
+  const [showCourse, setShowCourse] = useState(false);
 
   return (
-    <div style={{ height: "100vh", backgroundColor: "white", position: "relative" }}>
-      <button
-        onClick={handleLoginClick}
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "20px",
-          backgroundColor: "#9705A8",
-          color: "white",
-          padding: "0.5rem 1rem",
-          borderRadius: "8px",
-          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-          border: "none",
-          cursor: "pointer",
-        }}
-      >
-        Sign in
-      </button>
+    <>
+      <div style={{ backgroundColor: "white" }}>
+        <header
+          style={{
+            backgroundColor: "#8300A1",
+            color: "white",
+            fontSize: "1.25rem",
+            fontWeight: "bold",
+            padding: "1rem 1.5rem",
+          }}
+        >
+          Home Dashboard
+        </header>
+        <main
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "calc(100vh - 64px)",
+            gap: "1.5rem",
+            overflow: "auto",
+          }}
+        >
+          {!showCourse && (
+            <div>
+              <button type="button" onClick={() => setShowCourse(!showCourse)}>
+                Generate Course
+              </button>
+            </div>
+          )}
 
-      <header
-        style={{
-          backgroundColor: "purple",
-          color: "white",
-          fontSize: "1.5rem",
-          fontWeight: "bold",
-          padding: "1rem 1.5rem",
-          textAlign: "center",
-        }}
-      >
-        Home Dashboard
-      </header>
-
-      <main
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "calc(100% - 64px)",
-        }}
-      >
-        {!showForm && (
-          <button
-            style={{
-              backgroundColor: "purple",
-              color: "white",
-              padding: "0.75rem 1.5rem",
-              borderRadius: "8px",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            Generate Course
-          </button>
-        )}
-
-        {/* Conditionally render the UserLogin component */}
-        {showForm && <UserLogin />}
-      </main>
-    </div>
+          {showCourse && (
+            <>
+              <br />
+              <div
+                style={{
+                  width: "400px",
+                }}
+              >
+                <div>
+                  <br />
+                  <b>Course Information</b>
+                  <p>Course Name:</p>
+                  <label
+                    style={{
+                      fontWeight: "bold",
+                      color: "#333",
+                    }}
+                  >
+                    <input name="courseName" />
+                  </label>
+                </div>
+                <br />
+                <br />
+                <div>
+                  <p>Description:</p>
+                  <label
+                    style={{
+                      fontWeight: "bold",
+                      color: "#333",
+                    }}
+                  >
+                    <input name="courseDescription" />
+                  </label>
+                </div>
+                <br />
+                <br />
+                <div>
+                  <p>Difficulty:</p>
+                  <select
+                    style={{
+                      padding: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                      outline: "none",
+                      fontSize: "1rem",
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <option value="A1">A1</option>
+                    <option value="A2">A2</option>
+                    <option value="B1">B1</option>
+                    <option value="B2">B2</option>
+                    <option value="C1">C1</option>
+                    <option value="C2">C2</option>
+                  </select>
+                </div>
+                <br />
+                <br />
+                <div>
+                  <p>Learn:</p>
+                  <select
+                    style={{
+                      padding: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                      outline: "none",
+                      fontSize: "1rem",
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <option value="learnSpanish">Spanish</option>
+                    <option value="learnEnglish">English</option>
+                    <option value="learnFrench">French</option>
+                    <option value="learnItalian">Italian</option>
+                    <option value="learnGerman">German</option>
+                    <option value="learnPortuguese">Portuguese</option>
+                  </select>
+                </div>
+                <br />
+                <br />
+                <div>
+                  <p>Speakers Of:</p>
+                  <select
+                    style={{
+                      padding: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                      outline: "none",
+                      fontSize: "1rem",
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <option value="speakSpanish">Spanish</option>
+                    <option value="speakEnglish">English</option>
+                    <option value="speakFrench">French</option>
+                    <option value="speakItalian">Italian</option>
+                    <option value="speakGerman">German</option>
+                    <option value="speakPortuguese">Portuguese</option>
+                    <option value="speakUkraninian">Ukraninian</option>
+                    <option value="speakArabic">Arabic</option>
+                    <option value="speakChineseS">Chinese Simplified</option>
+                    <option value="speakChineseT">Chinese Traditional</option>
+                    <option value="speakCzech">Czech</option>
+                    <option value="speakPortuguese">Danish</option>
+                    <option value="speakDanish">Dutch</option>
+                    <option value="speakFilipino">Filipino</option>
+                    <option value="speakGreek">Greek</option>
+                    <option value="speakHindi">Hindi</option>
+                    <option value="speakHungarian">Hungarian</option>
+                    <option value="speakPortuguese">Indonesian</option>
+                    <option value="speakIndonesiane">Japanese</option>
+                    <option value="speakKorean">Korean</option>
+                    <option value="speakMalay">Malay</option>
+                    <option value="speakPortuguese">Polish</option>
+                    <option value="speakPolish">Punjabi</option>
+                    <option value="speakSwahili">Swahili</option>
+                    <option value="speakPortuguese">Thai</option>
+                    <option value="speakThai">Turkish</option>
+                    <option value="speakvietnamese">Vietnamese</option>
+                  </select>
+                </div>
+                <br />
+                <br />
+                <hr />
+                <div>
+                  <br></br>
+                  <b>Course settings</b>
+                  <p>
+                    Limit access to your course by setting visibility to private
+                    and including an enrolment key
+                  </p>
+                  <br />
+                  <p>
+                    Visability
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginRight: "1rem",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="visibility"
+                        value="public"
+                        style={{
+                          width: "20px",
+                        }}
+                      />
+                      Public
+                    </label>
+                    <br />
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginRight: "1rem",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="visibility"
+                        value="public"
+                        style={{
+                          width: "20px",
+                        }}
+                      />
+                      Private
+                    </label>
+                  </p>
+                </div>
+                <br />
+                <div>
+                  <p>Enrolment Key</p>
+                  <label
+                    style={{
+                      fontWeight: "bold",
+                      color: "#333",
+                    }}
+                  >
+                    <input name="enrolmentKey" />
+                  </label>
+                </div>
+                <br />
+                <br />
+                <div>
+                  <p>Allowed school domains (optional)</p>
+                  <label
+                    style={{
+                      fontWeight: "bold",
+                      color: "#333",
+                    }}
+                  >
+                    <input name="schoolDomains" />
+                  </label>
+                </div>
+                <br />
+                <div>
+                  <p>
+                    Reviews
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginRight: "1rem",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="reviews"
+                        value="public"
+                        style={{
+                          width: "20px",
+                        }}
+                      />
+                      Enabled
+                    </label>
+                    <br />
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginRight: "1rem",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="reviews"
+                        value="public"
+                        style={{
+                          width: "20px",
+                        }}
+                      />
+                      Disabled
+                    </label>
+                  </p>
+                </div>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setShowCourse(!showCourse)}
+                    style={{}}
+                  >
+                    Submit
+                  </button>
+                  <br />
+                  <br />
+                </div>
+              </div>
+            </>
+          )}
+        </main>
+      </div>
+    </>
   );
 }
