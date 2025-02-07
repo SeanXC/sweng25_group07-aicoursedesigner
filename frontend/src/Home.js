@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import "./Home.css";
-
+import ConnectAWS from './AWSButton';
+import UserLogin from './UserLogin';  // Import the new UserLogin component
 export default function HomeDashboard() {
   const [showCourse, setShowCourse] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
+  const handleLoginClick = () => {
+    setShowForm((prev) => !prev); // Toggle the form visibility
+  };
   return (
     <>
+    
       <div style={{ backgroundColor: "white" }}>
         <header
           style={{
@@ -18,6 +24,24 @@ export default function HomeDashboard() {
         >
           Home Dashboard
         </header>
+        <button
+        onClick={handleLoginClick}
+        style={{
+          position: "absolute",
+          top: "20px",
+          right: "20px",
+          backgroundColor: "#9705A8",
+          color: "white",
+          padding: "0.5rem 1rem",
+          borderRadius: "8px",
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        Sign in
+      </button>
+      {showForm && <UserLogin />}
         <main
           style={{
             display: "flex",
@@ -290,6 +314,7 @@ export default function HomeDashboard() {
           )}
         </main>
       </div>
+      <ConnectAWS/>
     </>
   );
 }

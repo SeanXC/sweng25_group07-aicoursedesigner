@@ -26,27 +26,7 @@ const StatusButton = () => {
 // Button that calls function above , have it display the "status" when it gets a response back 
 // 
 return (
-    <div style={{ height: "100vh", backgroundColor: "white" }}>
-      <header
-        style={{
-          backgroundColor: "purple",
-          color: "white",
-          fontSize: "1.25rem",
-          fontWeight: "bold",
-          padding: "1rem 1.5rem",
-        }}
-      >
-        AWS Connection Status
-      </header>
-      <main
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-          height: "calc(100% - 64px)",
-        }}
-      >
+    <div>
         <button
           onClick={checkConnection}
           style={{
@@ -74,7 +54,6 @@ return (
         >
           Status: {status}
         </p>
-      </main>
     </div>
   );
 };
