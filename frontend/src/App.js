@@ -1,22 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
-import HomeDashboard from './Home';
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Home from './Home'; 
+import HomeDashboard from './HomeDashboard';
 import ConnectAWS from './AWSButton';
 import UserLogin from './UserLogin'; 
 import CourseForm from './CourseForm';
-import { Routes, Route } from "react-router-dom";
+import ConfirmUserPage from './confirmUser';
 
-
-
-// import UserLogin from './UserLogin';
 function App() {
+  const isAuthenticated = () => {
+    const accessToken = sessionStorage.getItem("accessToken");
+    return !!accessToken;
+  };
+
   return (
-    <Routes>
-    <Route path="/" element={<HomeDashboard />} />
-    <Route path="/connectaws" element={<ConnectAWS />} />
-    <Route path="/userlogin" element={<UserLogin />} />
-    <Route path="/courseform" element={<CourseForm />} />
-  </Routes>
+    <BrowserRouter>
+      <Routes>
+       
+        <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<HomeDashboard />} />
+        <Route path="/connectaws" element={<ConnectAWS />} />
+        <Route path="/login" element={<UserLogin />} />
+        <Route path="/confirmUser" element={<ConfirmUserPage />} />
+        <Route path="/courseform" element={<CourseForm />} />
+        <Route
+          path="/protected"
+          element={isAuthenticated() ? <Home /> : <Navigate replace to="/login" />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
