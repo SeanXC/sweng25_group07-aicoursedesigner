@@ -1,12 +1,55 @@
 import React, { useState } from "react";
 import "./Home.css";
+import ShowPhrases from "./ShowPhrases";
+let data = {};
+
+const formDataEntries = {
+  courseName: "",
+  courseDesc: "",
+  difficulty: "",
+  targetLang: "",
+  nativeLang: "",
+  duration: 5,
+};
+
+
+
+
 export default function HomeDashboard() {
+
   const [showCourse, setShowCourse] = useState(true);
+  const [ courseData, setCourseData] = useState (null);
   const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState(null);
+
+
 
   const handleLoginClick = () => {
     setShowForm((prev) => !prev); // Toggle the form visibility
   };
+
+
+  async function formSubmit(e) {
+    
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const values = Object.fromEntries(formData.entries());
+    console.log(values);
+    //setFormData(values);
+    const courseData = {
+      courseName: values.courseName,
+      courseDesc: values.courseDesc,
+      difficulty: values.difficulty,
+      targetLang: values.language,
+      nativeLang: values.nativeLanguage,
+      duration: 5,
+    }
+    console.log ("Current difficulty," , values.difficulty)
+    console.log ("Current Course Data",courseData )
+
+    setCourseData(courseData);
+    setShowCourse(true);
+  }
   return (
     <>
     
@@ -34,6 +77,7 @@ export default function HomeDashboard() {
                   width: "400px",
                 }}
               >
+                <form method="post" onSubmit={formSubmit}>
                 <div>
                   <br />
                   <b>Course Information</b>
@@ -57,7 +101,7 @@ export default function HomeDashboard() {
                       color: "#333",
                     }}
                   >
-                    <input name="courseDescription" />
+                    <input name="courseDesc" />
                   </label>
                 </div>
                 <br />
@@ -65,6 +109,7 @@ export default function HomeDashboard() {
                 <div>
                   <p>Difficulty:</p>
                   <select
+                   name = "difficulty"
                     style={{
                       padding: "10px",
                       borderRadius: "5px",
@@ -87,6 +132,7 @@ export default function HomeDashboard() {
                 <div>
                   <p>Learn:</p>
                   <select
+                  name = "language"
                     style={{
                       padding: "10px",
                       borderRadius: "5px",
@@ -96,12 +142,12 @@ export default function HomeDashboard() {
                       backgroundColor: "white",
                     }}
                   >
-                    <option value="learnSpanish">Spanish</option>
-                    <option value="learnEnglish">English</option>
-                    <option value="learnFrench">French</option>
-                    <option value="learnItalian">Italian</option>
-                    <option value="learnGerman">German</option>
-                    <option value="learnPortuguese">Portuguese</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="English">English</option>
+                    <option value="French">French</option>
+                    <option value="Italian">Italian</option>
+                    <option value="German">German</option>
+                    <option value="Portuguese">Portuguese</option>
                   </select>
                 </div>
                 <br />
@@ -109,6 +155,7 @@ export default function HomeDashboard() {
                 <div>
                   <p>Speakers Of:</p>
                   <select
+                    name = "nativeLanguage"
                     style={{
                       padding: "10px",
                       borderRadius: "5px",
@@ -118,33 +165,34 @@ export default function HomeDashboard() {
                       backgroundColor: "white",
                     }}
                   >
-                    <option value="speakSpanish">Spanish</option>
-                    <option value="speakEnglish">English</option>
-                    <option value="speakFrench">French</option>
-                    <option value="speakItalian">Italian</option>
-                    <option value="speakGerman">German</option>
-                    <option value="speakPortuguese">Portuguese</option>
-                    <option value="speakUkraninian">Ukraninian</option>
-                    <option value="speakArabic">Arabic</option>
-                    <option value="speakChineseS">Chinese Simplified</option>
-                    <option value="speakChineseT">Chinese Traditional</option>
-                    <option value="speakCzech">Czech</option>
-                    <option value="speakPortuguese">Danish</option>
-                    <option value="speakDanish">Dutch</option>
-                    <option value="speakFilipino">Filipino</option>
-                    <option value="speakGreek">Greek</option>
-                    <option value="speakHindi">Hindi</option>
-                    <option value="speakHungarian">Hungarian</option>
-                    <option value="speakPortuguese">Indonesian</option>
-                    <option value="speakIndonesiane">Japanese</option>
-                    <option value="speakKorean">Korean</option>
-                    <option value="speakMalay">Malay</option>
-                    <option value="speakPortuguese">Polish</option>
-                    <option value="speakPolish">Punjabi</option>
-                    <option value="speakSwahili">Swahili</option>
-                    <option value="speakPortuguese">Thai</option>
-                    <option value="speakThai">Turkish</option>
-                    <option value="speakvietnamese">Vietnamese</option>
+                      <option value="Spanish">Spanish</option>
+                      <option value="English">English</option>
+                      <option value="French">French</option>
+                      <option value="Italian">Italian</option>
+                      <option value="German">German</option>
+                      <option value="Portuguese">Portuguese</option>
+                      <option value="Ukraninian">Ukraninian</option>
+                      <option value="Arabic">Arabic</option>
+                      <option value="ChineseS">Chinese Simplified</option>
+                      <option value="ChineseT">Chinese Traditional</option>
+                      <option value="Czech">Czech</option>
+                      <option value="Danish">Danish</option>
+                      <option value="Dutch">Dutch</option>
+                      <option value="Filipino">Filipino</option>
+                      <option value="Greek">Greek</option>
+                      <option value="Hindi">Hindi</option>
+                      <option value="Hungarian">Hungarian</option>
+                      <option value="Indonesian">Indonesian</option>
+                      <option value="Japanese">Japanese</option>
+                      <option value="Korean">Korean</option>
+                      <option value="Malay">Malay</option>
+                      <option value="Polish">Polish</option>
+                      <option value="Punjabi">Punjabi</option>
+                      <option value="Swahili">Swahili</option>
+                      <option value="Thai">Thai</option>
+                      <option value="Turkish">Turkish</option>
+                      <option value="Vietnamese">Vietnamese</option>
+
                   </select>
                 </div>
                 <br />
@@ -263,18 +311,15 @@ export default function HomeDashboard() {
                     </label>
                   </p>
                 </div>
+                {formData && <p>You're learning {formData.language}</p>}
                 <div>
-                  <button
-                    type="button"
-                    onClick={() => setShowCourse(!showCourse)}
-                    style={{}}
-                  >
-                    Submit
-                  </button>
+                <button type="submit">Submit</button>
                   <br />
                   <br />
                 </div>
+                </form>
               </div>
+              {courseData && <ShowPhrases courseData= {courseData}/>}
             </>
           )}
        </button>

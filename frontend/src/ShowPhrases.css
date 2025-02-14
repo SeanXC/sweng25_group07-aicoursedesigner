@@ -1,0 +1,30 @@
+body {
+    font-family: 'Montserrat'
+}
+
+input,
+select {
+    width: 90%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    font-size: large;
+}
+
+
+.slider {
+    /* -webkit-appearance: none; */
+    width: 50%;
+    /* height: 1px; */
+    border-radius: 1px;
+    background: #ddd;
+    outline:none;
+    opacity: 0.9;
+    color: #8300A1;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}

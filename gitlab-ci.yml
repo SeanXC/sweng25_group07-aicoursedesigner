@@ -1,0 +1,74 @@
+stages:
+  - install
+  - build
+  - deploy
+
+variables:
+  NODE_ENV: test
+
+before_script:
+  # Ensure node and npm are available
+  - node -v
+  - npm -v
+  # Set up SSH keys and environment variables
+  - mkdir -p ~/.ssh
+  - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - echo "$OPENAI_API_KEY" > .env
+
+install_frontend:
+  image: node:18
+  stage: install
+  script:
+    - cd frontend
+    - npm ci
+    - npm install react-scripts  # Explicitly install react-scripts
+    - npm list react-scripts  # Verify installation
+  tags:
+    - frontend
+
+
+
+install_backend:
+  image: node:18
+  stage: install
+  script:
+    - cd backend/src
+    - npm install
+  tags:
+    - frontend
+
+build_frontend:
+  image: node:18
+  stage: build
+  script:
+    - cd frontend
+    - npm run build  # for react scripts
+  tags:
+    - frontend
+  artifacts:
+    paths:
+      - frontend/build/
+    expire_in: 1h
+
+deploy_frontend:
+  image: node:18
+  stage: deploy
+  script:
+    - cd frontend
+    - mv build public  # GitLab Pages looks for the public folder
+  only:
+    - frontEnd
+  tags:
+    - frontend
+
+deploy_backend:
+  image: node:18
+  stage: deploy
+  script:
+    - cd backend
+    - ssh user@your-server-ip 'cd /path/to/backend && git pull && npm ci && pm2 restart server'
+  only:
+    - frontEnd
+  tags:
+    - frontend
