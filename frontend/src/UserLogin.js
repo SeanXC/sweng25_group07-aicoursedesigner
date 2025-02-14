@@ -108,7 +108,7 @@ export default function UserLogin() {
                     name="username"
                     value={formData.username}
                     onChange={handleInputChange}
-                    placeholder="UserName"
+                    placeholder="Email"
                     required
                     style={{
                       padding: "0.75rem",
