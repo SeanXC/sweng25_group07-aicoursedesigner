@@ -1,8 +1,11 @@
-import './App.css';
+import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Home from './Home'; // Home page component
-import LoginPage from './UserLogin'; // Login page component
-import ConfirmUserPage from './confirmUser'; // Confirm user page component
+import Home from './Home'; 
+import HomeDashboard from './HomeDashboard';
+import ConnectAWS from './AWSButton';
+import UserLogin from './UserLogin'; 
+import CourseForm from './CourseForm';
+import ConfirmUserPage from './confirmUser';
 
 function App() {
   const isAuthenticated = () => {
@@ -11,28 +14,21 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          {/* Home Page Route */}
-          <Route path="/" element={<Home />} />
-
-          {/* Sign In / Sign Up Route */}
-          <Route path="/login" element={<LoginPage />} />
-
-          {/* User Confirmation Page */}
-          <Route path="/confirmUser" element={<ConfirmUserPage />} />
-
-          {/* Protected Home route after login */}
-          <Route
-            path="/Home"
-            element={
-              isAuthenticated() ? <Home /> : <Navigate replace to="/Login" />
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <Routes>
+       
+        <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<HomeDashboard />} />
+        <Route path="/connectaws" element={<ConnectAWS />} />
+        <Route path="/login" element={<UserLogin />} />
+        <Route path="/confirmUser" element={<ConfirmUserPage />} />
+        <Route path="/courseform" element={<CourseForm />} />
+        <Route
+          path="/protected"
+          element={isAuthenticated() ? <Home /> : <Navigate replace to="/login" />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

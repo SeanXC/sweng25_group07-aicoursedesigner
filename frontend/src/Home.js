@@ -1,33 +1,30 @@
 import React from "react";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for programmatic navigation
+import { useNavigate, Link } from "react-router-dom"; 
+import "./Home.css";
 
 export default function HomeDashboard() {
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const navigate = useNavigate(); 
 
-  // Navigate to the login page when the "Sign in" button is clicked
+  
   const handleLoginClick = () => {
     navigate("/login");
   };
 
   return (
     <div style={{ height: "100vh", backgroundColor: "white", position: "relative" }}>
-      <button
-        onClick={handleLoginClick}
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "20px",
-          backgroundColor: "#9705A8",
-          color: "white",
-          padding: "0.5rem 1rem",
-          borderRadius: "8px",
-          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-          border: "none",
-          cursor: "pointer",
-        }}
-      >
-        Sign in
-      </button>
+      <header>
+        <span>Home Dashboard</span>
+
+        <Link to="/connectaws">
+          <button style={buttonStyle}>Connect AWS</button>
+        </Link>
+
+        <button onClick={handleLoginClick} style={buttonStyle}>Sign In</button>
+
+        <Link to="/courseform">
+          <button style={buttonStyle}>Generate Course</button>
+        </Link>
+      </header>
 
       <header
         style={{
@@ -68,3 +65,14 @@ export default function HomeDashboard() {
     </div>
   );
 }
+
+
+const buttonStyle = {
+  backgroundColor: "#8300A1",
+  color: "white",
+  padding: "0.75rem 1.5rem",
+  borderRadius: "8px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  border: "none",
+  cursor: "pointer",
+};
