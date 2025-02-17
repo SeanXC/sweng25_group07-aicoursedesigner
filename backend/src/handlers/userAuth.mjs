@@ -28,8 +28,8 @@ export const handler = async (event) => {
             response = await loginUser(loginBody);
             break;
         case event.httpMethod === 'POST' && event.path === verifyPath:
-            // TODO
-            response = await verifyUser(event);
+            const verifyBody = JSON.parse(event.body);
+            response = await verifyUser(verifyBody);
             break;
         default:
             response = buildResponse(404, '404 Not Found');
@@ -109,16 +109,26 @@ async function loginUser(userInfo) {
     const responce = {
         user: userInfo, token : token
     }
-
-
     return buildResponse(200, { message: 'User logged in successfully' });
 }
 
-async function verifyUser(event) {
-    // TODO: Implement user verification logic here
-    const body = JSON.parse(event.body);
-    // TODO: Verify user token or other verification logic
-    return buildResponse(200, { message: 'User verified successfully' });
+async function verifyUser(requestBody) {
+    
+    if(!requestBody.user || !requestBody.user.username || !requestBody.token)
+    {
+        return buildResponse(401, {verified: false, message: 'incorrect request body'})
+    }
+
+    const user = requestBody.user;
+    const token = requestBody.token;
+    const verification = verifyToken(user.username, token);
+
+    if (!verification.verified){
+        return buildResponse(401, verification)
+    }
+
+
+    return buildResponse(200, {verified: true, message: 'User verified successfully', user: user, token : token });
 }
 
 
@@ -161,5 +171,30 @@ function generateToken(user){
     }
     return jwt.sign(userInfo, process.env.JWT_SECRET, {expiresIn: '1h'})
 
+}
+
+// FUNCTIONS FOR VERIFICATION
+
+function verifyToken(username, token){
+    return jwt.verify(token, process.env.JWT_SECRET, (error, response) => {
+        if (error) {
+            return {
+                verified: false,
+                message: 'Invalid Token'
+            }
+        }
+
+        if (response.username !== username){
+            return {
+                verified: false,
+                message : 'Invalid user'
+            }
+        }
+
+        return {
+            veirfied: true, message : 'Verified'
+        }
+
+    })
 }
 
