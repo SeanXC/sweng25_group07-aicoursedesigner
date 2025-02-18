@@ -5,6 +5,7 @@ import ConnectAWS from './AWSButton';
 import UserLogin from './UserLogin'; 
 import CourseForm from './CourseForm';
 import ConfirmUserPage from './confirmUser';
+import ForgotPassword from './forgetPassword';
 //import ShowPhrases from "./ShowPhrases";
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
         <Route path="/login" element={<UserLogin />} />
         <Route path="/confirmUser" element={<ConfirmUserPage />} />
         <Route path="/courseform" element={<CourseForm />} />
-
+        <Route path="/forgetPassword" element={<ForgotPassword />} />
        
         <Route
           path="/protected"

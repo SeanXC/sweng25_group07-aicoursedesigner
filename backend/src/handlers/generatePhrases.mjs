@@ -11,17 +11,14 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function generateContent(outline, target_week){
-    const targetWeek = outline.weeks.find(week=>week.week===target_week);
-    if(!targetWeek) return { error: `no week ${target_week} data found` };
+async function generatePhrases(input){
+    const targetLang = input.language;
+    if(!targetLang) return { error: "please specify the target language" };
 
-    const mainContent = targetWeek.main_content;
-    if(!mainContent) return { error: `no main content found for week ${targetWeek}` };
+    const numPhrases = input.no_of_phrases;
+    if(!numPhrases) return { error: "please specify the no. of phrases to generate" };
 
-    const lang = outline.target_language;
-    const prompt = `Generate the following detailed lesson content for ${lang} course:
-                    ${mainContent.map((content,i)=>`${i+1}. ${content}`).join("\n")}
-                    in a valid JSON format.`;
+    const prompt = `Generate ${numPhrases} phrases for a ${targetLang} course in a valid JSON format.`;
     const response = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [{ role: "user", content: prompt }],
@@ -52,4 +49,4 @@ async function generateContent(outline, target_week){
     }
 }
 
-export { generateContent };
+export { generatePhrases };

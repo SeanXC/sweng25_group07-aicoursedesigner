@@ -86,9 +86,20 @@ export default function ShowPhrases({ courseData }) {
   //        }),
   //      });
 
-  //      if (!response.ok) {
-  //        throw new Error(`Error: ${response.statusText}`);
-  //      }
+const submitPhrases = async () => {
+  try {
+    const response = await fetch("http://localhost:8000/generate-phrases", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        input: {
+          language: courseData.targetLang,
+          no_of_phrases: sliderValue,
+        },
+      }),
+    });
 
   //      const phrases = await response.json();
   //      console.log("Phrases generated successfully:", phrases);
@@ -129,6 +140,18 @@ export default function ShowPhrases({ courseData }) {
     }
   };
 
+    const data = await response.json();
+    console.log("Phrases generated successfully:", data);
+    alert("Phrases generated successfully!");
+  } catch (error) {
+    console.error("Submission error:", error);
+    alert("Failed to generate phrases.");
+  }
+};
+
+
+
+  
   return (
     <>
       <div style={{ backgroundColor: "white" }}>
@@ -174,7 +197,7 @@ export default function ShowPhrases({ courseData }) {
           />
           {/* Submit Button */}
           <button
-            onClick={submitCourse}
+            onClick={submitPhrases}
             style={{
               backgroundColor: "#8300A1",
               color: "white",
