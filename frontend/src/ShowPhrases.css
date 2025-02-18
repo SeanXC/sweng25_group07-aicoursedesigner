@@ -1,4 +1,4 @@
-body {
+p {
     font-family: 'Montserrat'
 }
 
@@ -11,11 +11,8 @@ select {
     font-size: large;
 }
 
-
 .slider {
-    /* -webkit-appearance: none; */
     width: 50%;
-    /* height: 1px; */
     border-radius: 1px;
     background: #ddd;
     outline:none;
@@ -27,4 +24,33 @@ select {
 
 .slider:hover {
     opacity: 1;
+}
+table {
+    border: 3px solid #8300A1;
+    width: 300px;
+    height: 200px;
+    font-family: 'Montserrat'
+}
+
+th {
+    border-bottom: 1px solid black;
+    border-radius: 100px;
+    /* font-family: 'Montserrat' */
+}
+
+td {
+    text-align: center;
+    
+    border-right: 1px solid #8300A1;
+    border-left: 1px solid #8300A1;
+}
+
+button {
+    background-color: #8300A1;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
 }
