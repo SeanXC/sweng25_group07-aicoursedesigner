@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import logoImage from './logowhite.png'; // Path to your image file
-import iconImage from './icon_figure.png'; // Path to your image file
+import iconImage from './icon figure.png'; // Path to your image file
 import textImage from './speechText.png'; // Path to your image file
 import { confirmSignUp } from "./authService";
 
@@ -138,3 +138,4 @@ export default function ConfirmUser() {
     </div>
   );
 }
+
