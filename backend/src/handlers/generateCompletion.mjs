@@ -1,20 +1,20 @@
+//add dynamodb
+
 import OpenAI from "openai";
 import dotenv from "dotenv";
-// import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
-// import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-// import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 
-// const ssmClient = new SSMClient({ region: "eu-west-1" });
-// const client = new DynamoDBClient({ region: "eu-west-1" });
-// const dynamodb = DynamoDBDocumentClient.from(client);
+const ssmClient = new SSMClient({ region: "eu-west-1" });
+const client = new DynamoDBClient({ region: "eu-west-1" });
+const dynamodb = DynamoDBDocumentClient.from(client);
 
 dotenv.config();
 
-// Use API key from .env instead of fetching from AWS SSM
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
 // async function getOpenAIKey() {
 //   try {
 //     const command = new GetParameterCommand({
@@ -29,12 +29,12 @@ const openai = new OpenAI({
 //   }
 // }
 
-function check(userInput) {
-  const fields = ["courseName", "courseDesc", "difficulty", "targetLang", "nativeLang", "duration"];
-  for (const field of fields) {
-    if (!userInput[field]) return "Error: Missing required fields";
+function check(userInput){
+  const fields = ["courseName","courseDesc","difficulty","targetLang","nativeLang","duration"];
+  for(const field of fields){
+    if(!userInput[field]) return "Error: Missing required fields";
   }
-  if (typeof userInput.duration !== "number" || userInput.duration <= 0) {
+  if(typeof userInput.duration!="number" || userInput.duration<=0){
     return "Error: Invalid course duration";
   }
   return null;
@@ -43,14 +43,12 @@ function check(userInput) {
 async function getCompletion(userInput) {
   try {
     const inputError = check(userInput);
-    if (inputError) return inputError;
-    // Fetch API Key from .env directly (AWS SSM is commented out)
+    if(inputError) return inputError;
+
     // const apiKey = await getOpenAIKey();
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) throw new Error("Missing OpenAI API Key. Please set it in .env");
-
+    // if(!apiKey) throw new Error("Missing OpenAI API Key");
     // const openai = new OpenAI({ apiKey });
-
+    
     const prompt = `Generate a language course outline in the following JSON format:
                     {
                       "course_title": "<courseName>",
@@ -71,7 +69,6 @@ async function getCompletion(userInput) {
                     }
                     Course name: ${userInput.courseName}, description: ${userInput.courseDesc}, difficulty: ${userInput.difficulty}, 
                     target language: ${userInput.targetLang}, language used: ${userInput.nativeLang}, duration: ${userInput.duration} weeks.`;
-
     const response = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [{ role: "user", content: prompt }],
@@ -90,7 +87,7 @@ async function getCompletion(userInput) {
         },
         body: JSON.parse(outline),
       };
-    } catch (error) {
+    } catch(error){
       return {
         statusCode: 500,
         headers: {

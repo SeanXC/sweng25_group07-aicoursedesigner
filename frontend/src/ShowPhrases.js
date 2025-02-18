@@ -47,20 +47,18 @@ export default function ShowPhrases({ courseData }) {
 */
   
 
-const submitCourse = async () => {
+const submitPhrases = async () => {
   try {
-    const response = await fetch("http://localhost:8000/generate-course", {
+    const response = await fetch("http://localhost:8000/generate-phrases", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        courseName: courseData.courseName,
-        courseDesc: courseData.courseDesc,
-        difficulty: courseData.difficulty,
-        targetLang: courseData.targetLang,
-        nativeLang: courseData.nativeLang,
-        duration: 5,
+        input: {
+          language: courseData.targetLang,
+          no_of_phrases: sliderValue,
+        },
       }),
     });
 
@@ -69,13 +67,14 @@ const submitCourse = async () => {
     }
 
     const data = await response.json();
-    console.log("Course generated successfully:", data);
-    alert("Course submitted successfully!");
+    console.log("Phrases generated successfully:", data);
+    alert("Phrases generated successfully!");
   } catch (error) {
     console.error("Submission error:", error);
-    alert("Failed to submit course.");
+    alert("Failed to generate phrases.");
   }
 };
+
 
 
   
@@ -118,7 +117,7 @@ const submitCourse = async () => {
 
           {/* Submit Button */}
           <button
-            onClick={submitCourse}
+            onClick={submitPhrases}
             style={{
               backgroundColor: "#007bff",
               color: "white",

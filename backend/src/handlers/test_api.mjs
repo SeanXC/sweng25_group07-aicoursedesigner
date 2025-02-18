@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import express from "express";
 import bodyParser from "body-parser";
-import { getCompletion } from "./generateCourse.mjs"
+import { getCompletion } from "./generateCompletion.mjs"
 
 const app = express();
 const PORT = 3000;
