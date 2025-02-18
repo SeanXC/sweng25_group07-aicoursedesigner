@@ -1,49 +1,56 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom"; 
 import "./Home.css";
+import logoImage from './logowhite.png'; 
+import NualasImage from './nualas.svg';
 
 
 
 export default function HomeDashboard() {
-
-  
-  
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleLoginClick = () => {
     navigate("/login");
   };
 
-  
-
   return (
-    <div style={{ height: "100vh", backgroundColor: "white", position: "relative" }}>
-      <header style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", padding: "20px" }}>
+    <div className="home-container">
+      <div className="top-bar">
+     
+         
+        <img src={logoImage} alt="Logo" className="logo" />
+
+        <header className="home-header">
         <span>Home Dashboard</span>
+        </header>
+        
+        
 
-        <Link to="/connectaws">
-          <button style={buttonStyle}>Connect AWS</button>
-        </Link>
+        <button onClick={handleLoginClick} className="home-button" position="absolute">Sign In</button>
+      </div>
 
-        <button onClick={handleLoginClick} style={buttonStyle}>Sign In</button>
+      <div className="content">
+        <img src = {NualasImage} className = "nualas-image" />
+        
+       
 
-        <Link to="/courseform">
-          <button style={buttonStyle}>Generate Course</button>
-        </Link>
-      </header>
+        <p className="text">Create a course</p>
+        <p className="text2">Design and customize lessons to track student progress seamlessly</p>
 
-      <main
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "calc(100% - 64px)",
-        }}
-      ></main>
+        
+
+          <Link to="/courseform">
+            <button className="home-button">Generate Course</button>
+          </Link>
+          
+          <Link to="/connectaws">
+            <button className="home-button connect-aws-button">Connect AWS</button>
+          </Link>
+      </div>
     </div>
   );
 }
+
 
 const buttonStyle = {
   backgroundColor: "#8300A1",
