@@ -1,11 +1,40 @@
 import "./Home";
 import "./ShowPhrases.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ShowPhrases({ courseData }) {
-  const [sliderValue, setSliderValue] = useState(7);
+  const [sliderValue, setSliderValue] = useState(5);
+  const [responseData, setResponseData] = useState(null);
 
-  console.log("ShowPhrases data", courseData);
+  const data = {
+    title: "Week 1",
+    topic: "Basic greetings and introductions",
+    phrases: [
+      {
+        native: "Hello",
+        target: "Hola",
+      },
+      {
+        native: "Goodbye",
+        target: "Adiós",
+      },
+      {
+        native: "How are you?",
+        target: "¿Cómo estás?",
+      },
+      {
+        native: "What's your name?",
+        target: "¿Cómo te llamas?",
+      },
+    ],
+  };
+  useEffect(() => {
+    console.log("setting data", data);
+    setResponseData(data);
+  }, []);
+
+  console.log("response json", responseData);
+  // console.log("ShowPhrases data", courseData);
 
   if (!courseData) {
     return <p>Loading course data...</p>;
@@ -45,40 +74,61 @@ export default function ShowPhrases({ courseData }) {
     }
   };
 */
-  
+  //  const submitPhraseNo = async () => {
+  //    try {
+  //      const response = await fetch("http://localhost:8000/generate-course", {
+  //        method: "POST",
+  //        headers: {
+  //          "Content-Type": "application/json",
+  //        },
+  //        body: JSON.stringify({
+  //          noOfPhrases: sliderValue,
+  //        }),
+  //      });
 
-const submitCourse = async () => {
-  try {
-    const response = await fetch("http://localhost:8000/generate-course", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        courseName: courseData.courseName,
-        courseDesc: courseData.courseDesc,
-        difficulty: courseData.difficulty,
-        targetLang: courseData.targetLang,
-        nativeLang: courseData.nativeLang,
-        duration: 5,
-      }),
-    });
+  //      if (!response.ok) {
+  //        throw new Error(`Error: ${response.statusText}`);
+  //      }
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
+  //      const phrases = await response.json();
+  //      console.log("Phrases generated successfully:", phrases);
+  //      alert("Phrase value submitted successfully!");
+  //    } catch (error) {
+  //      console.error("Submission error:", error);
+  //      alert("Failed to submit phrase value.");
+  //    }
+  //  };
+
+  const submitCourse = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/generate-course", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          courseName: courseData.courseName,
+          courseDesc: courseData.courseDesc,
+          difficulty: courseData.difficulty,
+          targetLang: courseData.targetLang,
+          nativeLang: courseData.nativeLang,
+          duration: 5,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Course generated successfully:", data);
+      alert("Course submitted successfully!");
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("Failed to submit course.");
     }
+  };
 
-    const data = await response.json();
-    console.log("Course generated successfully:", data);
-    alert("Course submitted successfully!");
-  } catch (error) {
-    console.error("Submission error:", error);
-    alert("Failed to submit course.");
-  }
-};
-
-
-  
   return (
     <>
       <div style={{ backgroundColor: "white" }}>
@@ -103,24 +153,30 @@ const submitCourse = async () => {
             overflow: "auto",
           }}
         >
-<p style={{ color: "black" }}>Number of phrases to generate: {sliderValue}</p>
-<input
+          <p style={{ color: "black" }}>Course Name: {courseData.courseName}</p>
+          <p style={{ color: "black" }}>
+            You're learning: {courseData.targetLang}
+          </p>
+
+          <p style={{ color: "black" }}>
+            Number of phrases to generate: {sliderValue}
+          </p>
+          <input
+            style={{
+              width: "70%",
+            }}
             type="range"
             min="3"
             max="10"
             value={sliderValue}
             onChange={(e) => setSliderValue(e.target.value)}
-            className="slider"
             id="myRange"
           />
-<p style={{ color: "black" }}>Course Name: {courseData.courseName}</p>
-<p style={{ color: "black" }}>Language: {courseData.targetLang}</p>
-
           {/* Submit Button */}
           <button
             onClick={submitCourse}
             style={{
-              backgroundColor: "#007bff",
+              backgroundColor: "#8300A1",
               color: "white",
               padding: "0.75rem 1.5rem",
               borderRadius: "8px",
@@ -131,6 +187,32 @@ const submitCourse = async () => {
           >
             Submit
           </button>
+          {responseData && (
+            <>
+              <p style={{ color: "black" }}>
+                {responseData.title}: {responseData.topic}
+              </p>
+
+              <div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th style={{ color: "black" }}>Native</th>
+                      <th style={{ color: "black" }}>Target</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {responseData.phrases.map((phrase, index) => (
+                      <tr key={index}>
+                        <td style={{ color: "black" }}>{phrase.native}</td>
+                        <td style={{ color: "black" }}>{phrase.target}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
         </main>
       </div>
     </>

@@ -1,12 +1,12 @@
 import OpenAI from "openai";
 import dotenv from "dotenv";
-// import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
-// import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-// import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 
-// const ssmClient = new SSMClient({ region: "eu-west-1" });
-// const client = new DynamoDBClient({ region: "eu-west-1" });
-// const dynamodb = DynamoDBDocumentClient.from(client);
+const ssmClient = new SSMClient({ region: "eu-west-1" });
+const client = new DynamoDBClient({ region: "eu-west-1" });
+const dynamodb = DynamoDBDocumentClient.from(client);
 
 dotenv.config();
 
@@ -30,7 +30,14 @@ const openai = new OpenAI({
 // }
 
 function check(userInput) {
-  const fields = ["courseName", "courseDesc", "difficulty", "targetLang", "nativeLang", "duration"];
+  const fields = [
+    "courseName",
+    "courseDesc",
+    "difficulty",
+    "targetLang",
+    "nativeLang",
+    "duration",
+  ];
   for (const field of fields) {
     if (!userInput[field]) return "Error: Missing required fields";
   }
@@ -47,7 +54,8 @@ async function getCompletion(userInput) {
     // Fetch API Key from .env directly (AWS SSM is commented out)
     // const apiKey = await getOpenAIKey();
     const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) throw new Error("Missing OpenAI API Key. Please set it in .env");
+    if (!apiKey)
+      throw new Error("Missing OpenAI API Key. Please set it in .env");
 
     // const openai = new OpenAI({ apiKey });
 
