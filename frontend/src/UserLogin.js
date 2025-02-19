@@ -48,7 +48,7 @@ export default function UserLogin() {
         if (session && typeof session.AccessToken !== "undefined") {
           sessionStorage.setItem("accessToken", session.AccessToken);
           if (sessionStorage.getItem("accessToken")) {
-            navigate("/home"); // Redirect to home after login using useNavigate
+            navigate("/"); // Redirect to home after login using useNavigate
           } else {
             console.error("Session token was not set properly.");
           }

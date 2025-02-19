@@ -6,7 +6,7 @@ export default function ShowPhrases({ courseData }) {
   const [sliderValue, setSliderValue] = useState(5);
   const [responseData, setResponseData] = useState(null);
 
-  const data = {
+ /* const data = {
     title: "Week 1",
     topic: "Basic greetings and introductions",
     phrases: [
@@ -28,12 +28,14 @@ export default function ShowPhrases({ courseData }) {
       },
     ],
   };
+
+
   useEffect(() => {
     console.log("setting data", data);
     setResponseData(data);
   }, []);
+  */
 
-  console.log("response json", responseData);
   // console.log("ShowPhrases data", courseData);
 
   if (!courseData) {
@@ -86,20 +88,54 @@ export default function ShowPhrases({ courseData }) {
   //        }),
   //      });
 
-const submitPhrases = async () => {
-  try {
-    const response = await fetch("http://localhost:8000/generate-phrases", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        input: {
-          language: courseData.targetLang,
-          no_of_phrases: sliderValue,
+  const submitPhrases = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/generate-phrases", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      }),
-    });
+        body: JSON.stringify({
+          input: {
+            language: courseData.targetLang,
+            no_of_phrases: sliderValue,
+          },
+        }),
+      });
+  
+      const data = await response.json();
+      console.log("Phrases generated successfully:", data);
+  
+      const formattedPhrases = data.phrases.map((phraseObj) => {
+        const keys = Object.keys(phraseObj).filter(key => key !== "id"); // Ignore "id"
+      
+        if (keys.length < 2) {
+          console.error("Invalid phrase object:", phraseObj);
+          return { native: "Unknown", target: "Unknown" }; // Handle unexpected formats
+        }
+      
+        return {
+          native: phraseObj[keys[0]], // First key is the native language
+          target: phraseObj[keys[1]], // Second key is the target language
+        };
+      });
+      
+      
+
+      console.log ("all formattedPhrases", formattedPhrases)
+  
+      setResponseData({
+        title: "Generated Phrases",
+        topic: "Language Learning",
+        phrases: formattedPhrases,
+        
+      });
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("Failed to generate phrases.");
+    }
+  };
+  
 
   //      const phrases = await response.json();
   //      console.log("Phrases generated successfully:", phrases);
@@ -110,44 +146,40 @@ const submitPhrases = async () => {
   //    }
   //  };
 
-  const submitCourse = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/generate-course", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          courseName: courseData.courseName,
-          courseDesc: courseData.courseDesc,
-          difficulty: courseData.difficulty,
-          targetLang: courseData.targetLang,
-          nativeLang: courseData.nativeLang,
-          duration: 5,
-        }),
-      });
+  
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
 
-      const data = await response.json();
-      console.log("Course generated successfully:", data);
-      alert("Course submitted successfully!");
-    } catch (error) {
-      console.error("Submission error:", error);
-      alert("Failed to submit course.");
+
+const submitCourse = async () => {
+  try {
+    const response = await fetch("http://localhost:8000/generate-course", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        courseName: courseData.courseName,
+        courseDesc: courseData.courseDesc,
+        difficulty: courseData.difficulty,
+        targetLang: courseData.targetLang,
+        nativeLang: courseData.nativeLang,
+        duration: 5,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
     }
-  };
 
     const data = await response.json();
-    console.log("Phrases generated successfully:", data);
-    alert("Phrases generated successfully!");
+    console.log("Course generated successfully:", data);
+    alert("Course submitted successfully!");
   } catch (error) {
     console.error("Submission error:", error);
-    alert("Failed to generate phrases.");
+    alert("Failed to submit course.");
   }
 };
+
 
 
 
