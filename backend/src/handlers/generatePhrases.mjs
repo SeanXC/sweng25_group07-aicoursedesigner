@@ -22,7 +22,7 @@ async function generatePhrases(language, no_of_phrases, topic){
                         {
                           "id": <id_number>,
                           "english": "<english_phrase>",
-                          "spanish": "<translated_phrase>"
+                          "<language>": "<translated_phrase>"
                         }
                       ]
                     }`;
