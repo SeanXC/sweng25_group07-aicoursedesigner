@@ -11,14 +11,21 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function generatePhrases(input){
-    const targetLang = input.language;
-    if(!targetLang) return { error: "please specify the target language" };
+async function generatePhrases(language, no_of_phrases, topic){
+    if(!language) return { error: "please specify the target language" };
+    if(!no_of_phrases) return { error: "please specify the no. of phrases to generate" };
+    if(!topic) return { error: "please specify a topic for the phrases" };
 
-    const numPhrases = input.no_of_phrases;
-    if(!numPhrases) return { error: "please specify the no. of phrases to generate" };
-
-    const prompt = `Generate ${numPhrases} phrases for a ${targetLang} course in a valid JSON format.`;
+    const prompt = `Generate ${no_of_phrases} phrases based on the topic "${topic}" for a ${language} course in the following JSON format:
+                    {
+                      "phrases": [
+                        {
+                          "id": <id_number>,
+                          "english": "<english_phrase>",
+                          "spanish": "<translated_phrase>"
+                        }
+                      ]
+                    }`;
     const response = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [{ role: "user", content: prompt }],

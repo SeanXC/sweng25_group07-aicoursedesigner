@@ -48,12 +48,12 @@ app.post("/generate-content", async(req, res) => {
 
 app.post("/generate-phrases", async(req, res) => {
   try {
-    const { input } = req.body;
-    if(!input){
+    const { language, no_of_phrases, topic } = req.body;
+    if(!{ language, no_of_phrases, topic }){
       return res.status(400).json({ error: "no valid input found" });
     }
 
-    const result = await generatePhrases(input);
+    const result = await generatePhrases(language, no_of_phrases, topic);
     res.status(result.statusCode).json(result.body);
   } catch(error){
     console.error("Server error:", error);
