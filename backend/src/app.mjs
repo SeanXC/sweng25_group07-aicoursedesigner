@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { getCompletion } from "./generateCompletion.mjs"; // Import the function from a separate file
-import { generateContent } from "./contentGenerator.mjs";
-import { generatePhrases } from "./generatePhrases.mjs";
+import { getCompletion } from "./handlers/generateCompletion/index.mjs"; // Import the function from a separate file
+import { generateContent } from "./handlers/contentGenerator/index.mjs";
+import { generatePhrases } from "./handlers/generatePhrases/index.mjs";
 
 dotenv.config(); // Load environment variables
 
