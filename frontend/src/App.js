@@ -6,6 +6,7 @@ import UserLogin from './UserLogin';
 import CourseForm from './CourseForm';
 import ConfirmUserPage from './confirmUser';
 import ForgotPassword from './forgetPassword';
+import Roleplay from "./roleplay";
 //import ShowPhrases from "./ShowPhrases";
 
 function App() {
@@ -18,16 +19,23 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomeDashboard />} />
-        
+
         <Route path="/connectaws" element={<ConnectAWS />} />
         <Route path="/login" element={<UserLogin />} />
         <Route path="/confirmUser" element={<ConfirmUserPage />} />
         <Route path="/courseform" element={<CourseForm />} />
         <Route path="/forgetPassword" element={<ForgotPassword />} />
-       
+        <Route path="/roleplay" element={<Roleplay />} />
+
         <Route
           path="/protected"
-          element={isAuthenticated() ? <HomeDashboard /> : <Navigate replace to="/login" />}
+          element={
+            isAuthenticated() ? (
+              <HomeDashboard />
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
         />
       </Routes>
     </BrowserRouter>
