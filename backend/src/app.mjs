@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { getCompletion } from "./handlers/generateCompletion/index.mjs"; // Import the function from a separate file
 import { generateContent } from "./handlers/contentGenerator/index.mjs";
 import { generatePhrases } from "./handlers/generatePhrases/index.mjs";
+import { generateRoleplay } from "./handlers/generateRoleplay/index.mjs";
 
 dotenv.config(); // Load environment variables
 
@@ -54,6 +55,17 @@ app.post("/generate-phrases", async(req, res) => {
     }
 
     const result = await generatePhrases(language, no_of_phrases, topic);
+    res.status(result.statusCode).json(result.body);
+  } catch(error){
+    console.error("Server error:", error);
+    res.status(500).json({ error: error.message });
+  }
+})
+
+app.post("/generate-roleplay", async(req, res) => {
+  try {
+    const { userId, userLevel, language, topic, msg } = req.body;
+    const result = await generateRoleplay(userId, userLevel, language, topic, msg);
     res.status(result.statusCode).json(result.body);
   } catch(error){
     console.error("Server error:", error);
