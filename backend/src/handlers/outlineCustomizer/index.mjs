@@ -12,13 +12,18 @@ const openai = new OpenAI({
 });
 
 
-async function outlineCustomizer(input){
-    const weekToChange = input.duration ;
+async function outlineCustomizer(prevPrompt, targetWeek, promptchange){
+
+    const previousPrompt = prevPrompt;
+    if(!prevPrompt) return {error: "Previous prompt not given"};
+    const weekToChange = targetWeek ;
     if(!weekToChange) return { error: "Please specify which week you want to change."};
-    const change = input.chage ;
+    const change = promptchange ;
     if(!change) return { error: "Please specify what change you want to add to the prompt."};
 
-    const prompt = `Regenerate the outline for week ${weekToChange}, making sure to ${change}, while keeping the rest of the course unchanged.`;
+    const prompt = `You have an outline for a course here:
+    ${previousPrompt}
+    Regenerate the outline for week ${weekToChange}, making sure to ${change}, while keeping the rest of the course unchanged.`;
     const response = await openai.chat.completions.create({
         model: "gpt-4",
         messages: [{ role: "user", content: prompt }],

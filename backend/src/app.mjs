@@ -5,6 +5,7 @@ import { getCompletion } from "./handlers/generateCompletion/index.mjs"; // Impo
 import { generateContent } from "./handlers/contentGenerator/index.mjs";
 import { generatePhrases } from "./handlers/generatePhrases/index.mjs";
 import { generateRoleplay } from "./handlers/generateRoleplay/index.mjs";
+import { outlineCustomizer } from "./handlers/outlineCustomizer.mjs";
 
 dotenv.config(); // Load environment variables
 
@@ -68,6 +69,20 @@ app.post("/generate-roleplay", async(req, res) => {
     const result = await generateRoleplay(userId, userLevel, language, topic, msg);
     res.status(result.statusCode).json(result.body);
   } catch(error){
+    console.error("Server error:", error);
+    res.status(500).json({ error: error.message });
+  }
+})
+
+app.post("/customize-outline", async(req, res) => {
+  try {
+    const {outline, target_week, promptchange } = req.body;
+    if(!outline){
+      return res.status(400).json({ error: "no outline found" });
+    }
+    const result = await outlineCustomizer(outline, target_week, promptchange);
+    res.status(result.statusCode).json(result.body);
+  }catch(error){
     console.error("Server error:", error);
     res.status(500).json({ error: error.message });
   }
