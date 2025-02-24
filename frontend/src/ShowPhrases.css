@@ -1,0 +1,56 @@
+p {
+    font-family: 'Montserrat'
+}
+
+input,
+select {
+    width: 90%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    font-size: large;
+}
+
+.slider {
+    width: 50%;
+    border-radius: 1px;
+    background: #ddd;
+    outline:none;
+    opacity: 0.9;
+    color: #8300A1;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+table {
+    border: 3px solid #8300A1;
+    width: 300px;
+    height: 200px;
+    font-family: 'Montserrat'
+}
+
+th {
+    border-bottom: 1px solid black;
+    border-radius: 100px;
+    /* font-family: 'Montserrat' */
+}
+
+td {
+    text-align: center;
+    
+    border-right: 1px solid #8300A1;
+    border-left: 1px solid #8300A1;
+}
+
+button {
+    background-color: #8300A1;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+}
