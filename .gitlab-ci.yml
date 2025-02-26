@@ -47,7 +47,7 @@ install_backend:
     - frontend
 
 build_frontend:
-  image: node:18
+  image: node:20
   stage: build
   dependencies:
     - install_frontend
