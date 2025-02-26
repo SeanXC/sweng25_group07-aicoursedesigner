@@ -22,12 +22,12 @@ install_frontend:
   script:
     - cd frontend
     - npm ci
-    - npm install react-scripts  # Explicitly install react-scripts
-    - npm list react-scripts  # Verify installation
+  cache:
+    key: npm-frontend
+    paths:
+      - frontend/node_modules/
   tags:
     - frontend
-
-
 
 install_backend:
   image: node:18
@@ -41,9 +41,15 @@ install_backend:
 build_frontend:
   image: node:18
   stage: build
+  dependencies:
+    - install_frontend
+  cache:
+    key: npm-frontend
+    paths:
+      - frontend/node_modules/
   script:
     - cd frontend
-    - npm run build  # for react scripts
+    - npm run build
   tags:
     - frontend
   artifacts:
