@@ -8,9 +8,10 @@ variables:
   NODE_ENV: test
 
 before_script:
-  # Clean up any existing git lock files
+before_script:
   - rm -f .git/index.lock
   - rm -f .git/config.lock
+  - rm -f .git/shallow.lock  
   - node -v
   - npm -v
   # Set up SSH keys and environment variables
