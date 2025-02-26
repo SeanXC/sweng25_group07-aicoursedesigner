@@ -25,7 +25,6 @@ install_frontend:
   stage: install
   script:
     - cd frontend
-    - npm cache clean --force  # Clean the npm cache
     - npm ci
   cache:
     key: npm-frontend
@@ -33,6 +32,8 @@ install_frontend:
       - frontend/node_modules/
   tags:
     - frontend
+  variables:
+    GIT_DEPTH: 0  # Disable shallow cloning
 
 
     
