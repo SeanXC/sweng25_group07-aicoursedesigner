@@ -1,24 +1,8 @@
 stages:
   - install
   - build
+  - test
   - deploy
-
-variables:
-  NODE_ENV: test
-
-before_script:
-  # Clean up any existing git lock files
-  - rm -f .git/index.lock
-  - rm -f .git/config.lock
-  - node -v
-  - npm -v
-  # Set up SSH keys and environment variables
-  - mkdir -p ~/.ssh
-  - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-  - chmod 600 ~/.ssh/id_rsa
-  # Ensure .env file is created from environment variables for both frontend and backend
-  - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > frontend/.env
-  - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > backend/.env
 
 install_frontend:
   image: node:20
@@ -30,40 +14,32 @@ install_frontend:
     key: npm-frontend
     paths:
       - frontend/node_modules/
-  tags:
-    - frontend
-  variables:
-    GIT_DEPTH: 0  # Disable shallow cloning
-
-
-    
-install_backend:
-  image: node:20
-  stage: install
-  script:
-    - cd backend/src
-    - npm install 
-  tags:
-    - frontend
 
 build_frontend:
   image: node:18
   stage: build
   dependencies:
     - install_frontend
-  cache:
-    key: npm-frontend
-    paths:
-      - frontend/node_modules/
   script:
     - cd frontend
     - npm run build
-  tags:
-    - frontend
   artifacts:
     paths:
       - frontend/build/
     expire_in: 1h
+
+test_frontend:
+  image: node:20
+  stage: test
+  dependencies:
+    - install_frontend
+  script:
+    - cd frontend
+    - npm run test:ci  # Run the tests in CI mode
+  cache:
+    key: npm-frontend
+    paths:
+      - frontend/node_modules/
 
 deploy_frontend:
   image: node:18
@@ -71,10 +47,6 @@ deploy_frontend:
   script:
     - cd frontend
     - mv build public  # GitLab Pages looks for the public folder
-  only:
-    - frontEnd
-  tags:
-    - frontend
 
 deploy_backend:
   image: node:18
@@ -82,7 +54,3 @@ deploy_backend:
   script:
     - cd backend/src
     - ssh user@your-server-ip 'cd /path/to/backend && git pull && npm ci && pm2 restart server'
-  only:
-    - main  # or adjust this based on the branch for backend deploy
-  tags:
-    - frontend
