@@ -14,8 +14,10 @@ before_script:
   - mkdir -p ~/.ssh
   - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
   - chmod 600 ~/.ssh/id_rsa
-  # Ensure .env file is created from environment variables
-  - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > .env
+  # Ensure .env file is created from environment variables for both frontend and backend
+  - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > frontend/.env
+  - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > backend/.env
+
 
 
 install_frontend:
