@@ -7,7 +7,9 @@ variables:
   NODE_ENV: test
 
 before_script:
-  # Ensure node and npm are available
+  # Clean up any existing git lock files
+  - rm -f .git/index.lock
+  - rm -f .git/config.lock
   - node -v
   - npm -v
   # Set up SSH keys and environment variables
@@ -17,6 +19,7 @@ before_script:
   # Ensure .env file is created from environment variables for both frontend and backend
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > frontend/.env
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > backend/.env
+
 
 install_frontend:
   image: node:18
