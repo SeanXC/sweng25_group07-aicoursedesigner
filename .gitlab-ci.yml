@@ -7,6 +7,8 @@ variables:
   NODE_ENV: test
 
 before_script:
+  # Authenticate with Docker to pull images
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   # Ensure node and npm are available
   - node -v
   - npm -v
