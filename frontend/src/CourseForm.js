@@ -15,7 +15,7 @@ const formDataEntries = {
 
 
 
-export default function HomeDashboard() {
+export default function CourseForm() {
 
   const [showCourse, setShowCourse] = useState(true);
   const [ courseData, setCourseData] = useState (null);

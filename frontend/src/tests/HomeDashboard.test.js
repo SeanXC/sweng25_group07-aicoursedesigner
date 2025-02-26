@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import HomeDashboard from './HomeDashboard';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import HomeDashboard from '../Home';
 
 describe('HomeDashboard Component', () => {
   it('renders "Home Dashboard" and "Sign In" button', () => {
@@ -17,14 +17,18 @@ describe('HomeDashboard Component', () => {
   it('navigates to /login when "Sign In" is clicked', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
-        <HomeDashboard />
+        <Routes>
+          <Route path="/" element={<HomeDashboard />} />
+          <Route path="/login" element={<div>Login Page</div>} />
+        </Routes>
       </MemoryRouter>
     );
 
     const signInButton = screen.getByText('Sign In');
     fireEvent.click(signInButton);
 
-    expect(window.location.pathname).toBe('/login');
+    // Verify if the URL has changed to '/login'
+    expect(screen.getByText('Login Page')).toBeInTheDocument();
   });
 
   it('renders links to "Generate Course" and "Connect AWS"', () => {
