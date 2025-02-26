@@ -20,12 +20,12 @@ before_script:
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > frontend/.env
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > backend/.env
 
-
 install_frontend:
-  image: node:18
+  image: node:20
   stage: install
   script:
     - cd frontend
+    - npm cache clean --force  # Clean the npm cache
     - npm ci
   cache:
     key: npm-frontend
@@ -34,16 +34,14 @@ install_frontend:
   tags:
     - frontend
 
+
+    
 install_backend:
-  image: node:18
+  image: node:20
   stage: install
   script:
     - cd backend/src
-    - npm install
-  cache:
-    key: npm-backend
-    paths:
-      - backend/src/node_modules/
+    - npm install 
   tags:
     - frontend
 
