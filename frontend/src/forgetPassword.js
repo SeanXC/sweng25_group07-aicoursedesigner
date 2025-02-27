@@ -68,7 +68,7 @@ const ResetPassword = () => {
   };
 
   const handleImageClick = () => {
-    navigate("/Home"); // Navigate to home page on logo click
+    navigate("/"); // Navigate to home page on logo click
   };
 
 
@@ -150,22 +150,21 @@ const ResetPassword = () => {
           )}
 
           {error && <p>{error}</p>}
+
+          {/* Back to Login link */}
+          <div style={{ textAlign: "center" }}>
+            <p
+              style={{
+                cursor: "pointer",
+                color: "purple",
+                fontSize: "0.9rem",
+              }}
+              onClick={() => navigate('/login')}
+            >
+              Back to Login
+            </p>
+          </div>
         </form>
-
-        <button onClick={() => navigate('/login')} 
-
-        style={{ 
-            backgroundColor: "white",
-            marginTop: "1rem",
-            cursor: "pointer",
-            color: "purple",
-            fontSize: "0.9rem",
-            border: "none",
-            
-            }}>
-
-          Back to Login
-        </button>
       </div>
     </div>
   );
