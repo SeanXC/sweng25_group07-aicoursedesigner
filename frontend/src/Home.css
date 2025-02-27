@@ -1,39 +1,41 @@
-body{
-    font-family:'Montserrat'
+body {
+    font-family: 'Montserrat';
 }
+
 input, select {
     width: 90%;
-    height: 30%;
+    height: 40px;
     padding: 12px;
     border-radius: 8px;
     border: 2px solid #ccc;
-    font-size:large;
+    font-size: large;
 }
 
-input:focus,select:focus {
+input:focus, select:focus {
     border-color: #8300A1;
     box-shadow: 0 0 8px rgba(128, 0, 128, 0.3);
 }
-button{
+
+button {
     background-color: #8300A1;
     color: white;
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border:none;
-    cursor:pointer;
+    border: none;
+    cursor: pointer;
 }
 
 input {
     width: 90%;
     height: 20px;
     cursor: pointer;
-    accent-color: "#8300A1";
+    accent-color: #8300A1; /* Removed quotes around color */
 }
 
 .home-container {
     height: 100vh;
-    background-color: white;  
+    background-color: white;
     position: relative;
 }
 
@@ -43,71 +45,178 @@ input {
     align-items: center;
     gap: 10px;
     padding: 20px;
+    margin-left: -130px; /* Adjust this value to move the header left */
 }
 
 .home-header span {
-    color: white;         
-    font-weight: bold;    
-    font-size: 24px;      
-  }
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+}
 
 .home-button {
     background-color: #8300A1;
     color: white;
-    padding: 0.75rem 1.5rem;
+    padding: 0.5rem 1rem; /* Smaller padding */
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border: none;
     cursor: pointer;
-    width: 200px;
     text-align: center;
 }
 
 .top-bar {
     height: 60px;
-    background-color: #9705A8;  
+    background-color: #9705A8;
     display: flex;
     align-items: center;
-    justify-content: space-between;  
+    justify-content: space-between;
     padding: 0 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-
-
 .logo {
-    height: 40px;  
-    width: auto;   
+    height: 40px;
+    width: auto;
 }
 
 .nualas-image {
-    max-width: 40%;  
-    height: auto;     
-    margin-top: -300px; 
+    max-width: 40%;
+    height: auto;
+    margin-top: -300px;
 }
 
 .content {
-    padding-top: 80px; 
+    padding-top: 80px;
     display: flex;
     flex-direction: column;
-    justify-content: center; 
-    align-items: center;    
-    height: calc(100vh - 60px); 
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 60px);
 }
 
 .connect-aws-button {
-    position: absolute;  
-    right: 20px;         
-    bottom: 20px;        
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
 }
 
 .text {
-font-size: 19px;            
-font-weight: bold;          
-color: #212353;   
+    font-size: 19px;
+    font-weight: bold;
+    color: #212353;
 }
 
 .text2 {
-font-size: 15px;            
-color: #212353;   
+    font-size: 15px;
+    color: #212353;
+}
+
+/* New CSS for aligning the sign-in button and user icon */
+.user-info-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between the icon and the sign-in button */
+}
+
+.user-info-button {
+    width: 40px; /* User icon button size */
+    height: 40px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.home-button-small {
+    padding: 0.5rem 1rem; /* Smaller button size */
+    font-size: 14px;
+}
+
+.logout-confirmation-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3); /* More transparent */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(3px); /* Slight blur for better focus */
+  }
+  
+  .confirmation-box {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 300px;
+    z-index: 1001;
+  }
+  
+  .buttons-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .cancel-button {
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  .confirm-button {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .user-dropdown-container {
+    position: relative;
+}
+
+.user-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 40px;
+    right: -20px;
+    border-radius: 8px;
+    padding: 1rem;
+    width: 250px;
+    z-index: 999;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.dropdown-button {
+    background-color: white;
+    color: black;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: none;
+    flex: 1;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.dropdown-button:hover {
+    background-color: #f5f5f5;
+}
+
+.dropdown-icon {
+    width: 40px;
+    margin-top: 0.5rem;
 }
