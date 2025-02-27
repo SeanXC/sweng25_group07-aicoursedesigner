@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import { getCompletion } from "./handlers/generateCompletion/index.mjs";
 import { generateContent } from "./handlers/contentGenerator/index.mjs";
 import { generatePhrases } from "./handlers/generatePhrases/index.mjs";
-import { generateRoleplay } from "./handlers/generateRoleplay/index.mjs";
+import { generateChat } from "./handlers/generateChat/index.mjs";
 import { outlineCustomizer } from "./handlers/outlineCustomizer/index.mjs";
 
 dotenv.config(); // Load environment variables
@@ -81,12 +81,12 @@ app.post("/generate-phrases", async (req, res) => {
 });
 
 // API endpoint to generate roleplay
-app.post("/generate-roleplay", async (req, res) => {
+app.post("/generate-chat", async (req, res) => {
   try {
     const { userId, userLevel, language, topic, msg } = req.body;
-    console.log("📌 Generating roleplay for:", { userId, userLevel, language, topic, msg });
+    console.log("📌 Generating AI chat for:", { userId, userLevel, language, topic, msg });
 
-    const result = await generateRoleplay(userId, userLevel, language, topic, msg);
+    const result = await generateChat(userId, userLevel, language, topic, msg);
     res.status(result.statusCode).json(result.body);
   } catch (error) {
     console.error("❌ Server error:", error);

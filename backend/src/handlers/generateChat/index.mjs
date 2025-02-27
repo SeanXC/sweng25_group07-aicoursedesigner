@@ -39,7 +39,7 @@ const conversation = {};
 //     return history.Items || [];
 // }
 
-async function generateRoleplay(userId, userLevel, language, topic, userMsg=""){
+async function generateChat(userId, userLevel, language, topic, userMsg=""){
     if(!language) return { error: "please specify the target language" };
     if(!userId) return { error: "missing user id" };
     if(!userLevel) return { error: `please specify your level in ${language}` };
@@ -52,7 +52,7 @@ async function generateRoleplay(userId, userLevel, language, topic, userMsg=""){
                 role: "system",
                 content: `You are roleplaying with a user on the topic "${topic}" in ${language}.
                           Keep responses interactive and conversation flowing, ensuring that the difficulty 
-                          of the conversation in ${language} is ${userLevel}. You start the conversation.
+                          of the conversation in ${language} is ${userLevel}.
                           Format the response into the following JSON structure:
                           {
                             response: "<response>"
@@ -114,4 +114,4 @@ async function generateRoleplay(userId, userLevel, language, topic, userMsg=""){
     }
 }
 
-export { generateRoleplay };
+export { generateChat };
