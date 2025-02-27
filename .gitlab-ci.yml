@@ -95,9 +95,11 @@ deploy_backend:
   image: node:18
   stage: deploy
   script:
-    - cd backend/src
-    - ssh user@your-server-ip 'cd /path/to/backend && git pull && npm ci && pm2 restart server'
+    - cd backend
+    - export OPENAI_API_KEY="$OPENAI_API_KEY"
+    - node app.mjs &
   only:
-    - main  # or adjust this based on the branch for backend deploy
+    - main 
   tags:
     - frontend
+
