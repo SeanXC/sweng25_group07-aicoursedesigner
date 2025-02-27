@@ -26,8 +26,11 @@ export default function ConfirmUser() {
     try {
       await confirmSignUp(confirmEmail, confirmationCode); // Make sure this function is defined
       setIsConfirmed(true); // Mark as confirmed after successful confirmation
+
+      sessionStorage.setItem("accessToken", "dummyAccessToken");  // Replace with real access token
+
       alert("Account confirmed successfully!\nSign in on next page.");
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       alert(`Failed to confirm account: ${error}`);
     }
