@@ -6,6 +6,7 @@ import UserLogin from './UserLogin';
 import CourseForm from './CourseForm';
 import ConfirmUserPage from './confirmUser';
 import ForgotPassword from './forgetPassword';
+import Chatbot from './Chatbot';
 //import ShowPhrases from "./ShowPhrases";
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
     const accessToken = sessionStorage.getItem("accessToken");
     return !!accessToken;
   };
-
+/*
   return (
     <BrowserRouter>
       <Routes>
@@ -33,5 +34,15 @@ function App() {
     </BrowserRouter>
   );
 }
+*/
 
+return(
+  <BrowserRouter>
+      <Routes>
+      <Route path="/" element={<Chatbot />} />
+      </Routes>
+  </BrowserRouter>
+
+)
+};
 export default App;
