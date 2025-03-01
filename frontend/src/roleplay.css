@@ -1,0 +1,62 @@
+.roleplay-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-family: 'Montserrat'
+}
+
+.title {
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.situation {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.dialogue {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding:20px;
+}
+
+.dialogue-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    max-width: 80%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.dialogue-line.ana {
+    align-self: flex-start;
+}
+
+.dialogue-line.carlos {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.speaker {
+    color: #8300A1;
+    font-weight: bold;
+}
+
+.speaker-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
