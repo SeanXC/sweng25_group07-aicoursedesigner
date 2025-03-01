@@ -18,7 +18,7 @@ function App() {
     const accessToken = sessionStorage.getItem("accessToken");
     return !!accessToken;
   };
-/*
+
   return (
     <BrowserRouter>
       <Routes>
@@ -33,6 +33,8 @@ function App() {
         <Route path="/userProfile" element={<UserProfile />} />
         <Route path="/confirmSignOut" element={<ConfirmSignOut />} />
         <Route path="/roleplay" element={<Roleplay />} />
+        <Route path="/chatbot" element={<Chatbot />} />
+
 
 
         <Route
@@ -49,15 +51,8 @@ function App() {
     </BrowserRouter>
   );
 }
-*/
 
-return(
-  <BrowserRouter>
-      <Routes>
-      <Route path="/" element={<Chatbot />} />
-      </Routes>
-  </BrowserRouter>
 
-)
-};
+
+
 export default App;
