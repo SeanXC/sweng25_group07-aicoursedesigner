@@ -9,6 +9,8 @@ import ForgotPassword from './forgetPassword';
 import SignOut from './SignOut'; 
 import UserProfile from './userProfile'; 
 import ConfirmSignOut from './confirmSignOut';
+import Roleplay from "./roleplay";
+import Chatbot from './Chatbot';
 
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
         <Route path="/signout" element={<SignOut />} />
         <Route path="/userProfile" element={<UserProfile />} />
         <Route path="/confirmSignOut" element={<ConfirmSignOut />} />
+        <Route path="/roleplay" element={<Roleplay />} />
+
 
         <Route
           path="/protected"
