@@ -1,55 +1,84 @@
 stages:
   - install
   - build
+  - test    # Add the test stage here
   - deploy
 
 variables:
   NODE_ENV: test
 
 before_script:
-  # Ensure node and npm are available
+before_script:
+  - rm -f .git/index.lock
+  - rm -f .git/config.lock
+  - rm -f .git/shallow.lock  
   - node -v
   - npm -v
   # Set up SSH keys and environment variables
   - mkdir -p ~/.ssh
   - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
   - chmod 600 ~/.ssh/id_rsa
-  - echo "$OPENAI_API_KEY" > .env
+  # Ensure .env file is created from environment variables for both frontend and backend
+  - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > frontend/.env
+  - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > backend/.env
 
 install_frontend:
-  image: node:18
+  image: node:20
   stage: install
   script:
     - cd frontend
     - npm ci
-    - npm install react-scripts  # Explicitly install react-scripts
-    - npm list react-scripts  # Verify installation
+  cache:
+    key: npm-frontend
+    paths:
+      - frontend/node_modules/
   tags:
     - frontend
-
-
+  variables:
+    GIT_DEPTH: 0  # Disable shallow cloning
 
 install_backend:
-  image: node:18
+  image: node:20
   stage: install
   script:
     - cd backend/src
-    - npm install
+    - npm install 
   tags:
     - frontend
 
 build_frontend:
-  image: node:18
+  image: node:20
   stage: build
+  dependencies:
+    - install_frontend
+  cache:
+    key: npm-frontend
+    paths:
+      - frontend/node_modules/
   script:
     - cd frontend
-    - npm run build  # for react scripts
+    - npm run build
   tags:
     - frontend
   artifacts:
     paths:
       - frontend/build/
     expire_in: 1h
+
+test_frontend:  # Add the test stage
+  image: node:20
+  stage: test
+  dependencies:
+    - install_frontend
+  script:
+    - cd frontend
+    - npm run test:ci  # Run the tests in CI mode
+  cache:
+    key: npm-frontend
+    paths:
+      - frontend/node_modules/
+  tags:
+    - frontend
 
 deploy_frontend:
   image: node:18
@@ -67,8 +96,10 @@ deploy_backend:
   stage: deploy
   script:
     - cd backend
-    - ssh user@your-server-ip 'cd /path/to/backend && git pull && npm ci && pm2 restart server'
+    - export OPENAI_API_KEY="$OPENAI_API_KEY"
+    - node app.mjs &
   only:
-    - frontEnd
+    - main 
   tags:
     - frontend
+
