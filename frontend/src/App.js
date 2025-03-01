@@ -6,8 +6,10 @@ import UserLogin from './UserLogin';
 import CourseForm from './CourseForm';
 import ConfirmUserPage from './confirmUser';
 import ForgotPassword from './forgetPassword';
-import Roleplay from "./roleplay";
-//import ShowPhrases from "./ShowPhrases";
+import SignOut from './SignOut'; 
+import UserProfile from './userProfile'; 
+import ConfirmSignOut from './confirmSignOut';
+
 
 function App() {
   const isAuthenticated = () => {
@@ -25,7 +27,9 @@ function App() {
         <Route path="/confirmUser" element={<ConfirmUserPage />} />
         <Route path="/courseform" element={<CourseForm />} />
         <Route path="/forgetPassword" element={<ForgotPassword />} />
-        <Route path="/roleplay" element={<Roleplay />} />
+        <Route path="/signout" element={<SignOut />} />
+        <Route path="/userProfile" element={<UserProfile />} />
+        <Route path="/confirmSignOut" element={<ConfirmSignOut />} />
 
         <Route
           path="/protected"
