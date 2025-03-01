@@ -6,6 +6,9 @@
     "@aws-amplify/auth": "^6.10.2",
     "@aws-amplify/ui-react": "^6.9.1",
     "@aws-sdk/client-cognito-identity-provider": "^3.744.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.750.0",
     "amazon-cognito-identity-js": "^6.3.12",
     "amplify": "^0.0.11",
     "aws": "^0.0.3-2",
@@ -15,21 +18,29 @@
     "cors": "^2.8.5",
     "cra-template": "1.2.0",
     "express": "^4.21.2",
+    "jest": "^28.0.0",
     "oidc-client-ts": "^3.1.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+  
     "react-oidc-context": "^3.2.0",
-    "react-router-dom": "^7.1.5",
     "react-scripts": "^5.0.1",
     "sweng_group7": "file:",
     "web-vitals": "^4.2.4"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "CI=false react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test:ci": "CI=true react-scripts test --ci --runInBand",
+    "eject": "react-scripts eject",
+    "lint": "eslint src --ext .js,.jsx"
   },
+ "jest": {
+  "transform": {
+    "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
+    "^.+\\.css$": "jest-transform-stub"
+  }
+},
+
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -49,7 +60,10 @@
     ]
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.26.3",
     "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "jest-transform-stub": "^2.0.0",
     "postcss": "^8.5.1",
     "tailwindcss": "^4.0.0"
   }

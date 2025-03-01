@@ -21,7 +21,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomeDashboard />} />
-        
+
         <Route path="/connectaws" element={<ConnectAWS />} />
         <Route path="/login" element={<UserLogin />} />
         <Route path="/confirmUser" element={<ConfirmUserPage />} />
@@ -33,7 +33,13 @@ function App() {
 
         <Route
           path="/protected"
-          element={isAuthenticated() ? <HomeDashboard /> : <Navigate replace to="/login" />}
+          element={
+            isAuthenticated() ? (
+              <HomeDashboard />
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
         />
       </Routes>
     </BrowserRouter>
