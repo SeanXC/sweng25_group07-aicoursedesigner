@@ -6,32 +6,28 @@ stages:
 
 variables:
   NODE_ENV: test
-  DOCKER_DRIVER: overlay2
 
 before_script:
-  - rm -rf frontend/node_modules/  # Clean node_modules to avoid issues with cached versions
+before_script:
   - rm -f .git/index.lock
   - rm -f .git/config.lock
-  - rm -f .git/shallow.lock
+  - rm -f .git/shallow.lock  
   - node -v
   - npm -v
+  # Set up SSH keys and environment variables
   - mkdir -p ~/.ssh
   - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
   - chmod 600 ~/.ssh/id_rsa
+  # Ensure .env file is created from environment variables for both frontend and backend
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > frontend/.env
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > backend/.env
-  - cd frontend
-  - npm install  # Reinstall dependencies to ensure everything is correctly installed
-
 
 install_frontend:
   image: node:20
   stage: install
   script:
-    - ls -al  # Print the contents of the current directory
     - cd frontend
     - npm ci
-    - npm install which
   cache:
     key: npm-frontend
     paths:
@@ -39,13 +35,11 @@ install_frontend:
   tags:
     - frontend
   variables:
-    GIT_DEPTH: 0
+    GIT_DEPTH: 0  # Disable shallow cloning
 
 install_backend:
   image: node:20
   stage: install
-  services:
-    - docker:dind  # Enable Docker-in-Docker service
   script:
     - cd backend/src
     - npm install 
@@ -55,17 +49,21 @@ install_backend:
 build_frontend:
   image: node:20
   stage: build
+  dependencies:
+    - install_frontend
+  cache:
+    key: npm-frontend
+    paths:
+      - frontend/node_modules/
   script:
-    - npm run build  # Run the build process after installing dependencies
+    - cd frontend
+    - npm run build
   tags:
     - frontend
   artifacts:
     paths:
       - frontend/build/
     expire_in: 1h
-
-
-
 
 test_frontend:  # Add the test stage
   image: node:20
