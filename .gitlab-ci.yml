@@ -28,9 +28,10 @@ install_frontend:
   image: node:20
   stage: install
   script:
+    - ls -al  # Print the contents of the current directory
     - cd frontend
     - npm ci
-    - npm install which  # Install the missing `which` dependency
+    - npm install which
   cache:
     key: npm-frontend
     paths:
@@ -38,7 +39,7 @@ install_frontend:
   tags:
     - frontend
   variables:
-    GIT_DEPTH: 0  # Disable shallow cloning
+    GIT_DEPTH: 0
 
 install_backend:
   image: node:20
@@ -65,7 +66,7 @@ build_frontend:
 
 
 
-    
+
 test_frontend:  # Add the test stage
   image: node:20
   stage: test
