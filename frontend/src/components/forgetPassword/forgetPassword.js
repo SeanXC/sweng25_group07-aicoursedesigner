@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { CognitoUserPool, CognitoUser } from 'amazon-cognito-identity-js';
-import config from './config.json';  // Import the configuration
-import logoImage from './logowhite.png'; // Path to your image file
-
+import config from '../../config.json';  // Import the configuration
+import logoImage from '../../images/logowhite.png'; // Path to your image file
 const ResetPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');

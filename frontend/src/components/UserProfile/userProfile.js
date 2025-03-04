@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import logoImage from "./logowhite.png";
-import avatar1 from "./avatar1.svg";
-import avatar2 from "./avatar2.svg";
-import avatar3 from "./avatar3.svg";
+import logoImage from "../../images/logowhite.png";
+import avatar1 from "../../images/avatar1.svg";
+import avatar2 from "../../images/avatar2.svg";
+import avatar3 from "../../images/avatar3.svg";
 
 export default function LanguageTeacherProfile() {
   const navigate = useNavigate();

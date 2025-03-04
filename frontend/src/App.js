@@ -1,16 +1,16 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import HomeDashboard from './Home';  // Importing HomeDashboard from Home.js
-import ConnectAWS from './AWSButton';
-import UserLogin from './UserLogin'; 
-import CourseForm from './CourseForm';
-import ConfirmUserPage from './confirmUser';
-import ForgotPassword from './forgetPassword';
-import SignOut from './SignOut'; 
-import UserProfile from './userProfile'; 
-import ConfirmSignOut from './confirmSignOut';
-import Roleplay from "./roleplay";
-import Chatbot from './Chatbot';
+import HomeDashboard from './components/Home/Home';  // Importing HomeDashboard from Home.js
+import ConnectAWS from './components/AWSButton/AWSButton';
+import UserLogin from "./components/UserLogin/UserLogin";
+import CourseForm from './components/CourseForm/CourseForm';
+import ConfirmUserPage from './components/ConfirmUser/confirmUser';
+import ForgotPassword from './components/forgetPassword/forgetPassword';
+import SignOut from './components/SignOut/SignOut'; 
+import UserProfile from './components/UserProfile/userProfile'; 
+import ConfirmSignOut from './components/ConfirmSignOut/confirmSignOut';
+import Roleplay from "./components/Roleplay/roleplay";
+import Chatbot from './components/Chatbot/Chatbot';
 
 
 function App() {

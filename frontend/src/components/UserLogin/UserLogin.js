@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import googleLogo from './google-logo-icon.jpg';
-import appleLogo from './apple-logo-icon.jpg';
-import { signIn, signUp } from "./authService"; // Assuming you have these functions for sign in and sign up
+import googleLogo from '../../images/google-logo-icon.jpg';
+import appleLogo from '../../images/apple-logo-icon.jpg';
+import { signIn, signUp } from "../AuthService/authService"; // Assuming you have these functions for sign in and sign up
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for programmatic navigation
-import logoImage from './logowhite.png'; // Path to your logo
+import logoImage from '../../images/logowhite.png'; // Path to your logo
 
 export default function UserLogin() {
   const navigate = useNavigate(); // Initialize useNavigate hook

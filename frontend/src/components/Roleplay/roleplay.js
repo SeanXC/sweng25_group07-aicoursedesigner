@@ -1,7 +1,7 @@
 import React from "react";
 import "./roleplay.css";
-import carlosImg from "./images/nuala12.svg";
-import anaImg from "./images/nuala21.svg";
+import carlosImg from "../../images/nuala12.svg";
+import anaImg from "../../images/nuala21.svg";
 
 const conversation = {
   title: "Conociendo a un nuevo amigo",

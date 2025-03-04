@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom"; 
 import "./Home.css";
-import logoImage from './logowhite.png'; 
-import NualasImage from './nualas.svg';
-import UserIcon from './UserIcon.png';
-import LogOuticon from './logout.png';
-import UserProfileicon from './userProfile.svg';
-import LogoutConfirmation from "./confirmSignOut";
+import logoImage from '../../images/logowhite.png'; 
+import NualasImage from '../../images/nualas.svg';
+import UserIcon from '../../images/UserIcon.png';
+import LogOuticon from '../../images/logout.png';
+import UserProfileicon from '../../images/userProfile.svg';
+import LogoutConfirmation from "../ConfirmSignOut/confirmSignOut";
 
 export default function HomeDashboard() {
   const navigate = useNavigate();

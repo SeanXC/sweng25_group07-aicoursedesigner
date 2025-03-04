@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import logoImage from './logowhite.png'; // Path to your image file
-import iconImage from './icon_figure.png'; // Path to your image file
-import textImage from './speechText.png'; // Path to your image file
-import { confirmSignUp } from "./authService";
+import logoImage from '../../images/logowhite.png'; // Path to your image file
+import iconImage from '../../images/icon_figure.png'; // Path to your image file
+import textImage from '../../images/speechText.png'; // Path to your image file
+import { confirmSignUp } from "../AuthService/authService";
 
 export default function ConfirmUser() {
   const navigate = useNavigate(); // Initialize useNavigate hook

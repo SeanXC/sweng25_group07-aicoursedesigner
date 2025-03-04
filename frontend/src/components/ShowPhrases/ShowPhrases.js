@@ -1,4 +1,4 @@
-import "./Home";
+import "../Home/Home";
 import "./ShowPhrases.css";
 import { useState, useEffect } from "react";
 

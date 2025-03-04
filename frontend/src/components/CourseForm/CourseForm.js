@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "./Home.css";
-import ShowPhrases from "./ShowPhrases";
+import "../Home/Home.css";
+import ShowPhrases from "../ShowPhrases/ShowPhrases";
 let data = {};
 
 const formDataEntries = {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logoImage from './logowhite.png';  // Your logo for consistency with the sign-in page
+import logoImage from '../../images/logowhite.png';  // Your logo for consistency with the sign-in page
 
 export default function SignOut() {
   const navigate = useNavigate();

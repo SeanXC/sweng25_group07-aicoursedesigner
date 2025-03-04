@@ -1,5 +1,5 @@
 const { CognitoIdentityProviderClient, InitiateAuthCommand, SignUpCommand, ConfirmSignUpCommand } = require("@aws-sdk/client-cognito-identity-provider");
-const config = require("./config.json");
+const config = require("../../config.json");
 
 const cognitoClient = new CognitoIdentityProviderClient({
   region: config.region,
