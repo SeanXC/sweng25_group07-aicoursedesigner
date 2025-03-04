@@ -9,18 +9,20 @@ variables:
   DOCKER_DRIVER: overlay2
 
 before_script:
-  - rm -rf frontend/node_modules/  # Clear node_modules before installing
+  - rm -rf frontend/node_modules/  # Clean node_modules to avoid issues with cached versions
   - rm -f .git/index.lock
   - rm -f .git/config.lock
   - rm -f .git/shallow.lock
   - node -v
   - npm -v
-  # Set up SSH keys and environment variables
   - mkdir -p ~/.ssh
   - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
   - chmod 600 ~/.ssh/id_rsa
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > frontend/.env
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > backend/.env
+  - cd frontend
+  - npm install  # Reinstall dependencies to ensure everything is correctly installed
+
 
 install_frontend:
   image: node:20
@@ -52,15 +54,8 @@ install_backend:
 build_frontend:
   image: node:20
   stage: build
-  dependencies:
-    - install_frontend
-  cache:
-    key: npm-frontend
-    paths:
-      - frontend/node_modules/
   script:
-    - cd frontend
-    - npm run build
+    - npm run build  # Run the build process after installing dependencies
   tags:
     - frontend
   artifacts:
@@ -68,6 +63,9 @@ build_frontend:
       - frontend/build/
     expire_in: 1h
 
+
+
+    
 test_frontend:  # Add the test stage
   image: node:20
   stage: test
