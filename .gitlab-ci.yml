@@ -6,6 +6,7 @@ stages:
 
 variables:
   NODE_ENV: test
+  DOCKER_DRIVER: overlay2
 
 before_script:
   - rm -f .git/index.lock
@@ -13,8 +14,6 @@ before_script:
   - rm -f .git/shallow.lock  
   - node -v
   - npm -v
-  # Log into Docker Hub
-  - echo "$DOCKER_USERNAME" | docker login -u "$DOCKER_USERNAME" --password-stdin
   # Set up SSH keys and environment variables
   - mkdir -p ~/.ssh
   - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
@@ -42,6 +41,8 @@ install_frontend:
 install_backend:
   image: node:20
   stage: install
+  services:
+    - docker:dind  # Enable Docker-in-Docker service
   script:
     - cd backend/src
     - npm install 
