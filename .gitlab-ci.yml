@@ -9,16 +9,16 @@ variables:
   DOCKER_DRIVER: overlay2
 
 before_script:
+  - rm -rf frontend/node_modules/  # Clear node_modules before installing
   - rm -f .git/index.lock
   - rm -f .git/config.lock
-  - rm -f .git/shallow.lock  
+  - rm -f .git/shallow.lock
   - node -v
   - npm -v
   # Set up SSH keys and environment variables
   - mkdir -p ~/.ssh
   - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
   - chmod 600 ~/.ssh/id_rsa
-  # Ensure .env file is created from environment variables for both frontend and backend
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > frontend/.env
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > backend/.env
 
