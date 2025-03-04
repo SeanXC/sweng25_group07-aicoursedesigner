@@ -13,6 +13,8 @@ before_script:
   - rm -f .git/shallow.lock  
   - node -v
   - npm -v
+  # Log into Docker Hub
+  - echo "$DOCKER_USERNAME" | docker login -u "$DOCKER_USERNAME" --password-stdin
   # Set up SSH keys and environment variables
   - mkdir -p ~/.ssh
   - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
