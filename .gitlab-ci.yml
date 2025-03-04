@@ -27,7 +27,7 @@ install_frontend:
   stage: install
   script:
     - cd frontend
-    - npm ci
+    - npm install   # Use npm install instead of npm ci
   cache:
     key: npm-frontend
     paths:
@@ -36,6 +36,7 @@ install_frontend:
     - frontend
   variables:
     GIT_DEPTH: 0  # Disable shallow cloning
+
 
 install_backend:
   image: node:20
