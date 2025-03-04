@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import HomeDashboard from '../../components/Home';
+import HomeDashboard from '../components/Home/Home';
+
 
 describe('HomeDashboard Component', () => {
   it('renders "Home Dashboard" and "Sign In" button', () => {
