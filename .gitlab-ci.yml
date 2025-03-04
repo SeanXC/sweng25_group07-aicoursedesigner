@@ -8,7 +8,6 @@ variables:
   NODE_ENV: test
 
 before_script:
-before_script:
   - rm -f .git/index.lock
   - rm -f .git/config.lock
   - rm -f .git/shallow.lock  
@@ -28,6 +27,7 @@ install_frontend:
   script:
     - cd frontend
     - npm ci
+    - npm install which  # Install the missing `which` dependency
   cache:
     key: npm-frontend
     paths:
@@ -102,4 +102,3 @@ deploy_backend:
     - main 
   tags:
     - frontend
-
