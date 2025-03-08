@@ -1,4 +1,3 @@
-//add dynamodb
 
 import OpenAI from "openai";
 import dotenv from "dotenv";
@@ -6,15 +5,53 @@ import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 
+
+
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { v4 as uuidv4 } from "uuid"; // Generate unique course ID
+
+
 const ssmClient = new SSMClient({ region: "eu-west-1" });
 const client = new DynamoDBClient({ region: "eu-west-1" });
 const dynamodb = DynamoDBDocumentClient.from(client);
 
+
 dotenv.config();
+
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+
+async function saveCourseOutline(courseOutline) {
+  const courseId = uuidv4(); // Generate a unique ID for the course
+
+
+  const params = {
+    TableName: "courseOutlines", 
+    Item: {
+      courseId, // Primary key
+      courseTitle: courseOutline.course_title,
+      weeks: courseOutline.weeks,
+      assessment: courseOutline.assessment,
+      learningOutcomes: courseOutline.learning_outcomes,
+      createdAt: new Date().toISOString(),
+    },
+  };
+
+
+  try {
+    await dynamodb.send(new PutCommand(params));
+    console.log("Course outline saved successfully:", courseId);
+    return { success: true, courseId };
+  } catch (error) {
+    console.error("Error saving course outline:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+
 // async function getOpenAIKey() {
 //   try {
 //     const command = new GetParameterCommand({
@@ -29,6 +66,7 @@ const openai = new OpenAI({
 //   }
 // }
 
+
 function check(userInput){
   const fields = ["courseName","courseDesc","difficulty","targetLang","nativeLang","duration"];
   for(const field of fields){
@@ -40,15 +78,17 @@ function check(userInput){
   return null;
 }
 
+
 async function getCompletion(userInput) {
   try {
     const inputError = check(userInput);
     if(inputError) return inputError;
 
+
     // const apiKey = await getOpenAIKey();
     // if(!apiKey) throw new Error("Missing OpenAI API Key");
     // const openai = new OpenAI({ apiKey });
-    
+   
     const prompt = `Generate a language course outline in the following JSON format:
                     {
                       "course_title": "<courseName>",
@@ -67,7 +107,7 @@ async function getCompletion(userInput) {
                       },
                       "learning_outcomes": ["<outcome_1>", "<outcome_2>", ...]
                     }
-                    Course name: ${userInput.courseName}, description: ${userInput.courseDesc}, difficulty: ${userInput.difficulty}, 
+                    Course name: ${userInput.courseName}, description: ${userInput.courseDesc}, difficulty: ${userInput.difficulty},
                     target language: ${userInput.targetLang}, language used: ${userInput.nativeLang}, duration: ${userInput.duration} weeks.`;
     const response = await openai.chat.completions.create({
       model: "gpt-4",
@@ -75,7 +115,36 @@ async function getCompletion(userInput) {
       temperature: 0.7,
     });
 
+
     const outline = response.choices[0].message.content;
+    const cleanResponse = outline.replace(/^Here is a .*?\n/, "").trim();
+    let outlineObject;
+    try {
+      outlineObject = JSON.parse(cleanResponse);
+    } catch (error) {
+      console.error("Error parsing cleaned JSON:", error);
+      return {
+        statusCode: 400,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify({ error: "Invalid JSON format from OpenAI" }),
+      };
+    }
+
+
+    // Convert the string response into an object
+    //const outlineObject = JSON.parse(outline);
+
+    
+
+    // Save the generated outline to DynamoDB
+    const saveResult = await saveCourseOutline(outlineObject);
+
+
+
+
     try {
       return {
         statusCode: 200,
@@ -85,7 +154,7 @@ async function getCompletion(userInput) {
           "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
           "Access-Control-Allow-Headers": "Content-Type",
         },
-        body: JSON.parse(outline),
+        body: JSON.stringify(outlineObject),
       };
     } catch(error){
       return {
@@ -107,6 +176,7 @@ async function getCompletion(userInput) {
   }
 }
 
+
 // getCompletion(
 //   "Spanish Course",
 //   "Course for English speakers",
@@ -116,3 +186,24 @@ async function getCompletion(userInput) {
 //   5
 // );
 export { getCompletion };
+
+
+export async function handler(event) {
+  try {
+    const userInput = JSON.parse(event.body);
+    const result = await getCompletion(userInput);
+    return result;
+  } catch (error) {
+    console.error("Handler error:", error);
+    return {
+      statusCode: 500,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+      body: JSON.stringify({ error: "Internal Server Error" }),
+    };
+  }
+}
