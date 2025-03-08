@@ -1,0 +1,113 @@
+body{
+    font-family:'Montserrat'
+}
+input, select {
+    width: 90%;
+    height: 30%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    font-size:large;
+}
+
+input:focus,select:focus {
+    border-color: #8300A1;
+    box-shadow: 0 0 8px rgba(128, 0, 128, 0.3);
+}
+button{
+    background-color: #8300A1;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border:none;
+    cursor:pointer;
+}
+
+input {
+    width: 90%;
+    height: 20px;
+    cursor: pointer;
+    accent-color: "#8300A1";
+}
+
+.home-container {
+    height: 100vh;
+    background-color: white;  
+    position: relative;
+}
+
+.home-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+}
+
+.home-header span {
+    color: white;         
+    font-weight: bold;    
+    font-size: 24px;      
+  }
+
+.home-button {
+    background-color: #8300A1;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+    width: 200px;
+    text-align: center;
+}
+
+.top-bar {
+    height: 60px;
+    background-color: #9705A8;  
+    display: flex;
+    align-items: center;
+    justify-content: space-between;  
+    padding: 0 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.logo {
+    height: 40px;  
+    width: auto;   
+}
+
+.nualas-image {
+    max-width: 40%;  
+    height: auto;     
+    margin-top: -300px; 
+}
+
+.content {
+    padding-top: 80px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;    
+    height: calc(100vh - 60px); 
+}
+
+.connect-aws-button {
+    position: absolute;  
+    right: 20px;         
+    bottom: 20px;        
+}
+
+.text {
+font-size: 19px;            
+font-weight: bold;          
+color: #212353;   
+}
+
+.text2 {
+font-size: 15px;            
+color: #212353;   
+}
