@@ -6,7 +6,7 @@ const dynamodb = DynamoDBDocumentClient.from(client);
 
 async function getCourseOutlineHistory(email) {
   const params = {
-    TableName: "courseOutlines",
+    TableName: "Course",
     KeyConditionExpression: "email = :email",
     ExpressionAttributeValues: {
       ":email": email,

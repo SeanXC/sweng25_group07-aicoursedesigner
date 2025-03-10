@@ -8,34 +8,66 @@ const ssmClient = new SSMClient({ region: "eu-west-1" });
 const client = new DynamoDBClient({ region: "eu-west-1" });
 const dynamodb = DynamoDBDocumentClient.from(client);
 
-
 import { getCompletion } from "./getCompletion.mjs";
 import { saveCourseOutline } from "./saveCompletion.mjs";
 import { getCourseOutlineHistory } from "./getHistory.mjs";
 
 export async function handler(event) {
   try {
+    console.log("Received event:", JSON.stringify(event, null, 2)); // Debug log
+
     const { httpMethod, body, queryStringParameters } = event;
 
-    if (httpMethod === "POST") {
-      const userInput = JSON.parse(body);
+    if (httpMethod === "OPTIONS") {
       return {
         statusCode: 200,
-        body: JSON.stringify(await getCompletion(userInput)),
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "OPTIONS, POST, PUT, GET",
+          "Access-Control-Allow-Headers": "Content-Type",
+        },
+        body: JSON.stringify({ message: "CORS preflight success" }),
+      };
+    }
+
+    if (httpMethod === "POST") {
+      if (!body) {
+        return {
+          statusCode: 400,
+          headers: { "Access-Control-Allow-Origin": "*" },
+          body: JSON.stringify({ error: "Request body is required" }),
+        };
+      }
+      const userInput = JSON.parse(body);
+      const result = await getCompletion(userInput);
+      return {
+        statusCode: 200,
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify(result),
       };
     }
 
     if (httpMethod === "PUT") {
+      if (!body) {
+        return {
+          statusCode: 400,
+          headers: { "Access-Control-Allow-Origin": "*" },
+          body: JSON.stringify({ error: "Request body is required" }),
+        };
+      }
       const { email, courseOutline } = JSON.parse(body);
       if (!email) {
         return {
           statusCode: 400,
+          headers: { "Access-Control-Allow-Origin": "*" },
           body: JSON.stringify({ error: "Email is required" }),
         };
       }
+      const result = await saveCourseOutline(email, courseOutline);
       return {
         statusCode: 200,
-        body: JSON.stringify(await saveCourseOutline(email, courseOutline)),
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify(result),
       };
     }
 
@@ -44,24 +76,29 @@ export async function handler(event) {
       if (!email) {
         return {
           statusCode: 400,
+          headers: { "Access-Control-Allow-Origin": "*" },
           body: JSON.stringify({ error: "Email is required" }),
         };
       }
+      const result = await getCourseOutlineHistory(email);
       return {
         statusCode: 200,
-        body: JSON.stringify(await getCourseOutlineHistory(email)),
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify(result),
       };
     }
 
     return {
       statusCode: 405,
+      headers: { "Access-Control-Allow-Origin": "*" },
       body: JSON.stringify({ error: "Method Not Allowed" }),
     };
   } catch (error) {
     console.error("Handler error:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Internal Server Error" }),
+      headers: { "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify({ error: "Internal Server Error", details: error.message }),
     };
   }
 }

@@ -10,7 +10,7 @@ async function saveCourseOutline(email, courseOutline) {
   const timestamp = new Date().toISOString();
 
   const params = {
-    TableName: "courseOutlines",
+    TableName: "Course",
     Item: {
       email,
       courseId,
