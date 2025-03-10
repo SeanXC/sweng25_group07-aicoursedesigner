@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { getCompletion } from "./handlers/generateCompletion/index.mjs";
+//import { getCompletion } from "./handlers/generateCompletion/index.mjs";
 import { generateContent } from "./handlers/contentGenerator/index.mjs";
 import { generatePhrases } from "./handlers/generatePhrases/index.mjs";
 import { generateChat } from "./handlers/generateChat/index.mjs";
