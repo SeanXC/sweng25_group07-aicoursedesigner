@@ -1,17 +1,30 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-//import { getCompletion } from "./handlers/generateCompletion/index.mjs";
+import multer from "multer";
+import fs from "fs";
+import path from "path";
+import { getCompletion } from "./handlers/generateCompletion/index.mjs";
 import { generateContent } from "./handlers/contentGenerator/index.mjs";
 import { generatePhrases } from "./handlers/generatePhrases/index.mjs";
-import { generateChat } from "./handlers/generateChat/index.mjs";
+import { generateChat, transcribeAudio } from "./handlers/generateChat/index.mjs";
 import { outlineCustomizer } from "./handlers/outlineCustomizer/index.mjs";
 
 dotenv.config(); // Load environment variables
 
+const storage = multer.diskStorage({
+  destination: "uploads/",
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + "-" + Date.now() + ext);
+  },
+});
+const upload = multer({ storage: storage });
+
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Middleware to log incoming requests
 app.use((req, res, next) => {
@@ -123,6 +136,47 @@ app.post("/customize-outline", async (req, res) => {
   }
 });
 
+app.post("/transcribe-audio", upload.single("audio"), async (req, res) => {
+  try{
+    if(!req.file){
+      return res.status(400).json({ error: "no audio file uploaded" });
+    }
+
+    console.log("received audio file:", req.file);
+    const filePath = req.file.path;
+
+    const transcribedText = await transcribeAudio(filePath);
+    fs.unlinkSync(filePath);
+    res.json({ transcribedText });
+  } catch(error){
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/generate-chat-stt", upload.single("audio"), async (req, res) => {
+  try{
+    const { userId, userLevel, language, topic } = req.body;
+    if(!userId || !userLevel || !language || !topic){
+      return res.status(400).json({ error: "missing required fields" });
+    }
+    if(!req.file){
+      return res.status(400).json({ error: "no audio uploaded" });
+    }
+
+    const filePath = req.file.path;
+    console.log("processing audio file for chat: ", filePath);
+
+    const transcribedText = await transcribeAudio(filePath);
+    fs.unlinkSync(filePath);
+    console.log("transcribed text: ", transcribedText);
+
+    const chatResponse = await generateChat(userId, userLevel, language, topic, transcribedText);
+    res.status(chatResponse.statusCode).json(chatResponse.body);
+  } catch(error){
+    console.error("error: ", error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Start the server
 app.listen(PORT, () => {
