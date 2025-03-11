@@ -4,10 +4,10 @@ import dotenv from "dotenv";
 import multer from "multer";
 import fs from "fs";
 import path from "path";
-import { getCompletion } from "./handlers/generateCompletion/index.mjs";
+//import { getCompletion } from "./handlers/generateCompletion/index.mjs";
 import { generateContent } from "./handlers/contentGenerator/index.mjs";
 import { generatePhrases } from "./handlers/generatePhrases/index.mjs";
-import { generateChat, transcribeAudio } from "./handlers/generateChat/index.mjs";
+//import { generateChat, transcribeAudio } from "./handlers/generateChat/index.mjs";
 import { outlineCustomizer } from "./handlers/outlineCustomizer/index.mjs";
 
 dotenv.config(); // Load environment variables
@@ -36,24 +36,24 @@ app.use((req, res, next) => {
 
 const PORT = 8000;
 
-// API endpoint to generate course outline
-app.post("/generate-course", async (req, res) => {
-  try {
-    const userInput = req.body;
-    console.log("📌 Received input for course generation:", userInput);
+// // API endpoint to generate course outline
+// app.post("/generate-course", async (req, res) => {
+//   try {
+//     const userInput = req.body;
+//     console.log("📌 Received input for course generation:", userInput);
 
-    const result = await getCompletion(userInput);
+//     const result = await getCompletion(userInput);
     
-    if (typeof result === "string") {
-      return res.status(400).json({ error: result });
-    }
+//     if (typeof result === "string") {
+//       return res.status(400).json({ error: result });
+//     }
 
-    res.status(result.statusCode).json(result.body);
-  } catch (error) {
-    console.error("❌ Server error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
+//     res.status(result.statusCode).json(result.body);
+//   } catch (error) {
+//     console.error("❌ Server error:", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 // API endpoint to generate course content
 app.post("/generate-content", async (req, res) => {
@@ -93,19 +93,19 @@ app.post("/generate-phrases", async (req, res) => {
   }
 });
 
-// API endpoint to generate roleplay
-app.post("/generate-chat", async (req, res) => {
-  try {
-    const { userId, userLevel, language, topic, msg } = req.body;
-    console.log("📌 Generating AI chat for:", { userId, userLevel, language, topic, msg });
+// // API endpoint to generate roleplay
+// app.post("/generate-chat", async (req, res) => {
+//   try {
+//     const { userId, userLevel, language, topic, msg } = req.body;
+//     console.log("📌 Generating AI chat for:", { userId, userLevel, language, topic, msg });
 
-    const result = await generateChat(userId, userLevel, language, topic, msg);
-    res.status(result.statusCode).json(result.body);
-  } catch (error) {
-    console.error("❌ Server error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
+//     const result = await generateChat(userId, userLevel, language, topic, msg);
+//     res.status(result.statusCode).json(result.body);
+//   } catch (error) {
+//     console.error("❌ Server error:", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 // API endpoint to customize the course outline
 app.post("/customize-outline", async (req, res) => {

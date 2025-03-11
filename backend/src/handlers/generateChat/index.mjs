@@ -1,89 +1,78 @@
-import OpenAI from "openai";
-import fs from "fs";
-import dotenv from "dotenv";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
-const client = new DynamoDBClient({ region: "eu-west-1" });
-const dynamodb = DynamoDBDocumentClient.from(client);
+import { generateChat } from "./generateChat.mjs";
+import { getChatHistory } from "./getChatHistory.mjs";
+import { saveChatMessage } from "./saveChatMessage.mjs";
 
-dotenv.config();
+export async function handler(event) {
+  try {
+    console.log("Received event:", JSON.stringify(event, null, 2));
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+    const { httpMethod, body, queryStringParameters, path } = event;
 
-const conversation = {};
-
-const transcribeAudio = async(filePath) => {
-  try{
-    const response = await openai.audio.transcriptions.create({
-      model: "whisper-1",
-      file: fs.createReadStream(filePath),
-      language: "es", // change to user's chosen lang
-    });
-
-    return response.text;
-  } catch(error){
-    console.error("Whisper API error:", error.message);
-    throw new Error("failed to transcribe audio");
-  }
-};
-
-async function generateChat(userId, userLevel, language, topic, userMsg=""){
-    if(!language) return { error: "please specify the target language" };
-    if(!userId) return { error: "missing user id" };
-    if(!userLevel) return { error: `please specify your level in ${language}` };
-    if(!topic) return { error: "please specify a topic for the roleplay" };
-
-    if(!conversation[userId]){
-        conversation[userId] = [
-            {
-                role: "system",
-                content: `You are roleplaying with a user on the topic "${topic}" in ${language}.
-                          Keep responses interactive and conversation flowing, ensuring that the difficulty 
-                          of the conversation in ${language} is ${userLevel}.
-                          Format the response into the following JSON structure:
-                          {
-                            "response": "<response>"
-                          }`,
-            },
-        ];
-    }
-
-    if(userMsg){
-        conversation[userId].push({ role: "user", content: userMsg });
-    }
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: conversation[userId],
-      temperature: 0.7,
-    });
-    conversation[userId].push({ role: "assistant", content: response.choices[0].message.content });
-
-    try {
+    // Handle CORS preflight requests
+    if (httpMethod === "OPTIONS") {
       return {
         statusCode: 200,
         headers: {
-          "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
+          "Access-Control-Allow-Methods": "OPTIONS, POST, PUT, GET",
           "Access-Control-Allow-Headers": "Content-Type",
         },
-        body: JSON.parse(response.choices[0].message.content),
-      };
-    } catch(error){
-      return {
-        statusCode: 500,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
-          "Access-Control-Allow-Headers": "Content-Type",
-        },
-        body: JSON.stringify({ error: error.message }),
+        body: JSON.stringify({ message: "CORS preflight success" }),
       };
     }
-}
 
-export { generateChat, transcribeAudio };
+    // Handle chat history retrieval (GET request)
+    if (httpMethod === "GET" && path === "/chat-history") {
+      const { email } = queryStringParameters || {};
+      if (!email) {
+        return { statusCode: 400, body: JSON.stringify({ error: "Email is required" }) };
+      }
+      return {
+        statusCode: 200,
+        body: JSON.stringify(await getChatHistory(email)),
+      };
+    }
+
+    // Handle chat generation (POST request)
+    if (httpMethod === "POST" && path === "/generate-chat") {
+      if (!body) {
+        return { statusCode: 400, body: JSON.stringify({ error: "Request body is required" }) };
+      }
+      const { email, userLevel, language, topic, userMsg = "" } = JSON.parse(body);
+      if (!email || !language || !userLevel || !topic) {
+        return { statusCode: 400, body: JSON.stringify({ error: "Missing required fields" }) };
+      }
+      return {
+        statusCode: 200,
+        body: JSON.stringify(await generateChat(email, userLevel, language, topic, userMsg)),
+      };
+    }
+
+    // Handle saving chat messages manually (PUT request)
+    if (httpMethod === "PUT" && path === "/save-chat") {
+      if (!body) {
+        return { statusCode: 400, body: JSON.stringify({ error: "Request body is required" }) };
+      }
+      const { email, role, message, language, topic } = JSON.parse(body);
+      if (!email || !role || !message) {
+        return { statusCode: 400, body: JSON.stringify({ error: "Missing required fields" }) };
+      }
+      return {
+        statusCode: 200,
+        body: JSON.stringify(await saveChatMessage(email, role, message, language, topic)),
+      };
+    }
+
+    // Handle unsupported HTTP methods
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: "Method Not Allowed" }),
+    };
+  } catch (error) {
+    console.error("Handler error:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Internal Server Error", details: error.message }),
+    };
+  }
+}
