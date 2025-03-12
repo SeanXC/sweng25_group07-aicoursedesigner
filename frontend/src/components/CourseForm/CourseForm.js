@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import "../Home/Home.css";
-import ShowPhrases from "../ShowPhrases/ShowPhrases";
+import React, { useState, useEffect } from "react";
+import "./Home.css";
+import ShowPhrases from "./ShowPhrases";
+import { fetchUserData } from './fetchUserData'; 
 let data = {};
 
 const formDataEntries = {
@@ -13,14 +14,14 @@ const formDataEntries = {
 };
 
 
-
-
-export default function CourseForm() {
+export default function HomeDashboard() {
 
   const [showCourse, setShowCourse] = useState(true);
   const [ courseData, setCourseData] = useState (null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState(null);
+  const [userLanguage, setUserLanguage] = useState(""); // Store the language to learn from user data
+  const [userDifficulty, setUserDifficulty] = useState(""); // Store the difficulty from user data
 
 
 
@@ -28,6 +29,21 @@ export default function CourseForm() {
     setShowForm((prev) => !prev); // Toggle the form visibility
   };
 
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const userEmail = sessionStorage.getItem("email"); // Get user email from sessionStorage
+      if (userEmail) {
+        const userData = await fetchUserData(userEmail); // Fetch user data using fetchUserData function
+        if (userData) {
+          setUserLanguage(userData.languages || ""); // Set user language or default to empty string
+          setUserDifficulty(userData.proficiency || ""); // Set user difficulty or default to empty string
+        }
+      }
+    };
+  
+    fetchUserProfile();  // Call the function to fetch user data
+  }, []);  
+  
 
   async function formSubmit(e) {
     
@@ -39,8 +55,8 @@ export default function CourseForm() {
     const courseData = {
       courseName: values.courseName,
       courseDesc: values.courseDesc,
-      difficulty: values.difficulty,
-      targetLang: values.language,
+      difficulty: values.difficulty || userDifficulty,
+      targetLang: values.language || userLanguage,
       nativeLang: values.nativeLanguage,
       duration: 5,
     }
@@ -119,6 +135,7 @@ export default function CourseForm() {
                       backgroundColor: "white",
                     }}
                   >
+                    <option hidden value={userDifficulty}>{userDifficulty}</option> 
                     <option value="A1">A1</option>
                     <option value="A2">A2</option>
                     <option value="B1">B1</option>
@@ -142,6 +159,7 @@ export default function CourseForm() {
                       backgroundColor: "white",
                     }}
                   >
+                    <option hidden value={userLanguage}>{userLanguage}</option>
                     <option value="Spanish">Spanish</option>
                     <option value="English">English</option>
                     <option value="French">French</option>
@@ -165,8 +183,8 @@ export default function CourseForm() {
                       backgroundColor: "white",
                     }}
                   >
-                      <option value="Spanish">Spanish</option>
                       <option value="English">English</option>
+                      <option value="Spanish">Spanish</option>
                       <option value="French">French</option>
                       <option value="Italian">Italian</option>
                       <option value="German">German</option>
