@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import logoImage from '../../images/logowhite.png'; // Path to your image file
-import iconImage from '../../images/icon_figure.png'; // Path to your image file
-import textImage from '../../images/speechText.png'; // Path to your image file
-import { confirmSignUp } from "../AuthService/authService";
+import logoImage from './logowhite.png'; // Path to your image file
+import iconImage from './icon_figure.png'; // Path to your image file
+import textImage from './speechText.png'; // Path to your image file
+import { confirmSignUp } from "./authService";
 
 export default function ConfirmUser() {
   const navigate = useNavigate(); // Initialize useNavigate hook
@@ -29,8 +29,7 @@ export default function ConfirmUser() {
 
       sessionStorage.setItem("accessToken", "dummyAccessToken");  // Replace with real access token
 
-      alert("Account confirmed successfully!\nSign in on next page.");
-      navigate("/");
+      navigate("/completeProfile");
     } catch (error) {
       alert(`Failed to confirm account: ${error}`);
     }
