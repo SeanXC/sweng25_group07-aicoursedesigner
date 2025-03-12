@@ -11,6 +11,7 @@ import UserProfile from './components/UserProfile/userProfile';
 import ConfirmSignOut from './components/ConfirmSignOut/confirmSignOut';
 import Roleplay from "./components/Roleplay/roleplay";
 import Chatbot from './components/Chatbot/Chatbot';
+import CourseDashboard from "./components/newCourseDashbaord/newCourseDashboard";
 
 
 function App() {
@@ -34,8 +35,7 @@ function App() {
         <Route path="/confirmSignOut" element={<ConfirmSignOut />} />
         <Route path="/roleplay" element={<Roleplay />} />
         <Route path="/chatbot" element={<Chatbot />} />
-
-
+        <Route path="/courseDashbaord" element={<CourseDashboard />} />
 
         <Route
           path="/protected"
