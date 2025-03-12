@@ -1,24 +1,22 @@
-// Add AWS SSM and DynamoDB
 import OpenAI from "openai";
 import dotenv from "dotenv";
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { saveCourseOutline } from "./saveCompletion.mjs"; // Import saving function
 
-// AWS SSM & DynamoDB Clients
+// AWS SSM Client for API Key retrieval
 const ssmClient = new SSMClient({ region: "eu-west-1" });
-const client = new DynamoDBClient({ region: "eu-west-1" });
-const dynamodb = DynamoDBDocumentClient.from(client);
 
-// Load environment variables (used for other configs if needed)
 dotenv.config();
 
-// Function to retrieve OpenAI API Key from AWS SSM Parameter Store
+/**
+ * Retrieves the OpenAI API Key from AWS SSM Parameter Store.
+ * @returns {Promise<string|null>} API key or null if an error occurs.
+ */
 async function getOpenAIKey() {
   try {
     const command = new GetParameterCommand({
-      Name: "OPENAI_API_KEY", // Ensure this parameter exists in AWS SSM
-      WithDecryption: true, // Fetch decrypted value
+      Name: "OPENAI_API_KEY",
+      WithDecryption: true,
     });
     const response = await ssmClient.send(command);
     return response.Parameter.Value;
@@ -28,11 +26,15 @@ async function getOpenAIKey() {
   }
 }
 
-// Function to validate user input
-function check(userInput) {
-  const fields = ["courseName", "courseDesc", "difficulty", "targetLang", "nativeLang", "duration"];
-  for (const field of fields) {
-    if (!userInput[field]) return "Error: Missing required fields";
+/**
+ * Validates user input for generating a course outline.
+ * @param {object} userInput - User input data.
+ * @returns {string|null} Error message if validation fails, otherwise null.
+ */
+function validateInput(userInput) {
+  const requiredFields = ["email", "courseName", "courseDesc", "difficulty", "targetLang", "nativeLang", "duration"];
+  for (const field of requiredFields) {
+    if (!userInput[field]) return `Error: Missing required field: ${field}`;
   }
   if (typeof userInput.duration !== "number" || userInput.duration <= 0) {
     return "Error: Invalid course duration";
@@ -40,20 +42,23 @@ function check(userInput) {
   return null;
 }
 
-// Main function to generate course outline using OpenAI API
+/**
+ * Generates a language course outline using OpenAI and saves it to DynamoDB.
+ * @param {object} userInput - User input parameters.
+ * @returns {Promise<object>} Generated course outline or an error object.
+ */
 async function getCompletion(userInput) {
   try {
-    const inputError = check(userInput);
+    const inputError = validateInput(userInput);
     if (inputError) return { error: inputError };
 
-    // Retrieve API Key from AWS SSM
+    // Fetch OpenAI API key
     const apiKey = await getOpenAIKey();
     if (!apiKey) return { error: "Failed to retrieve OpenAI API Key from SSM" };
 
-    // Initialize OpenAI client with retrieved API Key
     const openai = new OpenAI({ apiKey });
 
-    // Define the prompt for OpenAI
+    // Define the prompt for OpenAI (Kept Unchanged)
     const prompt = `Generate a language course outline in the following JSON format:
                     {
                       "course_title": "<courseName>",
@@ -75,55 +80,28 @@ async function getCompletion(userInput) {
                     Course name: ${userInput.courseName}, description: ${userInput.courseDesc}, difficulty: ${userInput.difficulty}, 
                     target language: ${userInput.targetLang}, language used: ${userInput.nativeLang}, duration: ${userInput.duration} weeks.`;
 
-    // Send request to OpenAI API
+    // Generate response from OpenAI
     const response = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
     });
 
-    // Extract and process OpenAI response
     const outline = response.choices[0].message.content;
-    try {
-      return {
-        statusCode: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
-          "Access-Control-Allow-Headers": "Content-Type",
-        },
-        body: JSON.parse(outline),
-      };
-    } catch (error) {
-      return {
-        statusCode: 500,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
-          "Access-Control-Allow-Headers": "Content-Type",
-        },
-        body: JSON.stringify({ error: error.message }),
-      };
-    }
+    const parsedOutline = JSON.parse(outline);
+
+    // Save generated course outline to DynamoDB
+    const saveResponse = await saveCourseOutline(userInput.email, parsedOutline);
+
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+      body: { generatedOutline: parsedOutline, saveResponse },
+    };
   } catch (error) {
+    console.error("Error in getCompletion:", error);
     return { error: error.message };
   }
 }
-
-// Example test function call (commented out)
-/*
-getCompletion(
-  {
-    "courseName": "Spanish Course",
-    "courseDesc": "For English speakers",
-    "difficulty": "B1",
-    "targetLang": "Spanish",
-    "nativeLang": "English",
-    "duration": 5
-  }
-).then(console.log);
-*/
 
 export { getCompletion };
