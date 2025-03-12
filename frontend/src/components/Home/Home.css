@@ -150,11 +150,11 @@ input {
   
   .confirmation-box {
     background-color: white;
-    padding: 2rem;
-    border-radius: 8px;
+    padding: 3rem;
+    border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
-    width: 300px;
+    width: 400px;
     z-index: 1001;
   }
   
@@ -165,8 +165,8 @@ input {
   }
   
   .cancel-button {
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: #2abc58;
+    color: white;
   }
   
   .confirm-button {
