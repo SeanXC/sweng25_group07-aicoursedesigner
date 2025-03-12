@@ -8,6 +8,7 @@ import path from "path";
 import { generateContent } from "./handlers/contentGenerator/index.mjs";
 import { generatePhrases } from "./handlers/generatePhrases/index.mjs";
 import { generateChat } from "./handlers/generateChat/index.mjs";
+import { generateRoleplay} from "./handlers/generateRoleplay/index.mjs";
 import { outlineCustomizer } from "./handlers/outlineCustomizer/index.mjs";
 
 dotenv.config(); // Load environment variables
@@ -93,13 +94,26 @@ app.post("/generate-phrases", async (req, res) => {
   }
 });
 
-// API endpoint to generate roleplay
+// API endpoint to generate roleplay (between user and chatbot)
 app.post("/generate-chat", async (req, res) => {
   try {
     const { userId, userLevel, language, topic, msg } = req.body;
     console.log("📌 Generating AI chat for:", { userId, userLevel, language, topic, msg });
 
     const result = await generateChat(userId, userLevel, language, topic, msg);
+    res.status(result.statusCode).json(result.body);
+  } catch (error) {
+    console.error("❌ Server error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/generate-roleplay", async (req, res) => {
+  try {
+    const { userId, userLevel, language, topic } = req.body;
+    console.log("📌 Generating an AI chat for:", { userId, userLevel, language, topic });
+
+    const result = await generateRoleplay(userId, userLevel, language, topic);
     res.status(result.statusCode).json(result.body);
   } catch (error) {
     console.error("❌ Server error:", error);
