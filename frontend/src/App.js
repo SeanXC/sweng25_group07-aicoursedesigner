@@ -22,6 +22,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+      {/*}
         <Route path="/" element={<HomeDashboard />} />
 
         <Route path="/connectaws" element={<ConnectAWS />} />
@@ -34,6 +35,8 @@ function App() {
         <Route path="/confirmSignOut" element={<ConfirmSignOut />} />
         <Route path="/roleplay" element={<Roleplay />} />
         <Route path="/chatbot" element={<Chatbot />} />
+        */}
+        <Route path="/" element={<Chatbot />} />
 
 
 
