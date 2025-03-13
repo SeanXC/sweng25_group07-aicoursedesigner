@@ -1,83 +1,85 @@
-import OpenAI from "openai";
-import dotenv from "dotenv";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
-const client = new DynamoDBClient({ region: "eu-west-1" });
-const dynamodb = DynamoDBDocumentClient.from(client);
+import { generateRoleplay } from "./generateRoleplay.mjs";
+import { getRoleplayHistory } from "./getRoleplayHistory.mjs";
+import { saveRoleplayHistory } from "./saveRoleplayHistory.mjs";
 
-dotenv.config();
+export async function handler(event) {
+  try {
+    console.log("Received event:", JSON.stringify(event, null, 2));
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+    const { httpMethod, body, queryStringParameters, path } = event;
 
-async function generateRoleplay(userId, userLevel, language, topic){
-    if(!language) return { error: "please specify the target language" };
-    if(!userId) return { error: "missing user id" };
-    if(!userLevel) return { error: `please specify your level in ${language}` };
-    if(!topic) return { error: "please specify a topic for the roleplay" };
-
-    /* const history = await getConvoHistory(userId);
-    if(!conversation[userId]){
-        conversation[userId] = [
-            {
-                // role: "system",
-                content: `Create a conversation between two people on the topic "${topic}" in ${language}.
-                          Ensure that the difficulty of the conversation in ${language} is ${userLevel}.
-                          Format the response into the following JSON structure:
-                          {
-                            PersonOne: "<response>",
-                            PersonTwo: "<response>"
-                          }`,
-            },
-        ];
-    }*/
-
-    const prompt = `Create a conversation between two people on the topic "${topic}" in ${language}.
-    Ensure that the difficulty of the conversation in ${language} is ${userLevel}.
-    Format the response into the following JSON structure:
-    {
-      LineOne: "<response>",
-      LineTwo: "<response>",
-      LineThree: "<response>",
-      LineFour: "<response>",
-      LineFive: "<response>",
-      LineSix: "<response>"
-    }`;
-
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }] ,
-      temperature: 0.7,
-    });
-
-    // Not needed yet
-    //conversation[userId].push({ role: "assistant", content: response.choices[0].message.content });
-
-    try {
+    // Handle CORS preflight requests
+    if (httpMethod === "OPTIONS") {
       return {
         statusCode: 200,
         headers: {
-          "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
           "Access-Control-Allow-Headers": "Content-Type",
         },
-        body: JSON.parse(response.choices[0].message.content),
-      };
-    } catch(error){
-      return {
-        statusCode: 500,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
-          "Access-Control-Allow-Headers": "Content-Type",
-        },
-        body: JSON.stringify({ error: error.message }),
+        body: JSON.stringify({ message: "CORS preflight success" }),
       };
     }
-}
 
-export { generateRoleplay };
+    // Retrieve roleplay conversation history for a specific topic
+    if (httpMethod === "GET" && path === "/roleplay-history") {
+      const email = queryStringParameters?.email;
+      const topic = queryStringParameters?.topic;
+
+      console.log("Extracted query parameters:", { email, topic });
+
+      if (!email || !topic) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ error: "Email and Topic are required" }),
+        };
+      }
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify(await getRoleplayHistory(email, topic)),
+      };
+    }
+
+    // Generate a new roleplay conversation
+    if (httpMethod === "POST" && path === "/generate-roleplay") {
+      if (!body) {
+        return { statusCode: 400, body: JSON.stringify({ error: "Request body is required" }) };
+      }
+      const { email, userLevel, language, topic } = JSON.parse(body);
+      if (!email || !language || !userLevel || !topic) {
+        return { statusCode: 400, body: JSON.stringify({ error: "Missing required fields" }) };
+      }
+      return {
+        statusCode: 200,
+        body: JSON.stringify(await generateRoleplay(email, userLevel, language, topic)),
+      };
+    }
+
+    // Save roleplay conversation
+    if (httpMethod === "PUT" && path === "/save-roleplay") {
+      if (!body) {
+        return { statusCode: 400, body: JSON.stringify({ error: "Request body is required" }) };
+      }
+      const { email, conversation, language, topic } = JSON.parse(body);
+      if (!email || !conversation || !topic) {
+        return { statusCode: 400, body: JSON.stringify({ error: "Missing required fields" }) };
+      }
+      return {
+        statusCode: 200,
+        body: JSON.stringify(await saveRoleplayHistory(email, conversation, language, topic)),
+      };
+    }
+
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: "Method Not Allowed" }),
+    };
+  } catch (error) {
+    console.error("Handler error:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Internal Server Error", details: error.message }),
+    };
+  }
+}
