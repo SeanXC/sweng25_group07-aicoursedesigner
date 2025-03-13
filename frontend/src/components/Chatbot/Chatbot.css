@@ -1,13 +1,18 @@
 
+/* Chat Container */
 .chat-container {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   width: 400px;
   margin: 0 auto;
+  background-color: #fff; /* Add background color to the overall container */
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  padding: 20px;
 }
 
-
+/* Chat Box */
 .chat-box {
   display: flex;
   flex-direction: column;
@@ -17,9 +22,11 @@
   padding: 10px;
   border: 1px solid #ccc;
   margin-bottom: 20px;
+  border-radius: 10px; /* Rounded corners for chat box */
+  background-color: #fafafa; /* Slight background for chat box */
 }
 
-
+/* Bot Message */
 .bot-message {
   align-self: flex-start;
   background-color: #f0f0f0;
@@ -27,9 +34,11 @@
   border-radius: 10px;
   max-width: 80%;
   word-wrap: break-word;
+  font-size: 14px; /* Slightly smaller font for bot messages */
+  font-family: 'Arial', sans-serif;
 }
 
-
+/* User Message */
 .user-message {
   align-self: flex-end;
   background-color: #8300A1;
@@ -38,27 +47,39 @@
   border-radius: 10px;
   max-width: 80%;
   word-wrap: break-word;
+  font-size: 14px; /* Match font size of bot message */
+  font-family: 'Arial', sans-serif;
 }
 
-
+/* Input Container */
 .input-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
   padding: 10px;
+  border-top: 1px solid #ccc; /* Border on top for separation */
+  background-color: #fff; /* Background for input area */
 }
 
-
+/* Chat Input */
 .chat-input {
   width: 80%;
   padding: 10px;
   border-radius: 10px;
   border: 1px solid #ccc;
   font-size: 16px;
+  font-family: 'Arial', sans-serif;
+  outline: none;
+  box-sizing: border-box; /* Ensures padding doesn't affect width */
 }
 
+/* Chat Input on Focus */
+.chat-input:focus {
+  border-color: #8300A1; /* Change border color when focused */
+}
 
+/* Send Button */
 .send-button {
   background-color: #8300A1;
   color: white;
@@ -66,4 +87,39 @@
   border: none;
   border-radius: 10px;
   cursor: pointer;
+  font-size: 16px; /* Consistent font size */
+  transition: background-color 0.3s ease; /* Smooth hover transition */
+}
+
+/* Send Button Hover */
+.send-button:hover {
+  background-color: #5c0071; /* Darker purple on hover */
+}
+
+/* Mic Button */
+.mic-button {
+  background-color: #f3f3f3;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.mic-button img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Mic Button Hover */
+.mic-button:hover {
+  background-color: #f0f0f0;
+}
+
+.mic-button.recording {
+  background-color: red;
+  border-radius: 50%;
 }
