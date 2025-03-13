@@ -57,7 +57,7 @@ export default function Roleplay() {
   return (
     <>
       <div style={{ backgroundColor: "white" }}>
-        <header
+        {/* <header
           style={{
             backgroundColor: "#8300A1",
             color: "white",
@@ -67,7 +67,7 @@ export default function Roleplay() {
           }}
         >
           Home Dashboard
-        </header>
+        </header> */}
         <main>
           <div className="roleplay-container">
             <h1 className="title">{conversation.title}</h1>
