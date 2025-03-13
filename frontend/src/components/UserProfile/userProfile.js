@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import logoImage from "../../images/logowhite.png";
-import avatar1 from "../../images/avatar1.svg";
-import avatar2 from "../../images/avatar2.svg";
-import avatar3 from "../../images/avatar3.svg";
+import logoImage from "./logowhite.png";
+import avatar1 from "./avatar1.svg";
+import avatar2 from "./avatar2.svg";
+import avatar3 from "./avatar3.svg";
+import avatar4 from "./avatar4.svg";
+import avatar5 from "./avatar5.svg";
 
 export default function LanguageTeacherProfile() {
   const navigate = useNavigate();
@@ -16,16 +18,58 @@ export default function LanguageTeacherProfile() {
     role: "",
     avatar: avatar1,
   });
+  const [savedProfileData, setSavedProfileData] = useState(null);
 
-  const avatars = [avatar1, avatar2, avatar3];
+  const avatars = [avatar1, avatar2, avatar3,avatar4,avatar5];
 
-  // Handle input changes
+  useEffect(() => {
+    const storedName = sessionStorage.getItem("name");
+    const storedEmail = sessionStorage.getItem("email");
+
+    if (storedName && storedEmail) {
+      // For a new user, display name and email from sessionStorage
+      setFormData((prev) => ({
+        ...prev,
+        name: storedName,
+        email: storedEmail,
+      }));
+
+      // Try to fetch profile data if exists on the server
+      fetchProfileData(storedEmail);
+    } else {
+      navigate("/"); // Redirect to login if no user data found in sessionStorage
+    }
+  }, [navigate]);
+
+  // Fetch saved profile data from the server using the email
+  const fetchProfileData = async (email) => {
+    const apiUrl = `https://3smlhrocb8.execute-api.eu-west-1.amazonaws.com/StageTwo?email=${email}`;
+
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+
+      if (data) {
+        setSavedProfileData(data);
+        setFormData((prev) => ({
+          ...prev,
+          name: data.name || prev.name,  // Make sure name from backend doesn't overwrite sessionStorage name if it's empty
+          email: data.email || prev.email,  // Same for email
+          languages: data.languages || prev.languages,
+          proficiency: data.proficiency || prev.proficiency,
+          role: data.role || prev.role,
+          avatar: data.avatar || prev.avatar,
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+    }
+  };
+
+  // Handle input changes (name, languages, proficiency, role)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   // Handle avatar selection
@@ -36,41 +80,53 @@ export default function LanguageTeacherProfile() {
     }));
   };
 
-  // Toggle between edit and view mode
-  const toggleEditMode = () => {
-    setIsEditing(!isEditing);
-  };
+  // Save the profile to the server
+  const saveProfile = async (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    const apiUrl = "https://3smlhrocb8.execute-api.eu-west-1.amazonaws.com/StageTwo";
 
+    const requestData = {
+      name: formData.name,
+      email: formData.email,
+      languages: formData.languages,
+      proficiency: formData.proficiency,
+      role: formData.role,
+      avatar: formData.avatar,
+    };
 
-  // Save the profile changes
-const saveProfile = (e) => {
-    e.preventDefault();
-    setIsEditing(false);
-    sessionStorage.setItem("avatar", formData.avatar); // Store avatar in sessionStorage
-    console.log("Profile updated:", formData);
-  };
-  
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData),
+      });
 
-  // Retrieve user data from sessionStorage on component mount
-  useEffect(() => {
-    const storedName = sessionStorage.getItem("name");
-    const storedEmail = sessionStorage.getItem("email");
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Profile saved:", data);
+        
+        // After saving, fetch and update profile data
+        fetchProfileData(formData.email);
 
-    if (storedName && storedEmail) {
-      setFormData((prev) => ({
-        ...prev,
-        name: storedName,
-        email: storedEmail,
-      }));
-    } else {
-      navigate("/"); // Redirect to login if no user data found
+        setIsEditing(false); // Exit edit mode after saving
+      } else {
+        console.error("Failed to save profile:", data);
+        alert("Failed to save profile. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      alert("An error occurred while saving your profile.");
     }
-  }, [navigate]);
-
-  const handlelogoClick = () => {
-    navigate("/"); // Navigate to home page on logo click
   };
 
+  // Toggle between edit mode and view mode
+  const toggleEditMode = () => {
+    if (!isEditing) {
+      setIsEditing(true); // Enter editing mode
+    } else {
+      saveProfile(new Event("submit")); // Trigger saveProfile when exiting edit mode
+    }
+  };
 
   return (
     <div
@@ -80,28 +136,34 @@ const saveProfile = (e) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        padding: "2rem", // Added padding to prevent touching the border
+        padding: "2rem",
       }}
     >
-      {/* Logo Image */}
-       <div style={{ width: "100%", textAlign: "center", position: "absolute", top: "25px", right: "500px" }}>
-              <img
-                src={logoImage}
-                alt="Logo"
-                style={{ width: "200px", borderRadius: "10px" }}
-                onClick={handlelogoClick}
-              />
-        </div>
+      <div
+        style={{
+          width: "100%",
+          textAlign: "center",
+          position: "absolute",
+          top: "25px",
+          right: "500px",
+        }}
+      >
+        <img
+          src={logoImage}
+          alt="Logo"
+          style={{ width: "200px", borderRadius: "10px" }}
+          onClick={() => navigate("/")}
+        />
+      </div>
 
-      {/* Profile Form */}
       <div
         style={{
           border: "4px solid white",
           padding: "2rem",
           borderRadius: "20px",
           backgroundColor: "white",
-          width: "550px", // Increased width for a bigger profile
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Added shadow for better structure
+          width: "550px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
         }}
       >
         <h2 style={{ textAlign: "center" }}>
@@ -111,7 +173,6 @@ const saveProfile = (e) => {
           onSubmit={saveProfile}
           style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          {/* Avatar Display */}
           <div style={{ textAlign: "center", marginBottom: "1rem" }}>
             <img
               src={formData.avatar}
@@ -120,7 +181,6 @@ const saveProfile = (e) => {
             />
           </div>
 
-          {/* Avatar Selection */}
           {isEditing && (
             <div>
               <label style={{ fontWeight: "bold" }}>Select Avatar:</label>
@@ -153,6 +213,8 @@ const saveProfile = (e) => {
             </div>
           )}
 
+          
+          {/* Name Field */}
           <div>
             <label style={{ fontWeight: "bold" }}>Name:</label>
             {isEditing ? (
@@ -161,7 +223,6 @@ const saveProfile = (e) => {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                placeholder="Name"
                 required
                 style={{
                   padding: "0.75rem",
@@ -170,98 +231,132 @@ const saveProfile = (e) => {
                 }}
               />
             ) : (
-              <p>{formData.name}</p>
+              <p>{savedProfileData ? savedProfileData.name : formData.name}</p>
             )}
           </div>
 
-            <div>
-                <label style={{ fontWeight: "bold" }}>Email:</label>
-            {isEditing ? (
-                <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    placeholder="Email"
-                    readOnly
-                    style={{ padding: "0.75rem", borderRadius: "8px", border: "1px solid #ccc", backgroundColor: "#f5f5f5" }}
-                />
-            ) : (
-                <p>{formData.email}</p>
-            )}
-            </div>
-
+          {/* Language to Learn/Teach Field */}
           <div>
-            <label style={{ fontWeight: "bold" }}>I Want to Teach/Learn:</label>
+            <label style={{ fontWeight: "bold" }}>Language to Learn/Teach:</label>
             {isEditing ? (
-              <input
-                type="text"
+              <select
                 name="languages"
                 value={formData.languages}
                 onChange={handleInputChange}
-                placeholder="e.g. Spanish"
                 required
                 style={{
-                  padding: "0.75rem",
+                  padding: "0.45rem",
                   borderRadius: "8px",
                   border: "1px solid #ccc",
+                  width:"95%",
                 }}
-              />
+              >
+                <option hidden value="">
+                  Select a language
+                </option>
+                <option value="Spanish">Spanish</option>
+                <option value="English">English</option>
+                <option value="French">French</option>
+                <option value="Italian">Italian</option>
+                <option value="German">German</option>
+                <option value="Portuguese">Portuguese</option>
+              </select>
             ) : (
-              <p>{formData.languages}</p>
+              <p>{savedProfileData ? savedProfileData.languages : formData.languages}</p>
             )}
           </div>
 
+         {/* Proficiency Field */}
           <div>
             <label style={{ fontWeight: "bold" }}>Proficiency:</label>
             {isEditing ? (
-              <input
-                type="text"
+              <select
                 name="proficiency"
                 value={formData.proficiency}
                 onChange={handleInputChange}
-                placeholder="e.g. Beginner"
                 required
                 style={{
-                  padding: "0.75rem",
+                  padding: "0.45rem",
                   borderRadius: "8px",
                   border: "1px solid #ccc",
+                  width:"95%",
                 }}
-              />
+              >
+                <option hidden value="">
+                  Selcet a proficiency
+                </option>
+                <option value="A1">A1</option>
+                <option value="A2">A2</option>
+                <option value="B1">B1</option>
+                <option value="B2">B2</option>
+                <option value="C1">C1</option>
+                <option value="C2">C2</option>
+              </select>
             ) : (
-              <p>{formData.proficiency}</p>
+              <p>{savedProfileData ? savedProfileData.proficiency : formData.proficiency}</p>
             )}
           </div>
 
+          {/* Role Field */}
           <div>
             <label style={{ fontWeight: "bold" }}>Role:</label>
             {isEditing ? (
-              <input
-                type="text"
+              <select
                 name="role"
                 value={formData.role}
                 onChange={handleInputChange}
-                placeholder="e.g. Teacher"
                 required
+                style={{
+                  padding: "0.45rem", 
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                  width: "95%", 
+                }}
+              >
+                <option hidden value="">
+                  Select a role 
+                </option>
+                <option value="Student">Student</option>
+                <option value="Teacher">Teacher</option>
+                <option value="Developer">Developer</option>
+              </select>
+            ) : (
+              <p>{savedProfileData ? savedProfileData.role : formData.role}</p>
+            )}
+          </div>
+
+
+
+          <div>
+            <label style={{ fontWeight: "bold" }}>Email:</label>
+            {isEditing ? (
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                placeholder="Email"
+                readOnly
                 style={{
                   padding: "0.75rem",
                   borderRadius: "8px",
                   border: "1px solid #ccc",
+                  backgroundColor: "#f5f5f5",
                 }}
               />
             ) : (
-              <p>{formData.role}</p>
+              <p>{formData.email}</p>
             )}
           </div>
 
           <button
-            type="submit"
+            type="button" // Toggle between edit and view mode
             onClick={toggleEditMode}
             style={{
               backgroundColor: "#8300A1",
               color: "white",
               padding: "0.75rem 1.5rem",
               borderRadius: "8px",
-              border: "none",
+              border: "1px solid #ccc",
               cursor: "pointer",
               marginTop: "1rem",
             }}

@@ -1,34 +1,37 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom"; 
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import "./Home.css";
-import logoImage from '../../images/logowhite.png'; 
-import NualasImage from '../../images/nualas.svg';
-import UserIcon from '../../images/UserIcon.png';
-import LogOuticon from '../../images/logout.png';
-import UserProfileicon from '../../images/userProfile.svg';
-import LogoutConfirmation from "../ConfirmSignOut/confirmSignOut";
+import logoImage from './logowhite.png';
+import NualasImage from './nualas.svg';
+import UserIcon from './UserIcon.png';
+import LogOuticon from './logout.png';
+import UserProfileicon from './userProfile.svg';
+import LogoutConfirmation from "./confirmSignOut";
+import { fetchUserData } from "./fetchUserData"; 
 
 export default function HomeDashboard() {
   const navigate = useNavigate();
   const isLoggedIn = sessionStorage.getItem("accessToken");
-  const storedAvatar = sessionStorage.getItem("avatar");
-
-
+  const [storedAvatar, setStoredAvatar] = useState(UserIcon); // Default to UserIcon
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
 
+  // Toggle dropdown for user menu
   const toggleDropdown = () => {
     setDropdownOpen(prevState => !prevState);
   };
 
+  // Navigate to login page
   const handleLoginClick = () => {
     navigate("/login");
   };
 
+  // Navigate to user profile page
   const handleProfileClick = () => {
     navigate("/userProfile");
   };
 
+  // Handle logout
   const handleLogoutClick = () => {
     setShowLogout(true);
   };
@@ -36,6 +39,24 @@ export default function HomeDashboard() {
   const closeLogoutConfirmation = () => {
     setShowLogout(false);
   };
+
+  // UseEffect to fetch user data from the backend
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const userEmail = sessionStorage.getItem("email"); // Get user email from sessionStorage
+      if (userEmail) {
+        const userData = await fetchUserData(userEmail); // Fetch user data using fetchUserData function
+        if (userData && userData.avatar) {
+          sessionStorage.setItem("avatar", userData.avatar);
+          setStoredAvatar(userData.avatar); // Set avatar in component state
+        }
+      }
+    };
+
+    if (isLoggedIn) {
+      fetchUserProfile();
+    }
+  }, [isLoggedIn]);
 
   return (
     <div className="home-container">
@@ -50,7 +71,7 @@ export default function HomeDashboard() {
           {isLoggedIn ? (
             <div className="user-dropdown-container">
               <button onClick={toggleDropdown} className="user-info-button">
-              <img src={storedAvatar || UserIcon} alt="User Icon" className="user-icon" />
+                <img src={storedAvatar || UserIcon} alt="User Icon" className="user-icon" />
               </button>
 
               {dropdownOpen && (
@@ -76,7 +97,7 @@ export default function HomeDashboard() {
       </div>
 
       <div className="content">
-        <img src={NualasImage} className="nualas-image" />
+      <img src={NualasImage} alt="Nualas Logo" className="nualas-image" />
         <p className="text">Create a course</p>
         <p className="text2">Design and customize lessons to track student progress seamlessly</p>
 
@@ -93,3 +114,5 @@ export default function HomeDashboard() {
     </div>
   );
 }
+
+

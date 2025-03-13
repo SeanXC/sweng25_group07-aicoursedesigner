@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logoImage from '../../images/logowhite.png';  // Your logo for consistency with the sign-in page
+import logoImage from './logowhite.png';  // Your logo for consistency with the sign-in page
 
 export default function SignOut() {
   const navigate = useNavigate();
@@ -51,7 +51,8 @@ export default function SignOut() {
 
       {/* Sign Out Form */}
       <div style={{ border: "3px solid white", padding: "1rem", borderRadius: "10px", backgroundColor: "white", width: "320px" }}>
-        <h2>Successfully Signed Out</h2>
+        <h2>Goodbye!</h2>
+        <h3>Successfully Signed Out</h3>
         <p style={{ fontSize: "1.1rem", color: "purple" }}>You have been logged out. You can sign in again if you wish.</p>
         
         {/* Redirect button to go back to the login page */}
