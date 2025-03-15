@@ -25,65 +25,85 @@ async function getOpenAIKey() {
 }
 
 /**
- * Generates a roleplay conversation.
+ * Generates a roleplay conversation based on the provided week and outline.
  * @param {string} email - The user's email.
  * @param {string} userLevel - The user's language proficiency level.
  * @param {string} language - The target language.
  * @param {string} topic - The conversation topic.
+ * @param {number} weekTarget - The week number of the course.
+ * @param {object} outline - The learning outline for the course.
  */
-async function generateRoleplay(email, userLevel, language, topic) {
+async function generateRoleplay(email, userLevel, language, topic, weekTarget, outline) {
   if (!language) return { error: "Please specify the target language" };
   if (!email) return { error: "Missing user email" };
   if (!userLevel) return { error: `Please specify your level in ${language}` };
   if (!topic) return { error: "Please specify a topic for the roleplay" };
+  if (!weekTarget) return { error: "Please specify the target week" };
+  if (!outline) return { error: "Learning outline is required" };
 
-  // Retrieve OpenAI API key from AWS SSM
   const apiKey = await getOpenAIKey();
   if (!apiKey) return { error: "Failed to retrieve OpenAI API Key from SSM" };
 
   const openai = new OpenAI({ apiKey });
+  const weekDetails = outline.weeks.find(week => week.week === weekTarget);
+  if (!weekDetails) return { error: `Week ${weekTarget} not found in the outline` };
 
-  // Retrieve past conversation history
-  const historyData = await getRoleplayHistory(email);
+  const historyData = await getRoleplayHistory(email, topic, weekTarget);
   const history = historyData.success ? historyData.history : [];
 
   let prompt;
+  const difficulty = weekTarget / outline.weeks.length;
 
   if (history.length === 0) {
-    // No history exists, start the conversation with a natural opening line
-    prompt = `Create a natural conversation between two people on the topic "${topic}" in ${language}.
-    Ensure the difficulty level matches a ${userLevel} speaker.
-    The conversation should start with "person1" saying an appropriate opening line related to the topic.
-    For example:
-    - If the topic is "Ordering Food at a Restaurant," "person1" could start with: "Hello, I would like to order food."
-    - If the topic is "Asking for Directions," "person1" could start with: "Excuse me, can you help me find the nearest train station?"
+    prompt = `You are an AI generating a roleplay conversation for a student learning ${language}. The student is at level ${userLevel} and is currently studying **Week ${weekTarget}: "${weekDetails.title}"** under the topic "${topic}".
     
-    Format the response as:
+Determine suitable roles for the conversation based on the topic (e.g., "restaurant staff" and "customer" for a restaurant scenario).
+    
+Follow these guidelines:
+    - Maintain a natural and engaging conversation.
+    - Ensure that one role always starts the conversation.
+    - Distinct roles should have unique speaking styles and personalities.
+    - Difficulty should increase progressively based on the week number, with Week 1 being the simplest and later weeks incorporating complex structures and vocabulary.
+    - The conversation should remain within the scope of **Week ${weekTarget}**'s objectives and content.
+    
+Objectives:
+    - ${weekDetails.objectives.join("\n    - ")}
+    
+Main Content:
+    - ${weekDetails.main_content.join("\n    - ")}
+    
+Suggested Activities:
+    - ${weekDetails.activities.join("\n    - ")}
+    
+Generate the conversation in JSON format:
     {
-      "person1": "<opening line>",
-      "person2": "<response>",
-      "person1": "<response>",
-      "person2": "<response>",
-      ...
+      "<role1>": "<opening line>",
+      "<role2>": "<response>",
+      "<role1>": "<response>",
+      "<role2>": "<response>"
     }`;
   } else {
-    // History exists, continue the conversation naturally
-    const lastConversation = history[0].conversation; // Most recent conversation
-    const historyContext = Object.entries(lastConversation)
-      .map(([key, value]) => `${key}: ${value}`)
-      .join("\n");
+    const historyContext = history.map(entry => 
+      Object.entries(entry.conversation)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join("\n")
+    ).join("\n");
 
-    prompt = `Continue the following conversation naturally in ${language}, ensuring the difficulty level matches ${userLevel}.
-    The conversation so far:
+    prompt = `Continue the roleplay conversation in ${language}, maintaining a natural flow and aligned with **Week ${weekTarget}: "${weekDetails.title}"** under the topic "${topic}".
+    
+Previous conversation:
     ${historyContext}
-
-    Continue with a structured response in this format:
+    
+Guidelines:
+    - Ensure continuity by allowing the last speaker to continue, followed by the other person responding.
+    - The conversation should remain relevant to Week ${weekTarget}'s objectives and content.
+    - The difficulty should be appropriate for Week ${weekTarget}, ensuring progressively complex dialogues.
+    - Maintain the roles from the previous conversation (e.g., "restaurant staff" and "customer").
+    
+Generate the next exchange in JSON format:
     {
-      "person1": "<response>",
-      "person2": "<response>",
-      "person1": "<response>",
-      "person2": "<response>",
-      ...
+      "<role1>": "<response>",
+      "<role2>": "<response>"
     }`;
   }
 
@@ -95,20 +115,23 @@ async function generateRoleplay(email, userLevel, language, topic) {
 
   try {
     const conversation = JSON.parse(response.choices[0].message.content);
-
-    // Save to database
-    await saveRoleplayHistory(email, conversation, language, topic);
+    await saveRoleplayHistory(email, conversation, language, topic, weekTarget);
 
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: conversation,
+      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+      body: {
+        success: true,
+        conversation: conversation
+      }
     };
   } catch (error) {
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: error.message }),
+      body: {
+        error: error.message
+      }
     };
   }
 }

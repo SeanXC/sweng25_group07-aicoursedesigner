@@ -4,21 +4,9 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 const client = new DynamoDBClient({ region: "eu-west-1" });
 const dynamodb = DynamoDBDocumentClient.from(client);
 
-/**
- * Retrieves all roleplay conversation history for a user on a specific topic, sorted from earliest to latest.
- * @param {string} email - The user's email.
- * @param {string} topic - The conversation topic.
- */
-async function getRoleplayHistory(email, topic) {
-  console.log("Fetching roleplay history for:", { email, topic });
-
-  if (!email) {
-    console.error("Missing email parameter");
-    return { success: false, error: "Email is required" };
-  }
-  if (!topic) {
-    console.error("Missing topic parameter");
-    return { success: false, error: "Topic is required" };
+async function getRoleplayHistory(email, topic, weekTarget) {
+  if (!email || !topic || weekTarget === undefined) {
+    return { success: false, error: "Missing required parameters" };
   }
 
   const params = {
@@ -27,20 +15,21 @@ async function getRoleplayHistory(email, topic) {
     ExpressionAttributeValues: {
       ":email": email
     },
-    FilterExpression: "topic = :topic",
-    ExpressionAttributeValues: {
-      ":email": email,
-      ":topic": topic
-    },
     ScanIndexForward: true // Fetch from earliest to latest
   };
 
   try {
-    console.log("DynamoDB Query Parameters:", params);
     const result = await dynamodb.send(new QueryCommand(params));
-    console.log("DynamoDB Query Result:", result);
-    
-    return { success: true, history: result.Items || [] };
+
+
+    const filteredHistory = result.Items.filter(
+      (item) => item.topic === topic && item.weekTarget === weekTarget
+    );
+
+    return {
+      success: true,
+      history: filteredHistory
+    };
   } catch (error) {
     console.error("Error fetching history:", error);
     return { success: false, error: error.message };

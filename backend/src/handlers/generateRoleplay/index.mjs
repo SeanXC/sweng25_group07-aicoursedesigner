@@ -9,76 +9,109 @@ export async function handler(event) {
     const { httpMethod, body, queryStringParameters, path } = event;
 
     // Handle CORS preflight requests
-    if (httpMethod === "OPTIONS") {
+    if (httpMethod === "OPTIONS") { 
       return {
         statusCode: 200,
         headers: {
           "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
+          "Access-Control-Allow-Methods": "OPTIONS, POST, GET, PUT",
           "Access-Control-Allow-Headers": "Content-Type",
         },
         body: JSON.stringify({ message: "CORS preflight success" }),
       };
     }
 
-    // Retrieve roleplay conversation history for a specific topic
+    // Retrieve roleplay conversation history for a specific topic and week
     if (httpMethod === "GET" && path === "/roleplay-history") {
       const email = queryStringParameters?.email;
       const topic = queryStringParameters?.topic;
+      const weekTarget = queryStringParameters?.weekTarget ? Number(queryStringParameters.weekTarget) : null;
 
-      console.log("Extracted query parameters:", { email, topic });
+      console.log("Extracted query parameters:", { email, topic, weekTarget });
 
-      if (!email || !topic) {
+      if (!email || !topic || !weekTarget) {
         return {
           statusCode: 400,
-          body: JSON.stringify({ error: "Email and Topic are required" }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Email, Topic, and Week Target are required" }),
         };
       }
 
+      const historyData = await getRoleplayHistory(email, topic, weekTarget);
+
       return {
         statusCode: 200,
-        body: JSON.stringify(await getRoleplayHistory(email, topic)),
+        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify(historyData, null, 2),
       };
     }
 
     // Generate a new roleplay conversation
     if (httpMethod === "POST" && path === "/generate-roleplay") {
       if (!body) {
-        return { statusCode: 400, body: JSON.stringify({ error: "Request body is required" }) };
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Request body is required" }),
+        };
       }
-      const { email, userLevel, language, topic } = JSON.parse(body);
-      if (!email || !language || !userLevel || !topic) {
-        return { statusCode: 400, body: JSON.stringify({ error: "Missing required fields" }) };
+
+      const { email, userLevel, language, topic, weekTarget, outline } = JSON.parse(body);
+      if (!email || !language || !userLevel || !topic || !weekTarget || !outline) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Missing required fields" }),
+        };
       }
+
+      const generatedRoleplay = await generateRoleplay(email, userLevel, language, topic, weekTarget, outline);
+
       return {
         statusCode: 200,
-        body: JSON.stringify(await generateRoleplay(email, userLevel, language, topic)),
+        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify(generatedRoleplay, null, 2),
       };
     }
 
     // Save roleplay conversation
     if (httpMethod === "PUT" && path === "/save-roleplay") {
       if (!body) {
-        return { statusCode: 400, body: JSON.stringify({ error: "Request body is required" }) };
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Request body is required" }),
+        };
       }
-      const { email, conversation, language, topic } = JSON.parse(body);
-      if (!email || !conversation || !topic) {
-        return { statusCode: 400, body: JSON.stringify({ error: "Missing required fields" }) };
+
+      const { email, conversation, language, topic, weekTarget } = JSON.parse(body);
+      if (!email || !conversation || !topic || !weekTarget) {
+        return {
+          statusCode: 400,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ error: "Missing required fields" }),
+        };
       }
+
+      const saveResponse = await saveRoleplayHistory(email, conversation, language, topic, weekTarget);
+
       return {
         statusCode: 200,
-        body: JSON.stringify(await saveRoleplayHistory(email, conversation, language, topic)),
+        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify(saveResponse, null, 2),
       };
     }
 
     return {
       statusCode: 405,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: "Method Not Allowed" }),
     };
   } catch (error) {
     console.error("Handler error:", error);
     return {
       statusCode: 500,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: "Internal Server Error", details: error.message }),
     };
   }
