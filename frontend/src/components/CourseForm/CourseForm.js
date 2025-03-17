@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import "./Home.css";
-import ShowPhrases from "./ShowPhrases";
-import { fetchUserData } from './fetchUserData'; 
+import "../Home/Home.css";
+import ShowPhrases from "../ShowPhrases/ShowPhrases";
+import { fetchUserData } from '../UserProfile/fetchUserData'; 
 let data = {};
 
 const formDataEntries = {

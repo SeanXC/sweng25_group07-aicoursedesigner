@@ -12,6 +12,7 @@ import ConfirmSignOut from './components/ConfirmSignOut/confirmSignOut';
 import Roleplay from "./components/Roleplay/roleplay";
 import Chatbot from './components/Chatbot/Chatbot';
 import CourseDashboard from "./components/newCourseDashbaord/newCourseDashboard";
+import CompleteProfile from './components/ConfirmUser/completeProfile';
 
 
 function App() {
@@ -23,7 +24,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-      {/*}
         <Route path="/" element={<HomeDashboard />} />
 
         <Route path="/connectaws" element={<ConnectAWS />} />
@@ -37,6 +37,7 @@ function App() {
         <Route path="/roleplay" element={<Roleplay />} />
         <Route path="/chatbot" element={<Chatbot />} />
         <Route path="/courseDashbaord" element={<CourseDashboard />} />
+        <Route path="/completeProfile" element={<CompleteProfile />} />
 
         <Route
           path="/protected"

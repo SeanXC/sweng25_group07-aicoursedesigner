@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchUserData } from "./fetchUserData"; // Import the function
+import { fetchUserData } from "../UserProfile/fetchUserData"; // Import the function
 
 export default function LogoutConfirmation({ onCancel }) {
   const [userName, setUserName] = useState(null);

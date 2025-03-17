@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import tickImage from './tick.png'; // Import your tick image
-import iconImage from './nualaCelebrating.svg'; // Path to your image file
+import tickImage from '../../images/tick.png'; // Import your tick image
+import iconImage from '../../images/nualaCelebrating.svg'; // Path to your image file
 
 export default function ProfileCompletionPopup() {
   const navigate = useNavigate();
