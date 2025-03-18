@@ -7,12 +7,14 @@ import path from "path";
 //import { getCompletion } from "./handlers/generateCompletion/index.mjs";
 import { generateContent } from "./handlers/contentGenerator/index.mjs";
 import { generatePhrases } from "./handlers/generatePhrases/index.mjs";
-import { generateChat } from "./handlers/generateChat/index.mjs";
-import { generateRoleplay} from "./handlers/generateRoleplay/index.mjs";
+import { generateChat } from "./handlers/generateChat/generateChat.mjs";
+import { generateRoleplay} from "./handlers/generateRoleplay/generateRoleplay.mjs";
 import { outlineCustomizer } from "./handlers/outlineCustomizer/index.mjs";
+import { realTimeSpeech } from "./handlers/realTimeSpeech/index.mjs";
 
 dotenv.config(); // Load environment variables
 
+//const upload = multer({ dest: "uploads/" });
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
@@ -20,7 +22,7 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + "-" + Date.now() + ext);
   },
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 const app = express();
 app.use(cors());
@@ -150,47 +152,65 @@ app.post("/customize-outline", async (req, res) => {
   }
 });
 
-app.post("/transcribe-audio", upload.single("audio"), async (req, res) => {
+app.post("/generate-chat-rts", upload.single("audio"), async (req, res) => {
   try{
-    if(!req.file){
-      return res.status(400).json({ error: "no audio file uploaded" });
-    }
+    const { email, userLevel, language, topic } = req.body;
+    if(!req.file) return res.status(400).json({ error: "no audio file uploaded" });
 
-    console.log("received audio file:", req.file);
-    const filePath = req.file.path;
+    const audioPath = req.file.path;
+    const speechFile = await realTimeSpeech(email, userLevel, language, topic, audioPath);
 
-    const transcribedText = await transcribeAudio(filePath);
-    fs.unlinkSync(filePath);
-    res.json({ transcribedText });
+    res.download(speechFile, (err) => {
+      if(err) res.status(500).json({ error: "error sending speech file" });
+      fs.unlinkSync(audioPath);
+      //fs.unlinkSync(speechFile);
+    });
   } catch(error){
     res.status(500).json({ error: error.message });
   }
-});
+})
 
-app.post("/generate-chat-stt", upload.single("audio"), async (req, res) => {
-  try{
-    const { userId, userLevel, language, topic } = req.body;
-    if(!userId || !userLevel || !language || !topic){
-      return res.status(400).json({ error: "missing required fields" });
-    }
-    if(!req.file){
-      return res.status(400).json({ error: "no audio uploaded" });
-    }
+// app.post("/transcribe-audio", upload.single("audio"), async (req, res) => {
+//   try{
+//     if(!req.file){
+//       return res.status(400).json({ error: "no audio file uploaded" });
+//     }
 
-    const filePath = req.file.path;
-    console.log("processing audio file for chat: ", filePath);
+//     console.log("received audio file:", req.file);
+//     const filePath = req.file.path;
 
-    const transcribedText = await transcribeAudio(filePath);
-    fs.unlinkSync(filePath);
-    console.log("transcribed text: ", transcribedText);
+//     const transcribedText = await transcribeAudio(filePath);
+//     fs.unlinkSync(filePath);
+//     res.json({ transcribedText });
+//   } catch(error){
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
-    const chatResponse = await generateChat(userId, userLevel, language, topic, transcribedText);
-    res.status(chatResponse.statusCode).json(chatResponse.body);
-  } catch(error){
-    console.error("error: ", error);
-    res.status(500).json({ error: error.message });
-  }
-});
+// app.post("/generate-chat-stt", upload.single("audio"), async (req, res) => {
+//   try{
+//     const { userId, userLevel, language, topic } = req.body;
+//     if(!userId || !userLevel || !language || !topic){
+//       return res.status(400).json({ error: "missing required fields" });
+//     }
+//     if(!req.file){
+//       return res.status(400).json({ error: "no audio uploaded" });
+//     }
+
+//     const filePath = req.file.path;
+//     console.log("processing audio file for chat: ", filePath);
+
+//     const transcribedText = await transcribeAudio(filePath);
+//     fs.unlinkSync(filePath);
+//     console.log("transcribed text: ", transcribedText);
+
+//     const chatResponse = await generateChat(userId, userLevel, language, topic, transcribedText);
+//     res.status(chatResponse.statusCode).json(chatResponse.body);
+//   } catch(error){
+//     console.error("error: ", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 // Start the server
 app.listen(PORT, () => {

@@ -12,23 +12,25 @@ const dynamodb = DynamoDBDocumentClient.from(client);
 
 dotenv.config();
 
+// uncomment the following and fetch openai api key by awaiting this function
+// i am temporarily using the process.env.OPENAI_API_KEY as i am not able to get this to work
 /**
  * Retrieves the OpenAI API key from AWS SSM Parameter Store.
  * @returns {Promise<string|null>} API key or null if an error occurs.
  */
-async function getOpenAIKey() {
-  try {
-    const command = new GetParameterCommand({
-      Name: "OPENAI_API_KEY",
-      WithDecryption: true,
-    });
-    const response = await ssmClient.send(command);
-    return response.Parameter.Value;
-  } catch (error) {
-    console.error("Error fetching OpenAI API Key from AWS SSM:", error);
-    return null;
-  }
-}
+// async function getOpenAIKey() {
+//   try {
+//     const command = new GetParameterCommand({
+//       Name: "OPENAI_API_KEY",
+//       WithDecryption: true,
+//     });
+//     const response = await ssmClient.send(command);
+//     return response.Parameter.Value;
+//   } catch (error) {
+//     console.error("Error fetching OpenAI API Key from AWS SSM:", error);
+//     return null;
+//   }
+// }
 
 // Stores ongoing conversations for each user
 const conversation = {};
@@ -50,10 +52,11 @@ async function generateChat(email, userLevel, language, topic, userMsg = "") {
     if (!topic) return { error: "Please specify a topic for the roleplay" };
 
     // Fetch the OpenAI API key
-    const apiKey = await getOpenAIKey();
-    if (!apiKey) return { error: "Failed to retrieve OpenAI API Key from SSM" };
+    // const apiKey = await getOpenAIKey();
+    // if (!apiKey) return { error: "Failed to retrieve OpenAI API Key from SSM" };
 
-    const openai = new OpenAI({ apiKey });
+    // const openai = new OpenAI({ apiKey });
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     // Initialize conversation if the user is new
     if (!conversation[email]) {
@@ -61,7 +64,7 @@ async function generateChat(email, userLevel, language, topic, userMsg = "") {
             role: "system",
             content: `You are roleplaying with a user on the topic "${topic}" in ${language}.
                       Keep responses interactive and ensure the conversation flows smoothly.
-                      The difficulty level of the conversation in ${language} is ${userLevel}.
+                      The difficulty level of the conversation in ${language} is based on the proficiency ${userLevel}.
                       Format the response in the following JSON structure:
                       {
                         "response": "<response>"
@@ -123,4 +126,5 @@ async function generateChat(email, userLevel, language, topic, userMsg = "") {
     }
 }
 
+//export { getOpenAIKey };
 export { generateChat };
