@@ -28,7 +28,7 @@ install_frontend:
     paths:
       - frontend/node_modules/
   tags:
-    - SCSS
+    - shared
   variables:
     GIT_DEPTH: 0
 
@@ -39,7 +39,7 @@ install_backend:
     - cd backend/src
     - npm install
   tags:
-    - SCSS
+    - shared
 
 build_frontend:
   image: node:20
@@ -54,7 +54,7 @@ build_frontend:
     - cd frontend
     - npm run build
   tags:
-    - SCSS
+    - shared
   artifacts:
     paths:
       - frontend/build/
@@ -73,7 +73,7 @@ test_frontend:
     paths:
       - frontend/node_modules/
   tags:
-    - SCSS
+    - shared
 
 deploy_frontend:
   image: node:18
@@ -84,6 +84,6 @@ deploy_frontend:
   only:
     - frontend
   tags:
-    - SCSS
+    - shared
 
 
