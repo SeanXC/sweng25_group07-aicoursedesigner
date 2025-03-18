@@ -128,3 +128,96 @@ body {
     padding: 15px;
     margin-left: auto;
 }
+
+body {
+    font-family: 'Montserrat';
+}
+
+input,
+select {
+    width: 90%;
+    height: 40px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    font-size: large;
+}
+
+input:focus,
+select:focus {
+    border-color: #8300A1;
+    box-shadow: 0 0 8px rgba(128, 0, 128, 0.3);
+}
+
+button {
+    background-color: #8300A1;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+}
+
+input {
+    width: 90%;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #8300A1;
+    /* Removed quotes around color */
+}
+
+.home-container {
+    /* height: 100vh; */
+    background-color: white;
+    position: relative;
+}
+
+.home-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    margin-left: -130px;
+    /* Adjust this value to move the header left */
+}
+
+.home-header span {
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.home-button {
+    background-color: #8300A1;
+    color: white;
+    padding: 0.5rem 1rem;
+    /* Smaller padding */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+    text-align: center;
+}
+
+.top-bar {
+    height: 60px;
+    background-color: #9705A8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.logo {
+    height: 40px;
+    width: auto;
+}
+
+.nualas-image {
+    max-width: 40%;
+    height: auto;
+    margin-top: -300px;
+}

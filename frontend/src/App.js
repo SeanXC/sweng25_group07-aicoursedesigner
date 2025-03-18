@@ -13,6 +13,7 @@ import Roleplay from "./components/Roleplay/roleplay";
 import Chatbot from './components/Chatbot/Chatbot';
 import CourseDashboard from "./components/newCourseDashbaord/newCourseDashboard";
 import CompleteProfile from './components/ConfirmUser/completeProfile';
+import courseDisplay from "./components/courseDisplay/courseDisplay";
 
 
 function App() {
@@ -36,8 +37,9 @@ function App() {
         <Route path="/confirmSignOut" element={<ConfirmSignOut />} />
         <Route path="/roleplay" element={<Roleplay />} />
         <Route path="/chatbot" element={<Chatbot />} />
-        <Route path="/courseDashbaord" element={<CourseDashboard />} />
+        <Route path="/courseDashboard" element={<CourseDashboard />} />
         <Route path="/completeProfile" element={<CompleteProfile />} />
+        <Route path="/courseDisplay" element={<courseDisplay />} />
 
         <Route
           path="/protected"

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./newCourseDashbaord.css";
-import logoImage from "../../images/logowhite.png";
 import Roleplay from "../../components/Roleplay/roleplay";
+import NavBar from "../NavBar/NavBar";
 
 const Tabs = ({ activeTab, setActiveTab }) => {
   const tabs = ["Translation", "Roleplay", "Chatbot"];
@@ -42,7 +42,9 @@ const SideBar = () => (
     {["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"].map((week) => (
       <div className="weeks">
         <div key={week} className="week-box">
-          {week}
+          <p><b>{week}</b></p>
+          <p>Content description for {week}</p>
+          
         </div>
       </div>
     ))}
@@ -71,7 +73,8 @@ export default function CourseDashboard() {
   const [activeTab, setActiveTab] = useState("Translation");
   return (
     <div>
-      <header
+      <NavBar/>
+      {/* <header
         style={{
           backgroundColor: "#8300A1",
           color: "white",
@@ -87,7 +90,6 @@ export default function CourseDashboard() {
         <img src={logoImage} alt="Logo" className="logo" />
         <span
           style={{
-            // marginLeft: "300px"
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -96,7 +98,7 @@ export default function CourseDashboard() {
         >
           Course Dashboard
         </span>
-      </header>
+      </header> */}
 
       <div className="dashboard-container">
         <div className="main-content">
