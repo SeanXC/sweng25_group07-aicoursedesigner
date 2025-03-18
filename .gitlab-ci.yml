@@ -28,7 +28,7 @@ install_frontend:
     paths:
       - frontend/node_modules/
   tags:
-    - docker  # Use the "docker" tag to run on the Maven in Docker runner
+    - docker  
   variables:
     GIT_DEPTH: 0
 
