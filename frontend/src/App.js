@@ -13,7 +13,7 @@ import Roleplay from "./components/Roleplay/roleplay";
 import Chatbot from './components/Chatbot/Chatbot';
 import CourseDashboard from "./components/newCourseDashbaord/newCourseDashboard";
 import CompleteProfile from './components/ConfirmUser/completeProfile';
-import courseDisplay from "./components/courseDisplay/courseDisplay";
+import CourseDisplay from './components/CourseDisplay/CourseDisplay';
 
 
 function App() {
@@ -39,7 +39,7 @@ function App() {
         <Route path="/chatbot" element={<Chatbot />} />
         <Route path="/courseDashboard" element={<CourseDashboard />} />
         <Route path="/completeProfile" element={<CompleteProfile />} />
-        <Route path="/courseDisplay" element={<courseDisplay />} />
+        <Route path="/courseDisplay" element={<CourseDisplay />} />
 
         <Route
           path="/protected"

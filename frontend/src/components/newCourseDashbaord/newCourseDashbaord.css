@@ -201,15 +201,7 @@ input {
     text-align: center;
 }
 
-.top-bar {
-    height: 60px;
-    background-color: #9705A8;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
+
 
 .logo {
     height: 40px;

@@ -74,32 +74,6 @@ export default function CourseDashboard() {
   return (
     <div>
       <NavBar/>
-      {/* <header
-        style={{
-          backgroundColor: "#8300A1",
-          color: "white",
-          fontSize: "1.25rem",
-          fontWeight: "bold",
-          padding: "1rem 1.5rem",
-          // display: "flex",
-          // justifyContent: "center",
-          // alignItems: "center",
-          // textAlign: "center",
-        }}
-      >
-        <img src={logoImage} alt="Logo" className="logo" />
-        <span
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            textAlign: "center",
-          }}
-        >
-          Course Dashboard
-        </span>
-      </header> */}
-
       <div className="dashboard-container">
         <div className="main-content">
           <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />

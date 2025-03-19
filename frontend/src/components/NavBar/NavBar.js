@@ -6,6 +6,7 @@ import LogOuticon from "../../images/logout.png";
 import UserProfileicon from "../../images/userProfile.svg";
 import LogoutConfirmation from "../ConfirmSignOut/confirmSignOut";
 import { fetchUserData } from "../UserProfile/fetchUserData";
+import "./NavBar.css";
 
 export default function NavBar() {
   const navigate = useNavigate();
@@ -70,7 +71,7 @@ export default function NavBar() {
         />
 
         <header className="home-header">
-          <span>Home Dashboard</span>
+          <span></span>
         </header>
 
         <div className="user-info-container">

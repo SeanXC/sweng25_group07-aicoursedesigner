@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
-// import NavBar from "../../components/newCourseDashbaord/newCourseDashbaord";
+import NavBar from "../NavBar/NavBar";
 
-export default function courseDisplay() {
-  return (
+export default function CourseDisplay() {
+    return (
     <>
-      {/*  <NavBar /> */}
+    <NavBar/>
     </>
-  );
+    );
 }

@@ -71,7 +71,7 @@ export default function HomeDashboard() {
   return (
     <>
       <div>
-        <NavBar/>
+        <NavBar />
         <div
           style={{
             display: "flex",
@@ -89,7 +89,7 @@ export default function HomeDashboard() {
               alignItems: "center",
               flexDirection: "row",
               justifyContent: "center",
-              backgroundColor: "#9705A8",
+              backgroundColor: "#8300A1",
               color: "white",
               padding: "0.5rem 1rem",
               borderRadius: "8px",
