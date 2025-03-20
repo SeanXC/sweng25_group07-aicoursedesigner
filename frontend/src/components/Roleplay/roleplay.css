@@ -1,12 +1,13 @@
 .roleplay-container {
-    display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+    /* display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; */
+    margin-top: 1200px;
     width: 700px;
-    margin: 100px auto;
+    /* margin: 100px auto; */
     padding: 20px;
-    background-color: #fff;
+    /* background-color: #fff; */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     font-family: 'Montserrat'
