@@ -23,23 +23,27 @@ export default function LanguageTeacherProfile() {
   const avatars = [avatar1, avatar2, avatar3,avatar4,avatar5];
 
   useEffect(() => {
-    const storedName = sessionStorage.getItem("name");
     const storedEmail = sessionStorage.getItem("email");
-
-    if (storedName && storedEmail) {
-      // For a new user, display name and email from sessionStorage
+  
+    // Only check for email; name can be ignored if present
+    if (storedEmail) {
+      const storedName = sessionStorage.getItem("name");
+  
+      // Proceed with profile data fetch if email is found
       setFormData((prev) => ({
         ...prev,
-        name: storedName,
+        name: storedName || prev.name, // Use name from sessionStorage if it exists
         email: storedEmail,
       }));
-
-      // Try to fetch profile data if exists on the server
+  
+      // Fetch the profile data from the server using the email
       fetchProfileData(storedEmail);
     } else {
-      navigate("/"); // Redirect to login if no user data found in sessionStorage
+      // Redirect to home page if email is not in sessionStorage
+      navigate("/");
     }
   }, [navigate]);
+  
 
   // Fetch saved profile data from the server using the email
   const fetchProfileData = async (email) => {

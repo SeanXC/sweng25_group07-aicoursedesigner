@@ -44,6 +44,7 @@ export default function ConfirmUser() {
           src={logoImage} 
           alt="Confirmation" 
           style={{ width: "200px", borderRadius: "10px" }} 
+          onClick={() => navigate("/")}
         />
       </div>
 
