@@ -9,10 +9,9 @@ export default function UserLogin() {
   const navigate = useNavigate(); // Initialize useNavigate hook
   const [isLogin, setIsLogin] = useState(true); // State to toggle between login and signup forms
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
     name: "",
-    email: "",
     confirmEmail: "",
   });
 
@@ -35,13 +34,13 @@ export default function UserLogin() {
     e.preventDefault();
 
     if (isLogin) {
-      console.log("Logging in with", formData.username, formData.password);
+      console.log("Logging in with", formData.email, formData.password);
       try {
-        const session = await signIn(formData.username, formData.password);
+        const session = await signIn(formData.email, formData.password);
         console.log("Sign in successful", session);
         if (session?.AccessToken) {
           sessionStorage.setItem("accessToken", session.AccessToken);
-          sessionStorage.setItem("email", formData.username); // Store email (only available if signup form)
+          sessionStorage.setItem("email", formData.email); // Store email (only available if signup form)
           navigate("/"); // Redirect to home after successful login
         } else {
           console.error("SignIn session or AccessToken is undefined.");
@@ -91,8 +90,8 @@ export default function UserLogin() {
             <>
               <input
                 type="text"
-                name="username"
-                value={formData.username}
+                name="email"
+                value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Email"
                 required
