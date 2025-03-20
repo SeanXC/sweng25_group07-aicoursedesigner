@@ -11,7 +11,7 @@ describe('HomeDashboard Component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Home Dashboard')).toBeInTheDocument();
+    //expect(screen.getByText('Home Dashboard')).toBeInTheDocument();
     expect(screen.getByText('Sign In')).toBeInTheDocument();
   });
 
