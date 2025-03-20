@@ -1,24 +1,19 @@
 stages:
   - install
   - build
-  - test    # Add the test stage here
+  - test
   - deploy
 
 variables:
   NODE_ENV: test
 
 before_script:
-before_script:
-  - rm -f .git/index.lock
-  - rm -f .git/config.lock
-  - rm -f .git/shallow.lock  
+  - rm -f .git/index.lock .git/config.lock .git/shallow.lock
   - node -v
   - npm -v
-  # Set up SSH keys and environment variables
   - mkdir -p ~/.ssh
   - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
   - chmod 600 ~/.ssh/id_rsa
-  # Ensure .env file is created from environment variables for both frontend and backend
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > frontend/.env
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > backend/.env
 
@@ -27,25 +22,24 @@ install_frontend:
   stage: install
   script:
     - cd frontend
-    - npm install   # Use npm install instead of npm ci
+    - npm install
   cache:
     key: npm-frontend
     paths:
       - frontend/node_modules/
   tags:
-    - frontend
+    - docker  
   variables:
-    GIT_DEPTH: 0  # Disable shallow cloning
-
+    GIT_DEPTH: 0
 
 install_backend:
   image: node:20
   stage: install
   script:
     - cd backend/src
-    - npm install 
+    - npm install
   tags:
-    - frontend
+    - docker  # Use the "docker" tag
 
 build_frontend:
   image: node:20
@@ -60,46 +54,34 @@ build_frontend:
     - cd frontend
     - npm run build
   tags:
-    - frontend
+    - docker
   artifacts:
     paths:
       - frontend/build/
     expire_in: 1h
 
-test_frontend:  # Add the test stage
+test_frontend:
   image: node:20
   stage: test
   dependencies:
     - install_frontend
   script:
     - cd frontend
-    - npm run test:ci  # Run the tests in CI mode
+    - npm run test:ci
   cache:
     key: npm-frontend
     paths:
       - frontend/node_modules/
   tags:
-    - frontend
+    - docker
 
 deploy_frontend:
   image: node:18
   stage: deploy
   script:
     - cd frontend
-    - mv build public  # GitLab Pages looks for the public folder
+    - mv build public
   only:
-    - frontEnd
-  tags:
     - frontend
-
-deploy_backend:
-  image: node:18
-  stage: deploy
-  script:
-    - cd backend
-    - export OPENAI_API_KEY="$OPENAI_API_KEY"
-    - node app.mjs &
-  only:
-    - main 
   tags:
-    - frontend
+    - docker

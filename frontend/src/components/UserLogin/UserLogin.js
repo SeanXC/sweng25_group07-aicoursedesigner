@@ -71,9 +71,25 @@ export default function UserLogin() {
   };
 
   return (
-    <div style={{ backgroundColor: "#9705A8", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+    <div
+      style={{
+        backgroundColor: "#8300A1",
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       {/* Logo Image */}
-      <div style={{ width: "100%", textAlign: "center", position: "absolute", top: "25px", right: "500px" }}>
+      <div
+        style={{
+          width: "100%",
+          textAlign: "center",
+          position: "absolute",
+          top: "25px",
+          right: "500px",
+        }}
+      >
         <img
           src={logoImage}
           alt="Logo"
@@ -83,9 +99,20 @@ export default function UserLogin() {
       </div>
 
       {/* Login or Signup Form */}
-      <div style={{ border: "3px solid white", padding: "1rem", borderRadius: "10px", backgroundColor: "white", width: "320px" }}>
+      <div
+        style={{
+          border: "3px solid white",
+          padding: "1rem",
+          borderRadius: "10px",
+          backgroundColor: "white",
+          width: "320px",
+        }}
+      >
         <h2>{isLogin ? "Sign in" : "Create Account"}</h2>
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+        >
           {isLogin ? (
             <>
               <input
@@ -95,7 +122,11 @@ export default function UserLogin() {
                 onChange={handleInputChange}
                 placeholder="Email"
                 required
-                style={{ padding: "0.75rem", borderRadius: "8px", border: "1px solid #ccc" }}
+                style={{
+                  padding: "0.75rem",
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                }}
               />
               <input
                 type="password"
@@ -104,7 +135,11 @@ export default function UserLogin() {
                 onChange={handleInputChange}
                 placeholder="Password"
                 required
-                style={{ padding: "0.75rem", borderRadius: "8px", border: "1px solid #ccc" }}
+                style={{
+                  padding: "0.75rem",
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                }}
               />
             </>
           ) : (
@@ -116,7 +151,11 @@ export default function UserLogin() {
                 onChange={handleInputChange}
                 placeholder="Name"
                 required
-                style={{ padding: "0.75rem", borderRadius: "8px", border: "1px solid #ccc" }}
+                style={{
+                  padding: "0.75rem",
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                }}
               />
               <input
                 type="password"
@@ -125,7 +164,11 @@ export default function UserLogin() {
                 onChange={handleInputChange}
                 placeholder="Password"
                 required
-                style={{ padding: "0.75rem", borderRadius: "8px", border: "1px solid #ccc" }}
+                style={{
+                  padding: "0.75rem",
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                }}
               />
               <input
                 type="email"
@@ -134,7 +177,11 @@ export default function UserLogin() {
                 onChange={handleInputChange}
                 placeholder="Email"
                 required
-                style={{ padding: "0.75rem", borderRadius: "8px", border: "1px solid #ccc" }}
+                style={{
+                  padding: "0.75rem",
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                }}
               />
               <input
                 type="email"
@@ -143,14 +190,18 @@ export default function UserLogin() {
                 onChange={handleInputChange}
                 placeholder="Confirm Email"
                 required
-                style={{ padding: "0.75rem", borderRadius: "8px", border: "1px solid #ccc" }}
+                style={{
+                  padding: "0.75rem",
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                }}
               />
             </>
           )}
           <button
             type="submit"
             style={{
-              backgroundColor: "purple",
+              backgroundColor: "#8300A1",
               color: "white",
               padding: "0.75rem 1.5rem",
               borderRadius: "8px",
@@ -162,34 +213,43 @@ export default function UserLogin() {
             {isLogin ? "Sign in" : "Create Account"}
           </button>
 
-      <div style={{ textAlign: "center" }}>
-        <p
-          style={{ marginTop: "1rem", cursor: "pointer", color: "purple" }}
-          onClick={toggleForm}
-        >
-          {isLogin ? "New user? Sign up here" : "Already have an account? Sign in"}
-        </p>
+          <div style={{ textAlign: "center" }}>
+            <p
+              style={{ marginTop: "1rem", cursor: "pointer", color: "#8300A1" }}
+              onClick={toggleForm}
+            >
+              {isLogin
+                ? "New user? Sign up here"
+                : "Already have an account? Sign in"}
+            </p>
 
-        {/* Forgot Password link */}
-        {isLogin && (
-          <p
-            style={{
-              marginTop: "1rem",
-              cursor: "pointer",
-              color: "purple",
-              fontSize: "0.9rem",
-            }}
-            onClick={handleForgotPasswordClick}
-          >
-            Forget Password?
-          </p>
-        )}
-      </div>
-    </form>
+            {/* Forgot Password link */}
+            {isLogin && (
+              <p
+                style={{
+                  marginTop: "1rem",
+                  cursor: "pointer",
+                  color: "#8300A1",
+                  fontSize: "0.9rem",
+                }}
+                onClick={handleForgotPasswordClick}
+              >
+                Forget Password?
+              </p>
+            )}
+          </div>
+        </form>
 
         {/* Social login buttons */}
-        <div style={{ marginTop: "0.5rem", display: "flex", flexDirection: "column", gap: "0.05rem" }}>
-          <button 
+        <div
+          style={{
+            marginTop: "0.5rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.05rem",
+          }}
+        >
+          <button
             style={{
               backgroundColor: "white",
               color: "black",
@@ -203,7 +263,11 @@ export default function UserLogin() {
               justifyContent: "center",
             }}
           >
-            <img src={googleLogo} alt="Google" style={{ width: '40px', marginRight: '1px' }} />
+            <img
+              src={googleLogo}
+              alt="Google"
+              style={{ width: "40px", marginRight: "1px" }}
+            />
             Continue with Google
           </button>
 
@@ -221,7 +285,11 @@ export default function UserLogin() {
               justifyContent: "center",
             }}
           >
-            <img src={appleLogo} alt="Apple" style={{ width: '40px', marginRight: '2px' }} />
+            <img
+              src={appleLogo}
+              alt="Apple"
+              style={{ width: "40px", marginRight: "2px" }}
+            />
             Continue with Apple
           </button>
         </div>

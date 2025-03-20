@@ -1,72 +1,65 @@
 import React, { useState, useRef } from "react";
+import axios from 'axios';
+import micImage from './microphone-342.svg';
 import "./Chatbot.css";
-import micImage from './microphone-342.svg'; 
-import AWS from 'aws-sdk';
-
-AWS.config.update({
-  accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
-  region: process.env.REACT_APP_AWS_REGION,
-});
-
 export default function Chatbot() {
   const [inputText, setInputText] = useState("");
   const [messages, setMessages] = useState([
-    { sender: "bot", text: "Type 'Hola' to start" }
+    { sender: "bot", text: "Hi! How can I assist you today?" }
   ]);
-  const [questionIndex, setQuestionIndex] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState("");
-  
+
   const recognitionRef = useRef(null);
-
-  const questions = [
-    "¿Cuál es tu nombre?",            // "What is your name?"
-    "¿Dónde vives?",                  // "Where do you live?"
-    "¿Qué te gusta hacer?",           // "What do you like to do?"
-    "¿Cuál es tu color favorito?",     // "What is your favorite color?"
-    "¿Cuántos años tienes?"           // "How old are you?"
-
-  ];
 
   const handleInputChange = (event) => {
     setInputText(event.target.value);
   };
 
-  const handleSendMessage = () => {
-    if (inputText.toLowerCase() === "hola" && questionIndex === 0) {
+  const handleSendMessage = async () => {
+    setMessages([
+      ...messages,
+      { sender: "user", text: inputText },
+    ]);
+    setInputText("");
+
+    const requestBody = {
+      email: "test@email.com",  
+      userLevel: "Intermediate",  
+      language: "Spanish",  
+      topic: "Travel",  
+      userMsg: inputText,  
+    };
+
+    try {
+      const response = await axios.post(
+        'https://xoo613pdgk.execute-api.eu-west-1.amazonaws.com/chat/generate-chat',  
+        requestBody,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": process.env.REACT_APP_API_KEY,
+          }
+        }
+      );
+
+      const botResponse = response.data.body.response;
+
       setMessages([
         ...messages,
         { sender: "user", text: inputText },
-        { sender: "bot", text: questions[questionIndex] }
+        { sender: "bot", text: botResponse }
       ]);
-      setInputText(""); 
-      setQuestionIndex(1); 
-      speakText(questions[questionIndex]);
-    } else if (questionIndex > 0 && questionIndex < questions.length) {
-      setMessages([
-        ...messages,
-        { sender: "user", text: inputText },
-        { sender: "bot", text: questions[questionIndex] }
-      ]);
-      setInputText("");
-      setQuestionIndex(questionIndex + 1); 
-      speakText(questions[questionIndex]);
-    } else if (questionIndex === questions.length) {
-      setMessages([
-        ...messages,
-        { sender: "user", text: inputText },
-        { sender: "bot", text: "Thank you for completing the questions!" }
-      ]);
-      setInputText("");
-      setQuestionIndex(0); 
+      
+      speakText(botResponse);
+      
+    } catch (error) {
+      console.error("Error sending message:", error);
     }
   };
 
-  // Check for browser support
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  // Toggle Mic On/Off
   const toggleMic = () => {
     if (!SpeechRecognition) {
       console.error("Speech Recognition API is not supported in this browser.");
@@ -74,7 +67,6 @@ export default function Chatbot() {
     }
 
     if (isRecording) {
-      // Stop recording if already on
       if (recognitionRef.current) {
         recognitionRef.current.stop();
         setIsRecording(false);
@@ -82,7 +74,6 @@ export default function Chatbot() {
       return;
     }
 
-    // Start recording if off
     const recognition = new SpeechRecognition();
     recognition.lang = 'es-ES';
     recognition.interimResults = true;
@@ -111,7 +102,6 @@ export default function Chatbot() {
     recognitionRef.current = recognition;
   };
 
-  // Text-to-Speech
   const speakText = (text) => {
     const speech = new SpeechSynthesisUtterance(text);
     speech.lang = 'es-ES';
@@ -140,16 +130,16 @@ export default function Chatbot() {
         />
         <button className="send-button" onClick={handleSendMessage}>Send</button>
         
-        {/* Microphone Button */}
         <div
           className={`mic-button ${isRecording ? "recording" : ""}`}
           onClick={toggleMic}
         >
           <img src={micImage} alt="microphone" />
         </div>
+
+        {/* Dummy Circle Button */}
+        <div className="dummy-circle-button" onClick={() => alert("Dummy button clicked!")}></div>
       </div>
     </div>
   );
 }
-
-
