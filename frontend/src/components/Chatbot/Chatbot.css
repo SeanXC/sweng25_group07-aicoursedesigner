@@ -1,3 +1,13 @@
+/* Page Background */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #8300A1; /* Purple background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
 /* Chat Container */
 .chat-container {
@@ -5,8 +15,9 @@
   flex-direction: column;
   justify-content: flex-end;
   width: 400px;
+  height: 600px;
   margin: 0 auto;
-  background-color: #fff; /* Add background color to the overall container */
+  background-color: #fff; /* White background for chatbox */
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
   padding: 20px;
@@ -17,8 +28,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  overflow-y: auto;
-  max-height: 400px;
+  overflow-y: auto; /* Allow scrolling */
+  height: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   margin-bottom: 20px;
@@ -34,20 +45,20 @@
   border-radius: 10px;
   max-width: 80%;
   word-wrap: break-word;
-  font-size: 14px; /* Slightly smaller font for bot messages */
+  font-size: 14px;
   font-family: 'Arial', sans-serif;
 }
 
 /* User Message */
 .user-message {
   align-self: flex-end;
-  background-color: #8300A1;
+  background-color: #5c0071;
   color: white;
   padding: 10px;
   border-radius: 10px;
   max-width: 80%;
   word-wrap: break-word;
-  font-size: 14px; /* Match font size of bot message */
+  font-size: 14px;
   font-family: 'Arial', sans-serif;
 }
 
@@ -58,8 +69,8 @@
   align-items: center;
   gap: 10px;
   padding: 10px;
-  border-top: 1px solid #ccc; /* Border on top for separation */
-  background-color: #fff; /* Background for input area */
+  border-top: 1px solid #ccc;
+  background-color: #fff;
 }
 
 /* Chat Input */
@@ -71,12 +82,7 @@
   font-size: 16px;
   font-family: 'Arial', sans-serif;
   outline: none;
-  box-sizing: border-box; /* Ensures padding doesn't affect width */
-}
-
-/* Chat Input on Focus */
-.chat-input:focus {
-  border-color: #8300A1; /* Change border color when focused */
+  box-sizing: border-box;
 }
 
 /* Send Button */
@@ -87,13 +93,12 @@
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  font-size: 16px; /* Consistent font size */
-  transition: background-color 0.3s ease; /* Smooth hover transition */
+  font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 
-/* Send Button Hover */
 .send-button:hover {
-  background-color: #5c0071; /* Darker purple on hover */
+  background-color: #5c0071;
 }
 
 /* Mic Button */
@@ -107,6 +112,7 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  margin-left: 10px; /* To separate from the input box */
 }
 
 .mic-button img {
@@ -122,4 +128,22 @@
 .mic-button.recording {
   background-color: red;
   border-radius: 50%;
+}
+
+/* Dummy Circle Button */
+.dummy-circle-button {
+  width: 40px;
+  height: 40px;
+  background-color:white; /* Green color */
+  border-radius: 50%; /* Makes it a circle */
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Dummy Circle Button Hover */
+.dummy-circle-button:hover {
+  background-color: #45a049; /* Slightly darker green */
 }

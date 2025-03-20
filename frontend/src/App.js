@@ -24,6 +24,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      {/*}
       <Routes>
         <Route path="/" element={<HomeDashboard />} />
 
@@ -51,6 +52,10 @@ function App() {
             )
           }
         />
+      </Routes>
+      */}
+      <Routes>
+      <Route path="/" element={<Chatbot />} />
       </Routes>
     </BrowserRouter>
   );
