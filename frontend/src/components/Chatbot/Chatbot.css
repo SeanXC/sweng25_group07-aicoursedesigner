@@ -1,13 +1,4 @@
-/* Page Background */
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #8300A1; /* Purple background */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+
 
 /* Chat Container */
 .chat-container {

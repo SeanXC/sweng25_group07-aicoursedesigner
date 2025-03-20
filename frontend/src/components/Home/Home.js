@@ -7,8 +7,10 @@ import NavBar from "../NavBar/NavBar";
 export default function HomeDashboard() {
   return (
     <>
+     <div className ="home-container"> 
       <div>
         <NavBar />
+       
         <div className="content">
           <img src={NualasImage} alt="Nualas Logo" className="nualas-image" />
           <p className="text">Create a course</p>
@@ -26,8 +28,7 @@ export default function HomeDashboard() {
             </button>
           </Link>
         </div>
-
-        
+        </div>
       </div>
     </>
   );

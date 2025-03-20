@@ -13,8 +13,7 @@ import Roleplay from "./components/Roleplay/roleplay";
 import Chatbot from './components/Chatbot/Chatbot';
 import CourseDashboard from "./components/newCourseDashbaord/newCourseDashboard";
 import CompleteProfile from './components/ConfirmUser/completeProfile';
-import CourseDisplay from './components/CourseDisplay/CourseDisplay';
-
+import CourseDisplay from './components/courseDisplay/courseDisplay'
 
 function App() {
   const isAuthenticated = () => {
@@ -24,7 +23,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      {/*}
+      {
       <Routes>
         <Route path="/" element={<HomeDashboard />} />
 
@@ -53,10 +52,8 @@ function App() {
           }
         />
       </Routes>
-      */}
-      <Routes>
-      <Route path="/" element={<Chatbot />} />
-      </Routes>
+      }
+   
     </BrowserRouter>
   );
 }
