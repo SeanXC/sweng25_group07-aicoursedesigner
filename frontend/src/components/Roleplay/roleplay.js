@@ -56,7 +56,7 @@ const conversation = {
 export default function Roleplay() {
   return (
     <>
-      <div style={{ backgroundColor: "white" }}>
+      <div>
         {/* <header
           style={{
             backgroundColor: "#8300A1",

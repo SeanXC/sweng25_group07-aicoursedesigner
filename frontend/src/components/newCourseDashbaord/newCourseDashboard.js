@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./newCourseDashbaord.css";
-import logoImage from "../../images/logowhite.png";
 import Roleplay from "../../components/Roleplay/roleplay";
+import NavBar from "../NavBar/NavBar";
+import Chatbot from "../../components/Chatbot/Chatbot"
 
 const Tabs = ({ activeTab, setActiveTab }) => {
   const tabs = ["Translation", "Roleplay", "Chatbot"];
@@ -42,7 +43,9 @@ const SideBar = () => (
     {["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"].map((week) => (
       <div className="weeks">
         <div key={week} className="week-box">
-          {week}
+          <p><b>{week}</b></p>
+          <p>Content description for {week}</p>
+          
         </div>
       </div>
     ))}
@@ -61,43 +64,17 @@ const Translation = () => (
   </div>
 );
 
-const Chatbot = () => (
-  <div>
-    <p>Chatbot coming soon!</p>
-  </div>
-);
+// const Chatbot = () => (
+//   <div>
+//     <p>Chatbot coming soon!</p>
+//   </div>
+// );
 
 export default function CourseDashboard() {
   const [activeTab, setActiveTab] = useState("Translation");
   return (
     <div>
-      <header
-        style={{
-          backgroundColor: "#8300A1",
-          color: "white",
-          fontSize: "1.25rem",
-          fontWeight: "bold",
-          padding: "1rem 1.5rem",
-          // display: "flex",
-          // justifyContent: "center",
-          // alignItems: "center",
-          // textAlign: "center",
-        }}
-      >
-        <img src={logoImage} alt="Logo" className="logo" />
-        <span
-          style={{
-            // marginLeft: "300px"
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            textAlign: "center",
-          }}
-        >
-          Course Dashboard
-        </span>
-      </header>
-
+      <NavBar/>
       <div className="dashboard-container">
         <div className="main-content">
           <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
