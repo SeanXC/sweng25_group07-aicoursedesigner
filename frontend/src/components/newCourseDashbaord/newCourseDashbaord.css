@@ -69,17 +69,19 @@ body {
 }
 
 .weeks{
-    padding: 40px;
+    padding: 8px;
+    
 }
 
 .week-box {
-    padding: 10px;
+    padding: 8px;
     border: 1px solid #ccc;
     border-radius: 10px;
     text-align: center;
     background: white;
     height: 100px;
     cursor: pointer;
+    
 }
 
 .week-box.active{
@@ -98,7 +100,10 @@ body {
 }
 
 .roleplay{
-    margin-top: 1200px;
+    display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     width: 400px auto;
 }
 
@@ -122,8 +127,9 @@ body {
 }
 
 .sidebar {
-    width: 400px;
-    height:100%;
+    width: 350px ;
+    overflow-y: auto;
+    height: calc(100vh - 60px);
     background-color: #f4f4f4;
     padding: 15px;
     margin-left: auto;
@@ -173,43 +179,3 @@ input {
     position: relative;
 }
 
-.home-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    padding: 20px;
-    margin-left: -130px;
-    /* Adjust this value to move the header left */
-}
-
-.home-header span {
-    color: white;
-    font-weight: bold;
-    font-size: 24px;
-}
-
-.home-button {
-    background-color: #8300A1;
-    color: white;
-    padding: 0.5rem 1rem;
-    /* Smaller padding */
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border: none;
-    cursor: pointer;
-    text-align: center;
-}
-
-
-
-.logo {
-    height: 40px;
-    width: auto;
-}
-
-.nualas-image {
-    max-width: 40%;
-    height: auto;
-    margin-top: -300px;
-}

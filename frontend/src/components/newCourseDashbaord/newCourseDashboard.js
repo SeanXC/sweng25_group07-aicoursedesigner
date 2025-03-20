@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./newCourseDashbaord.css";
 import Roleplay from "../../components/Roleplay/roleplay";
 import NavBar from "../NavBar/NavBar";
+import Chatbot from "../../components/Chatbot/Chatbot"
 
 const Tabs = ({ activeTab, setActiveTab }) => {
   const tabs = ["Translation", "Roleplay", "Chatbot"];
@@ -63,11 +64,11 @@ const Translation = () => (
   </div>
 );
 
-const Chatbot = () => (
-  <div>
-    <p>Chatbot coming soon!</p>
-  </div>
-);
+// const Chatbot = () => (
+//   <div>
+//     <p>Chatbot coming soon!</p>
+//   </div>
+// );
 
 export default function CourseDashboard() {
   const [activeTab, setActiveTab] = useState("Translation");
