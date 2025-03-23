@@ -1,23 +1,33 @@
 import { realTimeSpeech } from "./speechProcessor.mjs";
 import fs from "fs";
 import path from "path";
+import { parse } from 'aws-multipart-parser';
 
 export async function handler(event){
     try{
-        const { email, userLevel, language, topic, audioFileName, audioBase64 } = JSON.parse(event.body);
-        if(!email || !userLevel || !language || !topic || !audioFileName || !audioBase64){
+        if(!event.body){
             return{
                 statusCode: 400,
-                body: JSON.stringify({ error: "missing required parameters" })
+                body: JSON.stringify({ error: "missing event body" })
             };
         }
 
-        const audioFilePath = path.join("/tmp", audioFileName);
-        const buffer = Buffer.from(audioBase64, "base64");
-        fs.writeFileSync(audioFilePath, buffer);
-        console.log(`audio file saved to ${audioFilePath}`);
+        const formData = parse(event, true);
+        if(!formData.email || !formData.userLevel || !formData.language || !formData.topic || !formData.audio){
+            return{
+                statusCode: 400,
+                body: JSON.stringify({ error: "missing required fields" })
+            };
+        }
 
-        const audioResponsePath = await realTimeSpeech(email, userLevel, language, topic, audioFilePath);
+        const audioContent = formData.audio.content;
+        const audioFilename = formData.audio.filename || "upload.mp3";
+        const audioFilePath = path.join("/tmp", audioFilename);
+
+        fs.writeFileSync(audioFilePath, audioContent);
+        console.log("audio file saved to:", audioFilePath);
+
+        const audioResponsePath = await realTimeSpeech(formData.email, formData.userLevel, formData.language, formData.topic, audioFilePath);
         return{
             statusCode: 200,
             body: JSON.stringify({ audioResponsePath })

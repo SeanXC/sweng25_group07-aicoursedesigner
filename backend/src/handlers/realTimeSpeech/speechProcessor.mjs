@@ -46,11 +46,10 @@ async function generateSpeech(text, email) {
         console.error("received empty audio buffer from OpenAI");
         return null;
     }
-    //fs.writeFileSync(speechFile, buffer);
 
     const key = `${email}/${uuidv4()}.mp3`;
     const params = {
-        Bucket: realtimespeech-output,
+        Bucket: BUCKET_NAME,
         Key: key,
         Body: buffer,
         ContentType: 'audio/mp3',
