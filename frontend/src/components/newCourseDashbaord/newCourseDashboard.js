@@ -3,6 +3,7 @@ import "./newCourseDashbaord.css";
 import Roleplay from "../../components/Roleplay/roleplay";
 import NavBar from "../NavBar/NavBar";
 import Chatbot from "../../components/Chatbot/Chatbot"
+import { useCourseData } from "../Context/CourseDataContext"; 
 
 const Tabs = ({ activeTab, setActiveTab }) => {
   const tabs = ["Translation", "Roleplay", "Chatbot"];
@@ -72,6 +73,8 @@ const Translation = () => (
 
 export default function CourseDashboard() {
   const [activeTab, setActiveTab] = useState("Translation");
+  const { courseData } = useCourseData(); //gets you the course data 
+  console.log("Course Data:", courseData);
   return (
     <div>
       <NavBar/>

@@ -1,366 +1,139 @@
 import React, { useState, useEffect } from "react";
 import "../Home/Home.css";
-import ShowPhrases from "../ShowPhrases/ShowPhrases";
 import { fetchUserData } from '../UserProfile/fetchUserData'; 
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import NavBar from "../NavBar/NavBar";
-let data = {};
-
-const formDataEntries = {
-  courseName: "",
-  courseDesc: "",
-  difficulty: "",
-  targetLang: "",
-  nativeLang: "",
-  duration: 5,
-};
-
+import { useCourseData } from "../Context/CourseDataContext"; 
 
 export default function HomeDashboard() {
   const navigate = useNavigate();
   const [showCourse, setShowCourse] = useState(true);
-  const [ courseData, setCourseData] = useState (null);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState(null);
-  const [userLanguage, setUserLanguage] = useState(""); // Store the language to learn from user data
-  const [userDifficulty, setUserDifficulty] = useState(""); // Store the difficulty from user data
+  const [userLanguage, setUserLanguage] = useState("");
+  const [userDifficulty, setUserDifficulty] = useState("");
+  const [duration, setDuration] = useState(5);
 
-
-
-  const handleLoginClick = () => {
-    setShowForm((prev) => !prev); // Toggle the form visibility
-  };
+  const { setCourseData } = useCourseData(); 
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      const userEmail = sessionStorage.getItem("email"); // Get user email from sessionStorage
+      const userEmail = sessionStorage.getItem("email");
       if (userEmail) {
-        const userData = await fetchUserData(userEmail); // Fetch user data using fetchUserData function
+        const userData = await fetchUserData(userEmail);
         if (userData) {
-          setUserLanguage(userData.languages || ""); // Set user language or default to empty string
-          setUserDifficulty(userData.proficiency || ""); // Set user difficulty or default to empty string
+          setUserLanguage(userData.languages || "");
+          setUserDifficulty(userData.proficiency || "");
         }
       }
     };
-  
-    fetchUserProfile();  // Call the function to fetch user data
-  }, []);  
-  
+    fetchUserProfile();
+  }, []);
 
   async function formSubmit(e) {
-    
     e.preventDefault();
     const formData = new FormData(e.target);
     const values = Object.fromEntries(formData.entries());
-    console.log(values);
-    //setFormData(values);
+    const userEmail = sessionStorage.getItem("email") || "testuser@email.com";
+    
     const courseData = {
+      email: userEmail,
       courseName: values.courseName,
       courseDesc: values.courseDesc,
       difficulty: values.difficulty || userDifficulty,
       targetLang: values.language || userLanguage,
       nativeLang: values.nativeLanguage,
-      duration: 5,
-    }
-    console.log ("Current difficulty," , values.difficulty)
-    console.log ("Current Course Data",courseData )
+      duration: duration,
+    };
 
-    setCourseData(courseData);
-    setShowCourse(true);
+    try {
+      console.log("Request Body:", JSON.stringify(courseData));
+      const response = await fetch("https://ycuzxyk9xj.execute-api.eu-west-1.amazonaws.com/dev/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(courseData),
+      });
+
+      if (response.ok) {
+        const responseBody = await response.json();
+        console.log("Response Body:", responseBody);
+        setCourseData(responseBody);
+        navigate('/courseDashboard');
+      } else {
+        console.error("Error generating course:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error generating course:", error);
+    }
   }
+
   return (
-    <>
-      <div>
-        <NavBar />
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "20px",
-          }}
-        >
-          <button
-            onClick={handleLoginClick}
-            style={{
-              position: "relative",
-              top: "20px",
-              // margin: "100px auto",
-              textAlign: "center",
-              alignItems: "center",
-              flexDirection: "row",
-              justifyContent: "center",
-              backgroundColor: "#8300A1",
-              color: "white",
-              padding: "0.5rem 1rem",
-              borderRadius: "8px",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            {showCourse && (
-              <>
-                <br />
-                <div
-                  style={{
-                    width: "600px",
-                  }}
-                >
-                  <form method="post" onSubmit={formSubmit}>
-                    <div>
-                      <br />
-                      <b>Course Information</b>
-                      <p>Course Name:</p>
-                      <label
-                        style={{
-                          fontWeight: "bold",
-                          color: "#333",
-                        }}
-                      >
-                        <input name="courseName" />
-                      </label>
-                    </div>
-                    <br />
-                    <br />
-                    <div>
-                      <p>Description:</p>
-                      <label
-                        style={{
-                          fontWeight: "bold",
-                          color: "#333",
-                        }}
-                      >
-                        <input name="courseDesc" />
-                      </label>
-                    </div>
-                    <br />
-                    <br />
-                    <div>
-                      <p>Difficulty:</p>
-                      <select
-                        name="difficulty"
-                        style={{
-                          padding: "10px",
-                          borderRadius: "5px",
-                          border: "1px solid #ccc",
-                          outline: "none",
-                          fontSize: "1rem",
-                          backgroundColor: "white",
-                        }}
-                      >
-                        <option hidden value={userDifficulty}>
-                          {userDifficulty}
-                        </option>
-                        <option value="A1">A1</option>
-                        <option value="A2">A2</option>
-                        <option value="B1">B1</option>
-                        <option value="B2">B2</option>
-                        <option value="C1">C1</option>
-                        <option value="C2">C2</option>
-                      </select>
-                    </div>
-                    <br />
-                    <br />
-                    <div>
-                      <p>Learn:</p>
-                      <select
-                        name="language"
-                        style={{
-                          padding: "10px",
-                          borderRadius: "5px",
-                          border: "1px solid #ccc",
-                          outline: "none",
-                          fontSize: "1rem",
-                          backgroundColor: "white",
-                        }}
-                      >
-                        <option hidden value={userLanguage}>
-                          {userLanguage}
-                        </option>
-                        <option value="Spanish">Spanish</option>
-                        <option value="English">English</option>
-                        <option value="French">French</option>
-                        <option value="Italian">Italian</option>
-                        <option value="German">German</option>
-                        <option value="Portuguese">Portuguese</option>
-                      </select>
-                    </div>
-                    <br />
-                    <br />
-                    <div>
-                      <p>Speakers Of:</p>
-                      <select
-                        name="nativeLanguage"
-                        style={{
-                          padding: "10px",
-                          borderRadius: "5px",
-                          border: "1px solid #ccc",
-                          outline: "none",
-                          fontSize: "1rem",
-                          backgroundColor: "white",
-                        }}
-                      >
-                        <option value="English">English</option>
-                        <option value="Spanish">Spanish</option>
-                        <option value="French">French</option>
-                        <option value="Italian">Italian</option>
-                        <option value="German">German</option>
-                        <option value="Portuguese">Portuguese</option>
-                        <option value="Ukraninian">Ukraninian</option>
-                        <option value="Arabic">Arabic</option>
-                        <option value="ChineseS">Chinese Simplified</option>
-                        <option value="ChineseT">Chinese Traditional</option>
-                        <option value="Czech">Czech</option>
-                        <option value="Danish">Danish</option>
-                        <option value="Dutch">Dutch</option>
-                        <option value="Filipino">Filipino</option>
-                        <option value="Greek">Greek</option>
-                        <option value="Hindi">Hindi</option>
-                        <option value="Hungarian">Hungarian</option>
-                        <option value="Indonesian">Indonesian</option>
-                        <option value="Japanese">Japanese</option>
-                        <option value="Korean">Korean</option>
-                        <option value="Malay">Malay</option>
-                        <option value="Polish">Polish</option>
-                        <option value="Punjabi">Punjabi</option>
-                        <option value="Swahili">Swahili</option>
-                        <option value="Thai">Thai</option>
-                        <option value="Turkish">Turkish</option>
-                        <option value="Vietnamese">Vietnamese</option>
-                      </select>
-                    </div>
-                    <br />
-                    <br />
-                    <hr />
-                    <div>
-                      <br></br>
-                      <b>Course settings</b>
-                      <p>
-                        Limit access to your course by setting visibility to
-                        private and including an enrolment key
-                      </p>
-                      <br />
-                      <p>
-                        Visability
-                        <label
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginRight: "1rem",
-                          }}
-                        >
-                          <input
-                            type="radio"
-                            name="visibility"
-                            value="public"
-                            style={{
-                              width: "20px",
-                            }}
-                          />
-                          Public
-                        </label>
-                        <br />
-                        <label
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginRight: "1rem",
-                          }}
-                        >
-                          <input
-                            type="radio"
-                            name="visibility"
-                            value="public"
-                            style={{
-                              width: "20px",
-                            }}
-                          />
-                          Private
-                        </label>
-                      </p>
-                    </div>
-                    <br />
-                    <div>
-                      <p>Enrolment Key</p>
-                      <label
-                        style={{
-                          fontWeight: "bold",
-                          color: "#333",
-                        }}
-                      >
-                        <input name="enrolmentKey" />
-                      </label>
-                    </div>
-                    <br />
-                    <br />
-                    <div>
-                      <p>Allowed school domains (optional)</p>
-                      <label
-                        style={{
-                          fontWeight: "bold",
-                          color: "#333",
-                        }}
-                      >
-                        <input name="schoolDomains" />
-                      </label>
-                    </div>
-                    <br />
-                    <div>
-                      <p>
-                        Reviews
-                        <label
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginRight: "1rem",
-                          }}
-                        >
-                          <input
-                            type="radio"
-                            name="reviews"
-                            value="public"
-                            style={{
-                              width: "20px",
-                            }}
-                          />
-                          Enabled
-                        </label>
-                        <br />
-                        <label
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginRight: "1rem",
-                          }}
-                        >
-                          <input
-                            type="radio"
-                            name="reviews"
-                            value="public"
-                            style={{
-                              width: "20px",
-                            }}
-                          />
-                          Disabled
-                        </label>
-                      </p>
-                    </div>
-                    {formData && <p>You're learning {formData.language}</p>}
-                    <div>
-                      <Link to="/courseDashboard">
-                        <button type="submit">Submit</button>
-                      </Link>
-                      <br />
-                      <br />
-                    </div>
-                  </form>
-                </div>
-                {courseData && <ShowPhrases courseData={courseData} />}
-              </>
-            )}
-          </button>
-        </div>
+    <div>
+      <NavBar />
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+        <button onClick={() => setShowForm(prev => !prev)} style={{ backgroundColor: "#8300A1", color: "white", padding: "0.5rem 1rem", borderRadius: "8px", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", border: "none", cursor: "pointer" }}>
+          {showCourse && (
+            <>
+              <div style={{ width: "600px" }}>
+                <form method="post" onSubmit={formSubmit}>
+                  <div>
+                    <b>Course Information</b>
+                    <p>Course Name:</p>
+                    <input name="courseName" />
+                  </div>
+                  <div>
+                    <p>Description:</p>
+                    <input name="courseDesc" />
+                  </div>
+                  <div>
+                    <p>Difficulty:</p>
+                    <select name="difficulty" style={{ width: "100%", padding: "8px", fontSize: "16px" }}>
+                    <option hidden value={userDifficulty}>{userDifficulty}</option>
+                      <option value="A1">A1</option>
+                      <option value="A2">A2</option>
+                      <option value="B1">B1</option>
+                      <option value="B2">B2</option>
+                      <option value="C1">C1</option>
+                      <option value="C2">C2</option>
+                    </select>
+                  </div>
+                  <div>
+                    <p>Learn:</p>
+                    <select name="language" style={{ width: "100%", padding: "8px", fontSize: "16px" }}>
+                    <option hidden value={userLanguage}>{userLanguage}</option>
+                      <option value="Spanish">Spanish</option>
+                      <option value="English">English</option>
+                      <option value="French">French</option>
+                      <option value="Italian">Italian</option>
+                      <option value="German">German</option>
+                      <option value="Portuguese">Portuguese</option>
+                    </select>
+                  </div>
+                  <div>
+                    <p>Speakers Of:</p>
+                    <select name="nativeLanguage" style={{ width: "100%", padding: "8px", fontSize: "16px" }}>
+                    <option value="English">English</option>
+                      <option value="Spanish">Spanish</option>
+                      <option value="French">French</option>
+                      <option value="Italian">Italian</option>
+                      <option value="German">German</option>
+                      <option value="Portuguese">Portuguese</option>
+                    </select>
+                  </div>
+                  <div>
+                    <p>Duration: {duration} weeks</p>
+                    <input type="range" min="1" max="12" value={duration} onChange={(e) => setDuration(e.target.value)} />
+                  </div>
+                  <div>
+                    <button type="submit">Submit</button>
+                  </div>
+                </form>
+              </div>
+            </>
+          )}
+        </button>
       </div>
-    </>
+    </div>
   );
-};
+}
