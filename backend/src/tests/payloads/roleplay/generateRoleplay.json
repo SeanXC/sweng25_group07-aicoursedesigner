@@ -1,0 +1,6 @@
+{
+    "httpMethod": "POST",
+    "path": "/generate-roleplay",
+    "body": "{ \"email\": \"user@example.com\", \"userLevel\": \"A2\", \"language\": \"Spanish\", \"topic\": \"Ordering Food at a Restaurant\", \"weekTarget\": 1, \"outline\": { \"course_title\": \"Spanish Course for English Speakers\", \"description\": \"For English speakers\", \"difficulty\": \"B1\", \"target_language\": \"Spanish\", \"language_used\": \"English\", \"duration\": \"5 weeks\", \"weeks\": [ { \"week\": 1, \"title\": \"Introduction to Spanish\", \"objectives\": [\"Understand basic Spanish greetings\", \"Familiarize with Spanish alphabets\"], \"main_content\": [\"Spanish alphabets\", \"Spanish greetings\"], \"activities\": [\"Pronunciation practice\", \"Role play for greetings\"] }, { \"week\": 2, \"title\": \"Basic Grammar and Vocabulary\", \"objectives\": [\"Learn basic Spanish grammar\", \"Expand Spanish vocabulary\"], \"main_content\": [\"Spanish verbs\", \"Spanish adjectives\"], \"activities\": [\"Grammar exercises\", \"Vocabulary flashcards\"] } ] } }"
+  }
+  

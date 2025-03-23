@@ -1,74 +1,126 @@
 stages:
   - install
   - build
+  - test
   - deploy
 
 variables:
   NODE_ENV: test
 
 before_script:
-  # Ensure node and npm are available
+  - rm -f .git/index.lock .git/config.lock .git/shallow.lock
   - node -v
   - npm -v
-  # Set up SSH keys and environment variables
   - mkdir -p ~/.ssh
   - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
   - chmod 600 ~/.ssh/id_rsa
-  - echo "$OPENAI_API_KEY" > .env
+  - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > frontend/.env
+  - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > backend/.env
 
 install_frontend:
-  image: node:18
+  image: node:20
   stage: install
   script:
     - cd frontend
-    - npm ci
-    - npm install react-scripts  # Explicitly install react-scripts
-    - npm list react-scripts  # Verify installation
+    - npm install
+  cache:
+    key: npm-frontend
+    paths:
+      - frontend/node_modules/
   tags:
-    - frontend
-
-
+    - docker  
+  variables:
+    GIT_DEPTH: 0
 
 install_backend:
-  image: node:18
+  image: node:20
   stage: install
   script:
     - cd backend/src
     - npm install
   tags:
-    - frontend
+    - docker  # Use the "docker" tag
 
 build_frontend:
-  image: node:18
+  image: node:20
   stage: build
+  dependencies:
+    - install_frontend
+  cache:
+    key: npm-frontend
+    paths:
+      - frontend/node_modules/
   script:
     - cd frontend
-    - npm run build  # for react scripts
+    - npm run build
   tags:
-    - frontend
+    - docker
   artifacts:
     paths:
       - frontend/build/
     expire_in: 1h
+
+test_frontend:
+  image: node:20
+  stage: test
+  dependencies:
+    - install_frontend
+  script:
+    - cd frontend
+    - npm run test:ci
+  cache:
+    key: npm-frontend
+    paths:
+      - frontend/node_modules/
+  tags:
+    - docker
 
 deploy_frontend:
   image: node:18
   stage: deploy
   script:
     - cd frontend
-    - mv build public  # GitLab Pages looks for the public folder
+    - mv build public
   only:
-    - frontEnd
-  tags:
     - frontend
+  tags:
+    - docker
 
-deploy_backend:
-  image: node:18
-  stage: deploy
-  script:
-    - cd backend
-    - ssh user@your-server-ip 'cd /path/to/backend && git pull && npm ci && pm2 restart server'
-  only:
-    - frontEnd
+test_backend_lambda:
+  image:
+    name: amazon/aws-cli:latest
+    entrypoint: [""]
+  stage: test
   tags:
-    - frontend
+    - docker
+  before_script:
+    - cd backend/src
+    - echo "Using AWS CLI:"
+    - aws --version
+  script:
+    - echo "Testing Lambda: generateRoleplay"
+    - aws lambda invoke \
+        --function-name generateRoleplay \
+        --payload fileb://src/tests/payloads/roleplay/generateRoleplay.json \
+        generateRoleplay_output.json \
+        --log-type Tail
+    - cat generateRoleplay_output.json
+
+    - echo "Testing Lambda: getRoleplayHistory"
+    - aws lambda invoke \
+        --function-name getRoleplayHistory \
+        --payload fileb://src/tests/payloads/roleplay/getRoleplayHistory.json \
+        getRoleplayHistory_output.json \
+        --log-type Tail
+    - cat getRoleplayHistory_output.json
+
+    - echo "Testing Lambda: saveRoleplayHistory"
+    - aws lambda invoke \
+        --function-name saveRoleplayHistory \
+        --payload fileb://src/tests/payloads/roleplay/saveRoleplayHistory.json \
+        saveRoleplayHistory_output.json \
+        --log-type Tail
+    - cat saveRoleplayHistory_output.json
+  only:
+    - backend
+
