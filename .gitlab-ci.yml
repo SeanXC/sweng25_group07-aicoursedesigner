@@ -99,28 +99,17 @@ test_backend_lambda:
     - aws --version
   script:
     - echo "Testing Lambda: generateRoleplay"
-    - aws lambda invoke \
-        --function-name generateRoleplay \
-        --payload fileb://src/tests/payloads/roleplay/generateRoleplay.json \
-        generateRoleplay_output.json \
-        --log-type Tail
+    - aws lambda invoke --function-name generateRoleplay --payload fileb://src/tests/payloads/roleplay/generateRoleplay.json generateRoleplay_output.json --log-type Tail
     - cat generateRoleplay_output.json
 
     - echo "Testing Lambda: getRoleplayHistory"
-    - aws lambda invoke \
-        --function-name getRoleplayHistory \
-        --payload fileb://src/tests/payloads/roleplay/getRoleplayHistory.json \
-        getRoleplayHistory_output.json \
-        --log-type Tail
+    - aws lambda invoke --function-name getRoleplayHistory --payload fileb://src/tests/payloads/roleplay/getRoleplayHistory.json getRoleplayHistory_output.json --log-type Tail
     - cat getRoleplayHistory_output.json
 
     - echo "Testing Lambda: saveRoleplayHistory"
-    - aws lambda invoke \
-        --function-name saveRoleplayHistory \
-        --payload fileb://src/tests/payloads/roleplay/saveRoleplayHistory.json \
-        saveRoleplayHistory_output.json \
-        --log-type Tail
+    - aws lambda invoke --function-name saveRoleplayHistory --payload fileb://src/tests/payloads/roleplay/saveRoleplayHistory.json saveRoleplayHistory_output.json --log-type Tail
     - cat saveRoleplayHistory_output.json
   only:
     - backend
+
 
