@@ -4,14 +4,16 @@ body {
 }
 
 input, select {
-    width: 90%;
-    height: 40px;
+    width: 100%;
+    height: 50px;
     padding: 12px;
     border-radius: 8px;
     border: 2px solid #ccc;
     font-size: large;
 }
-
+select option {
+    padding: 10px; 
+}
 input:focus, select:focus {
     border-color: #8300A1;
     box-shadow: 0 0 8px rgba(128, 0, 128, 0.3);
