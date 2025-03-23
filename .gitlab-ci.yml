@@ -17,74 +17,74 @@ before_script:
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > frontend/.env
   - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > backend/.env
 
-install_frontend:
-  image: node:20
-  stage: install
-  script:
-    - cd frontend
-    - npm install
-  cache:
-    key: npm-frontend
-    paths:
-      - frontend/node_modules/
-  tags:
-    - docker  
-  variables:
-    GIT_DEPTH: 0
+# install_frontend:
+#   image: node:20
+#   stage: install
+#   script:
+#     - cd frontend
+#     - npm install
+#   cache:
+#     key: npm-frontend
+#     paths:
+#       - frontend/node_modules/
+#   tags:
+#     - docker  
+#   variables:
+#     GIT_DEPTH: 0
 
-install_backend:
-  image: node:20
-  stage: install
-  script:
-    - cd backend/src
-    - npm install
-  tags:
-    - docker  # Use the "docker" tag
+# install_backend:
+#   image: node:20
+#   stage: install
+#   script:
+#     - cd backend/src
+#     - npm install
+#   tags:
+#     - docker
 
-build_frontend:
-  image: node:20
-  stage: build
-  dependencies:
-    - install_frontend
-  cache:
-    key: npm-frontend
-    paths:
-      - frontend/node_modules/
-  script:
-    - cd frontend
-    - npm run build
-  tags:
-    - docker
-  artifacts:
-    paths:
-      - frontend/build/
-    expire_in: 1h
+# build_frontend:
+#   image: node:20
+#   stage: build
+#   dependencies:
+#     - install_frontend
+#   cache:
+#     key: npm-frontend
+#     paths:
+#       - frontend/node_modules/
+#   script:
+#     - cd frontend
+#     - npm run build
+#   tags:
+#     - docker
+#   artifacts:
+#     paths:
+#       - frontend/build/
+#     expire_in: 1h
 
-test_frontend:
-  image: node:20
-  stage: test
-  dependencies:
-    - install_frontend
-  script:
-    - cd frontend
-    - npm run test:ci
-  cache:
-    key: npm-frontend
-    paths:
-      - frontend/node_modules/
-  tags:
-    - docker
+# test_frontend:
+#   image: node:20
+#   stage: test
+#   dependencies:
+#     - install_frontend
+#   script:
+#     - cd frontend
+#     - npm run test:ci
+#   cache:
+#     key: npm-frontend
+#     paths:
+#       - frontend/node_modules/
+#   tags:
+#     - docker
 
-deploy_frontend:
-  image: node:18
-  stage: deploy
-  script:
-    - cd frontend
-    - mv build public
-  only:
-    - frontend
-  tags:
-    - docker
+# deploy_frontend:
+#   image: node:18
+#   stage: deploy
+#   script:
+#     - cd frontend
+#     - mv build public
+#   only:
+#     - frontend
+#   tags:
+#     - docker
 
 test_backend_lambda:
   stage: test
@@ -111,8 +111,3 @@ test_backend_lambda:
     - cat saveRoleplayHistory_output.json
   only:
     - backend
-
-
-
-
-
