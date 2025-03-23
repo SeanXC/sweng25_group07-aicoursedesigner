@@ -99,15 +99,15 @@ test_backend_lambda:
     - aws --version
   script:
     - echo "Invoking AWS Lambda function 'generateRoleplay'..."
-    - aws lambda invoke --function-name generateRoleplay --payload fileb://src/tests/payloads/roleplay/generateRoleplay.json generateRoleplay_output.json --log-type Tail
+    - aws lambda invoke --function-name generateRoleplay --payload fileb://tests/payloads/roleplay/generateRoleplay.json generateRoleplay_output.json --log-type Tail
     - cat generateRoleplay_output.json
 
     - echo "Invoking AWS Lambda function 'getRoleplayHistory'..."
-    - aws lambda invoke --function-name getRoleplayHistory --payload fileb://src/tests/payloads/roleplay/getRoleplayHistory.json getRoleplayHistory_output.json --log-type Tail
+    - aws lambda invoke --function-name getRoleplayHistory --payload fileb://tests/payloads/roleplay/getRoleplayHistory.json getRoleplayHistory_output.json --log-type Tail
     - cat getRoleplayHistory_output.json
 
     - echo "Invoking AWS Lambda function 'saveRoleplayHistory'..."
-    - aws lambda invoke --function-name saveRoleplayHistory --payload fileb://src/tests/payloads/roleplay/saveRoleplayHistory.json saveRoleplayHistory_output.json --log-type Tail
+    - aws lambda invoke --function-name saveRoleplayHistory --payload fileb://tests/payloads/roleplay/saveRoleplayHistory.json saveRoleplayHistory_output.json --log-type Tail
     - cat saveRoleplayHistory_output.json
   only:
     - backend
