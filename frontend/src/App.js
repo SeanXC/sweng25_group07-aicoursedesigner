@@ -13,7 +13,7 @@ import Roleplay from "./components/Roleplay/roleplay";
 import Chatbot from './components/Chatbot/Chatbot';
 import CourseDashboard from "./components/newCourseDashbaord/newCourseDashboard";
 import CompleteProfile from './components/ConfirmUser/completeProfile';
-import CourseDisplay from './components/courseDisplay/courseDisplay'
+import CourseDisplay from './components/CourseDisplay/CourseDisplay'
 
 function App() {
   const isAuthenticated = () => {
