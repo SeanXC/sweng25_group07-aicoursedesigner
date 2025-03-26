@@ -25,7 +25,6 @@
         "dotenv": "^16.4.7",
         "express": "^4.21.2",
         "generateRoleplay": "file:",
-        "multer": "^1.4.5-lts.1",
         "openai": "^4.82.0"
     }
 }

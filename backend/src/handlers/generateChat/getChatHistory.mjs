@@ -5,24 +5,33 @@ const client = new DynamoDBClient({ region: "eu-west-1" });
 const dynamodb = DynamoDBDocumentClient.from(client);
 
 /**
- * Retrieves chat history for a user.
- * @param {string} email - The user's email.
- * @returns {Promise<object>} - The chat history or an error object.
+ * Retrieves chat history for a user for a specific topic and week.
  */
-async function getChatHistory(email) {
-  if (!email) return { success: false, error: "Email is required" };
+async function getChatHistory(email, topic, weekTarget) {
+  if (!email || !topic || weekTarget === undefined) {
+    return { success: false, error: "Missing required parameters" };
+  }
 
   const params = {
     TableName: "ChatMessages",
     KeyConditionExpression: "email = :email",
-    ExpressionAttributeValues: { ":email": email },
-    ScanIndexForward: false,
-    Limit: 20,
+    ExpressionAttributeValues: {
+      ":email": email,
+    },
+    ScanIndexForward: true,
   };
 
   try {
     const result = await dynamodb.send(new QueryCommand(params));
-    return { success: true, history: result.Items || [] };
+
+    const filteredHistory = result.Items.filter(
+      (item) => item.topic === topic && item.weekTarget === weekTarget
+    );
+
+    return {
+      success: true,
+      history: filteredHistory,
+    };
   } catch (error) {
     return { success: false, error: error.message };
   }

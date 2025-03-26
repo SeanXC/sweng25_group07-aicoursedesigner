@@ -3,25 +3,26 @@ import { getRoleplayHistory } from "./getRoleplayHistory.mjs";
 import { saveRoleplayHistory } from "./saveRoleplayHistory.mjs";
 
 export async function handler(event) {
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "OPTIONS, POST, GET, PUT",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Content-Type": "application/json",
+  };
+
   try {
     console.log("Received event:", JSON.stringify(event, null, 2));
 
     const { httpMethod, body, queryStringParameters, path } = event;
 
-    // Handle CORS preflight requests
-    if (httpMethod === "OPTIONS") { 
+    if (httpMethod === "OPTIONS") {
       return {
         statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "OPTIONS, POST, GET, PUT",
-          "Access-Control-Allow-Headers": "Content-Type",
-        },
+        headers,
         body: JSON.stringify({ message: "CORS preflight success" }),
       };
     }
 
-    // Retrieve roleplay conversation history for a specific topic and week
     if (httpMethod === "GET" && path === "/roleplay-history") {
       const email = queryStringParameters?.email;
       const topic = queryStringParameters?.topic;
@@ -32,7 +33,7 @@ export async function handler(event) {
       if (!email || !topic || !weekTarget) {
         return {
           statusCode: 400,
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({ error: "Email, Topic, and Week Target are required" }),
         };
       }
@@ -41,17 +42,16 @@ export async function handler(event) {
 
       return {
         statusCode: 200,
-        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        headers,
         body: JSON.stringify(historyData, null, 2),
       };
     }
 
-    // Generate a new roleplay conversation
     if (httpMethod === "POST" && path === "/generate-roleplay") {
       if (!body) {
         return {
           statusCode: 400,
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({ error: "Request body is required" }),
         };
       }
@@ -60,7 +60,7 @@ export async function handler(event) {
       if (!email || !language || !userLevel || !topic || !weekTarget || !outline) {
         return {
           statusCode: 400,
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({ error: "Missing required fields" }),
         };
       }
@@ -69,17 +69,16 @@ export async function handler(event) {
 
       return {
         statusCode: 200,
-        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        headers,
         body: JSON.stringify(generatedRoleplay, null, 2),
       };
     }
 
-    // Save roleplay conversation
     if (httpMethod === "PUT" && path === "/save-roleplay") {
       if (!body) {
         return {
           statusCode: 400,
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({ error: "Request body is required" }),
         };
       }
@@ -88,7 +87,7 @@ export async function handler(event) {
       if (!email || !conversation || !topic || !weekTarget) {
         return {
           statusCode: 400,
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({ error: "Missing required fields" }),
         };
       }
@@ -97,21 +96,21 @@ export async function handler(event) {
 
       return {
         statusCode: 200,
-        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        headers,
         body: JSON.stringify(saveResponse, null, 2),
       };
     }
 
     return {
       statusCode: 405,
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({ error: "Method Not Allowed" }),
     };
   } catch (error) {
     console.error("Handler error:", error);
     return {
       statusCode: 500,
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({ error: "Internal Server Error", details: error.message }),
     };
   }

@@ -59,36 +59,80 @@ async function getCompletion(userInput) {
     const openai = new OpenAI({ apiKey });
 
     // Define the prompt for OpenAI (Kept Unchanged)
+    // const prompt = `Generate a language course outline in the following JSON format:
+    //                 {
+    //                   "course_title": "<courseName>",
+    //                   "weeks": [
+    //                     {
+    //                       "week": <week_number>,
+    //                       "title": "<week_title>",
+    //                       "objectives": ["<objective_1>", "<objective_2>", ...],
+    //                       "main_content": ["<content_1>", "<content_2>", ...],
+    //                       "activities": ["<activity_1>", "<activity_2>", ...]
+    //                     }
+    //                   ],
+    //                   "assessment": {
+    //                     "continuous_evaluation": ["<ca_1>", "<ca_2>", ...],
+    //                     "final_assessment": ["<exam_1>", "<exam_2>", ...]
+    //                   },
+    //                   "learning_outcomes": ["<outcome_1>", "<outcome_2>", ...]
+    //                 }
+    //                 Course name: ${userInput.courseName}, description: ${userInput.courseDesc}, difficulty: ${userInput.difficulty}, 
+    //                 target language: ${userInput.targetLang}, language used: ${userInput.nativeLang}, duration: ${userInput.duration} weeks.`;
+
+    // // Generate response from OpenAI
+    // const response = await openai.chat.completions.create({
+    //   model: "gpt-4",
+    //   messages: [{ role: "user", content: prompt }],
+    //   temperature: 0.7,
+    // });
     const prompt = `Generate a language course outline in the following JSON format:
-                    {
-                      "course_title": "<courseName>",
-                      "weeks": [
-                        {
-                          "week": <week_number>,
-                          "title": "<week_title>",
-                          "objectives": ["<objective_1>", "<objective_2>", ...],
-                          "main_content": ["<content_1>", "<content_2>", ...],
-                          "activities": ["<activity_1>", "<activity_2>", ...]
-                        }
-                      ],
-                      "assessment": {
-                        "continuous_evaluation": ["<ca_1>", "<ca_2>", ...],
-                        "final_assessment": ["<exam_1>", "<exam_2>", ...]
-                      },
-                      "learning_outcomes": ["<outcome_1>", "<outcome_2>", ...]
-                    }
-                    Course name: ${userInput.courseName}, description: ${userInput.courseDesc}, difficulty: ${userInput.difficulty}, 
-                    target language: ${userInput.targetLang}, language used: ${userInput.nativeLang}, duration: ${userInput.duration} weeks.`;
+{
+  "course_title": "<courseName>",
+  "weeks": [
+    {
+      "week": <week_number>,
+      "topic": "<topic_of_the_week>",
+      "sessions": [
+        {
+          "title": "<session_title>",
+          "objectives": [
+            "<Detailed objective explaining what the learner will achieve>"
+          ],
+          "main_content": [
+            "<Detailed content of the session, including key vocabulary, grammar points, and sentence structures>"
+          ],
+          "activities": [
+            "<Detailed activity, e.g., role-playing exercises, listening comprehension, speaking drills, interactive exercises>"
+          ]
+        }
+      ]
+    }
+  ],
+  "learning_outcomes": [
+    "<Detailed learning outcome describing what learners will be able to do at the end of the course>"
+  ]
+}
+Course name: ${userInput.courseName}, 
+Description: ${userInput.courseDesc}, 
+Difficulty: ${userInput.difficulty}, 
+Target language: ${userInput.targetLang}, 
+Language used: ${userInput.nativeLang}, 
+Duration: ${userInput.duration} weeks.
+
+Make sure that each session contains detailed objectives, structured lesson content, and practical activities suitable for learners at this level. Each topic should be engaging and progressively build on prior knowledge.`;
 
     // Generate response from OpenAI
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
     });
 
-    const outline = response.choices[0].message.content;
-    const parsedOutline = JSON.parse(outline);
+
+    const outlineRaw = response.choices[0].message.content;
+    const cleaned = outlineRaw.replace(/^```json\s*/, "").replace(/```$/, "").trim();
+    const parsedOutline = JSON.parse(cleaned);
 
     // Save generated course outline to DynamoDB
     const saveResponse = await saveCourseOutline(userInput.email, parsedOutline);

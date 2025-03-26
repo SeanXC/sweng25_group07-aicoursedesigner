@@ -6,15 +6,9 @@ const dynamodb = DynamoDBDocumentClient.from(client);
 
 /**
  * Saves a chat message to DynamoDB.
- * @param {string} email - The user's email.
- * @param {string} role - The role of the message (system, user, assistant).
- * @param {string} message - The chat message content.
- * @param {string} language - The conversation language.
- * @param {string} topic - The conversation topic.
- * @returns {Promise<object>} - Success or failure response.
  */
-async function saveChatMessage(email, role, message, language, topic) {
-  if (!email || !role || !message) {
+async function saveChatMessage(email, role, message, language, languageTag, topic, weekTarget) {
+  if (!email || !role || !message || !topic || weekTarget === undefined) {
     return { success: false, error: "Missing required fields" };
   }
 
@@ -22,7 +16,16 @@ async function saveChatMessage(email, role, message, language, topic) {
 
   const params = {
     TableName: "ChatMessages",
-    Item: { email, timestamp, role, message, language, topic },
+    Item: {
+      email,
+      timestamp,
+      role,
+      message,
+      language,
+      languageTag,
+      topic,
+      weekTarget,
+    },
   };
 
   try {

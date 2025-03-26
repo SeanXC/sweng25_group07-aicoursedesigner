@@ -42,8 +42,7 @@ async function generateRoleplay(email, userLevel, language, topic, weekTarget, o
   if (!outline) return { error: "Learning outline is required" };
 
   const apiKey = await getOpenAIKey();
-  if (!apiKey) return { error: "Failed to retrieve OpenAI API Key from SSM" };
-
+  if (!apiKey) return { error: "Failed to retrieve OpenAI API Key from SSM" }
   const openai = new OpenAI({ apiKey });
   const weekDetails = outline.weeks.find(week => week.week === weekTarget);
   if (!weekDetails) return { error: `Week ${weekTarget} not found in the outline` };
@@ -100,7 +99,7 @@ Guidelines:
     - The difficulty should be appropriate for Week ${weekTarget}, ensuring progressively complex dialogues.
     - Maintain the roles from the previous conversation (e.g., "restaurant staff" and "customer").
     
-Generate the next exchange in JSON format:
+Generate the next exchange in JSON format(do not use markdown or backticks):
     {
       "<role1>": "<response>",
       "<role2>": "<response>"
@@ -108,13 +107,19 @@ Generate the next exchange in JSON format:
   }
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4",
+    model: "gpt-4o",
     messages: [{ role: "user", content: prompt }],
     temperature: 0.7,
   });
 
   try {
-    const conversation = JSON.parse(response.choices[0].message.content);
+    const outlineRaw = response.choices[0].message.content;
+    const cleaned = outlineRaw
+      .replace(/^```json\s*/, "")
+      .replace(/^```\s*/, "")
+      .replace(/```$/, "")
+      .trim();
+    const conversation = JSON.parse(cleaned);
     await saveRoleplayHistory(email, conversation, language, topic, weekTarget);
 
     return {
