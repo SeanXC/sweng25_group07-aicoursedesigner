@@ -38,5 +38,14 @@ test_backend_lambda:
     - echo "Invoking AWS Lambda function 'saveRoleplayHistory'..."
     - aws lambda invoke --function-name generateRoleplay --payload fileb://tests/payloads/generateRoleplay/saveRoleplayHistory.json saveRoleplayHistory_output.json --log-type Tail
     - cat saveRoleplayHistory_output.json
+
+    - echo "Invoking Lambda function 'userInfo' - GET user..."
+    - aws lambda invoke --function-name userInfo --payload fileb://tests/payloads/userInfo/getUser.json getUser_output.json --log-type Tail
+    - cat getUser_output.json
+
+    - echo "Invoking Lambda function 'userInfo' - POST user..."
+    - aws lambda invoke --function-name userInfo --payload fileb://tests/payloads/userInfo/saveUser.json saveUser_output.json --log-type Tail
+    - cat saveUser_output.json
+
   only:
     - backend
