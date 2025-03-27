@@ -1,0 +1,92 @@
+import React, { useState, useEffect } from "react";
+import "./newCourseDashbaord.css";
+import Roleplay from "../../components/Roleplay/roleplay";
+import NavBar from "../NavBar/NavBar";
+import Chatbot from "../../components/Chatbot/Chatbot"
+import { useCourseData } from "../Context/CourseDataContext"; 
+
+const Tabs = ({ activeTab, setActiveTab }) => {
+  const tabs = ["Translation", "Roleplay", "Chatbot"];
+
+  return (
+    <div className="tabs">
+      {tabs.map((tab) => (
+        <button
+          key={tab}
+          className={`tab ${activeTab === tab ? "active" : ""}`}
+          onClick={() => setActiveTab(tab)}
+        >
+          {tab}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+const Content = ({ activeTab }) => {
+  return (
+    <div className="content">
+      {activeTab === "Translation" && <Translation />}
+      {activeTab === "Roleplay" && <CourseRoleplay />}
+      {activeTab === "Chatbot" && <Chatbot />}
+    </div>
+  );
+};
+
+const CourseRoleplay = () => (
+  <div className="roleplay">
+    <Roleplay />
+  </div>
+);
+
+const SideBar = () => (
+  <div className="sidebar">
+    {["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"].map((week) => (
+      <div className="weeks">
+        <div key={week} className="week-box">
+          <p><b>{week}</b></p>
+          <p>Content description for {week}</p>
+          
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+const Translation = () => (
+  <div className="outside-card">
+    <div className="card">
+      <p className="word">pan</p>
+    </div>
+    <br></br>
+    <label className="answerText">
+      Enter the word in English: <input name="answer" />
+    </label>
+  </div>
+);
+
+// const Chatbot = () => (
+//   <div>
+//     <p>Chatbot coming soon!</p>
+//   </div>
+// );
+
+export default function CourseDashboard() {
+  const [activeTab, setActiveTab] = useState("Translation");
+  const { courseData } = useCourseData(); //gets you the course data 
+  console.log("Course Data:", courseData);
+  return (
+    <div>
+      <NavBar/>
+      <div className="dashboard-container">
+        <div className="main-content">
+          <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+          <div className="main">
+            <Content activeTab={activeTab} />
+          </div>
+        </div>
+        <SideBar />
+      </div>
+    </div>
+  );
+}

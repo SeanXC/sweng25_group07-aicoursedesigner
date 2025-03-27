@@ -1,6 +1,7 @@
 stages:
   - install
   - build
+  - test
   - deploy
   - test
 
