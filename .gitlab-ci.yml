@@ -1,6 +1,5 @@
 stages:
   - install
-  - build
   - deploy
   - test
 
@@ -26,8 +25,8 @@ install_backend:
     - echo "📦 Installing root dependencies..."
     - npm install
 
-build_lambda_functions:
-  stage: build
+build_and_deploy_lambda:
+  stage: deploy
   tags:
     - docker
   image: node:20
@@ -35,8 +34,8 @@ build_lambda_functions:
     - node -v
     - npm -v
   script:
-    - apt-get update && apt-get install -y zip
-    - echo "📦 Zipping selected Lambda functions..."
+    - apt-get update && apt-get install -y zip awscli
+    - echo "📦 Building and deploying selected Lambda functions..."
     - export ZIP_OUTPUT_DIR="$CI_PROJECT_DIR/backend/build_zips"
     - mkdir -p "$ZIP_OUTPUT_DIR"
     - cd backend/src/handlers
@@ -46,37 +45,17 @@ build_lambda_functions:
           echo "📦 Installing dependencies and zipping $dir"
           cd "$dir"
           [ -f "package.json" ] && npm install --omit=dev
-          zip -q -r9 "$ZIP_OUTPUT_DIR/${dir}.zip" ./*
+          zip_file="$ZIP_OUTPUT_DIR/${dir}.zip"
+          zip -q -r9 "$zip_file" ./*
+          echo "🚀 Deploying $dir to Lambda..."
+          aws lambda update-function-code \
+            --function-name "$dir" \
+            --zip-file "fileb://$zip_file" \
+            --region "$AWS_DEFAULT_REGION"
           cd ..
         fi
       done
-  artifacts:
-    paths:
-      - backend/build_zips/
-
-
-deploy_lambda:
-  stage: deploy
-  tags:
-    - docker
-  image:
-    name: amazon/aws-cli:latest
-    entrypoint: [""]
-  dependencies:
-    - build_lambda_functions
-  script:
-    - echo "🚀 Deploying Lambda functions..."
-    - |
-      for zip_file in backend/build_zips/*.zip; do
-        function_name=$(basename "$zip_file" .zip)
-        echo "🔄 Updating $function_name"
-        aws lambda update-function-code \
-          --function-name "$function_name" \
-          --zip-file "fileb://$zip_file" \
-          --region "$AWS_DEFAULT_REGION"
-        echo "✅ Updated $function_name"
-      done
-    - echo "🎉 All Lambda functions deployed!"
+    - echo "🎉 All selected Lambda functions built and deployed!"
 
   only:
     - backend
