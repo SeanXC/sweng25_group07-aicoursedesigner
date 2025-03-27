@@ -8,15 +8,36 @@ variables:
   NODE_ENV: test
   AWS_DEFAULT_REGION: eu-west-1
 
+before_script:
+  - rm -f .git/index.lock .git/config.lock .git/shallow.lock
+  - node -v
+  - npm -v
+  - mkdir -p ~/.ssh
+  - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > frontend/.env
+  - echo "OPENAI_API_KEY=$OPENAI_API_KEY" > backend/.env
+
+install_frontend:
+  image: node:20
+  stage: install
+  script:
+    - cd frontend
+    - npm install
+  cache:
+    key: npm-frontend
+    paths:
+      - frontend/node_modules/
+  tags:
+    - docker  
+  variables:
+    GIT_DEPTH: 0
+
 install_backend:
   stage: install
   tags:
     - docker
   image: node:20
-  before_script:
-    - rm -f .git/index.lock .git/config.lock .git/shallow.lock
-    - node -v
-    - npm -v
   script:
     - echo "📦 Installing root dependencies..."
     - npm install
@@ -31,6 +52,25 @@ install_backend:
           cd ..
         fi
       done
+
+build_frontend:
+  image: node:20
+  stage: build
+  dependencies:
+    - install_frontend
+  cache:
+    key: npm-frontend
+    paths:
+      - frontend/node_modules/
+  script:
+    - cd frontend
+    - npm run build
+  tags:
+    - docker
+  artifacts:
+    paths:
+      - frontend/build/
+    expire_in: 1h
 
 build_lambda_functions:
   stage: build
@@ -59,6 +99,17 @@ build_lambda_functions:
     paths:
       - backend/build_zips/
 
+deploy_frontend:
+  image: node:18
+  stage: deploy
+  script:
+    - cd frontend
+    - mv build public
+  only:
+    - main
+  tags:
+    - docker
+
 deploy_lambda:
   stage: deploy
   tags:
@@ -83,7 +134,22 @@ deploy_lambda:
     #   done
     # - echo "🎉 All Lambda functions deployed!"
   only:
-    - backend
+    - main
+
+test_frontend:
+  image: node:20
+  stage: test
+  dependencies:
+    - install_frontend
+  script:
+    - cd frontend
+    - npm run test:ci
+  cache:
+    key: npm-frontend
+    paths:
+      - frontend/node_modules/
+  tags:
+    - docker
 
 test_backend_lambda:
   stage: test
@@ -145,4 +211,4 @@ test_backend_lambda:
     - aws lambda invoke --function-name generateChat --payload fileb://tests/payloads/generateChat/saveChatMessage.json saveChatMessage_output.json --log-type Tail
     - cat saveChatMessage_output.json
   only:
-    - backend
+    - main
