@@ -49,8 +49,11 @@ build_lambda_functions:
     - |
       for dir in */; do
         if [ -f "$dir/index.mjs" ]; then
-          echo "📦 Zipping $dir"
+          echo "📦 Installing dependencies and zipping $dir"
           cd "$dir"
+          if [ -f "package.json" ]; then
+            npm install --omit=dev
+          fi
           zip -q -r9 "$ZIP_OUTPUT_DIR/${dir%/}.zip" ./*
           cd ..
         fi
