@@ -1,0 +1,9 @@
+{
+    "httpMethod": "GET",
+    "path": "/chat-history",
+    "queryStringParameters": {
+      "email": "test@email.com",
+      "topic": "Travel",
+      "weekTarget": 1
+    }
+}

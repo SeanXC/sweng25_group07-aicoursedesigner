@@ -1,0 +1,5 @@
+{
+    "httpMethod": "POST",
+    "path": "/generate-chat",
+    "body": "{\"email\":\"test@email.com\",\"userLevel\":\"Intermediate\",\"language\":\"Spanish\",\"languageTag\":\"es-ES\",\"topic\":\"Travel\",\"userMsg\":\"Hola, cómo estás?\",\"weekTarget\":1,\"outline\":{\"course_title\":\"French for Travelers\",\"weeks\":[{\"week\":1,\"title\":\"Basic Greetings and Introductions\",\"objectives\":[\"Use basic French greetings\",\"Introduce yourself in French\"],\"main_content\":[\"Bonjour, Salut, Comment ça va\",\"Je m'appelle..., Je suis de...\"],\"activities\":[\"Role-play greetings\",\"Practice dialogues\"]},{\"week\":2,\"title\":\"Ordering Food\",\"objectives\":[\"Order food and drinks\",\"Understand menu vocabulary\"],\"main_content\":[\"Je voudrais..., L'addition, s'il vous plaît\",\"Types of food and beverages\"],\"activities\":[\"Menu simulation\",\"Ordering practice\"]}]}}"
+}
