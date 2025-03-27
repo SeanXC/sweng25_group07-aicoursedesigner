@@ -8,6 +8,11 @@ variables:
   NODE_ENV: test
   AWS_DEFAULT_REGION: eu-west-1
 
+cache:
+  key: ${CI_PROJECT_NAME}
+  paths:
+    - ~/.npm
+
 install_backend:
   stage: install
   tags:
@@ -20,17 +25,6 @@ install_backend:
   script:
     - echo "📦 Installing root dependencies..."
     - npm install
-    - echo "📦 Installing handler dependencies..."
-    - cd backend/src/handlers
-    - |
-      for dir in */; do
-        if [ -f "$dir/package.json" ]; then
-          echo "📦 Installing in $dir"
-          cd "$dir"
-          npm install --omit=dev
-          cd ..
-        fi
-      done
 
 build_lambda_functions:
   stage: build
@@ -84,6 +78,7 @@ deploy_lambda:
         echo "✅ Updated $function_name"
       done
     - echo "🎉 All Lambda functions deployed!"
+
   only:
     - backend
 
@@ -118,5 +113,6 @@ test_backend_lambda:
     - echo "Invoking Lambda function 'userInfo' - POST user..."
     - aws lambda invoke --function-name userInfo --payload fileb://tests/payloads/userInfo/saveUser.json saveUser_output.json --log-type Tail
     - cat saveUser_output.json
+
   only:
     - backend
