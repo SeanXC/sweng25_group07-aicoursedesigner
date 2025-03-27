@@ -116,5 +116,17 @@ test_backend_lambda:
     - echo "Invoking Lambda function 'userInfo' - POST user..."
     - aws lambda invoke --function-name userInfo --payload fileb://tests/payloads/userInfo/saveUser.json saveUser_output.json --log-type Tail
     - cat saveUser_output.json
+
+    - echo "Invoking AWS Lambda function 'generateChat'..."
+    - aws lambda invoke --function-name generateChat --payload fileb://tests/payloads/generateChat/generateChat.json generateChat.json --log-type Tail
+    - cat generateChat_output.json
+
+    - echo "Invoking AWS Lambda function 'getChatHistory'..."
+    - aws lambda invoke --function-name getChatHistory --payload fileb://tests/payloads/generateChat/getChatHistory.json getChatHistory.json --log-type Tail
+    - cat getChatHistory_output.json
+
+    - echo "Invoking AWS Lambda function 'saveChatMessage'..."
+    - aws lambda invoke --function-name saveChatMessage --payload fileb://tests/payloads/generateChat/saveChatMessage.json saveChatMessage.json --log-type Tail
+    - cat saveChatMessage_output.json
   only:
     - backend
