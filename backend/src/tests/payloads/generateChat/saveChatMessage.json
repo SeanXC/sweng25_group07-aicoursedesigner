@@ -1,0 +1,5 @@
+{
+    "httpMethod": "PUT",
+    "path": "/save-chat",
+    "body": "{\"email\":\"test@email.com\",\"role\":\"user\",\"message\":\"Je veux aller à Paris!\",\"language\":\"French\",\"languageTag\":\"fr-FR\",\"topic\":\"Travel\",\"weekTarget\":1}"
+}

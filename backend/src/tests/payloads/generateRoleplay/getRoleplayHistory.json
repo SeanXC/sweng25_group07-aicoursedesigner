@@ -1,0 +1,10 @@
+{
+    "httpMethod": "GET",
+    "path": "/roleplay-history",
+    "queryStringParameters": {
+      "email": "user@example.com",
+      "topic": "Ordering Food at a Restaurant",
+      "weekTarget": 1
+    }
+  }
+  
