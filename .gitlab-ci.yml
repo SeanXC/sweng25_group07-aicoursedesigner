@@ -1,16 +1,12 @@
 stages:
   - install
+  - build
   - deploy
   - test
 
 variables:
   NODE_ENV: test
   AWS_DEFAULT_REGION: eu-west-1
-
-cache:
-  key: ${CI_PROJECT_NAME}
-  paths:
-    - ~/.npm
 
 install_backend:
   stage: install
@@ -24,9 +20,20 @@ install_backend:
   script:
     - echo "📦 Installing root dependencies..."
     - npm install
+    - echo "📦 Installing handler dependencies..."
+    - cd backend/src/handlers
+    - |
+      for dir in */; do
+        if [ -f "$dir/package.json" ]; then
+          echo "📦 Installing in $dir"
+          cd "$dir"
+          npm install --omit=dev
+          cd ..
+        fi
+      done
 
-build_and_deploy_lambda:
-  stage: deploy
+build_lambda_functions:
+  stage: build
   tags:
     - docker
   image: node:20
@@ -34,29 +41,46 @@ build_and_deploy_lambda:
     - node -v
     - npm -v
   script:
-    - apt-get update && apt-get install -y zip awscli
-    - echo "📦 Building and deploying selected Lambda functions..."
+    - apt-get update && apt-get install -y zip
+    - echo "📦 Zipping Lambda functions..."
     - export ZIP_OUTPUT_DIR="$CI_PROJECT_DIR/backend/build_zips"
     - mkdir -p "$ZIP_OUTPUT_DIR"
     - cd backend/src/handlers
     - |
-      for dir in generateChat generateCompletion generateRoleplay generatePhrases userInfo; do
+      for dir in */; do
         if [ -f "$dir/index.mjs" ]; then
-          echo "📦 Installing dependencies and zipping $dir"
+          echo "📦 Zipping $dir"
           cd "$dir"
-          [ -f "package.json" ] && npm install --omit=dev
-          zip_file="$ZIP_OUTPUT_DIR/${dir}.zip"
-          zip -q -r9 "$zip_file" ./*
-          echo "🚀 Deploying $dir to Lambda..."
-          aws lambda update-function-code \
-            --function-name "$dir" \
-            --zip-file "fileb://$zip_file" \
-            --region "$AWS_DEFAULT_REGION"
+          zip -q -r9 "$ZIP_OUTPUT_DIR/${dir%/}.zip" ./*
           cd ..
         fi
       done
-    - echo "🎉 All selected Lambda functions built and deployed!"
+  artifacts:
+    paths:
+      - backend/build_zips/
 
+deploy_lambda:
+  stage: deploy
+  tags:
+    - docker
+  image:
+    name: amazon/aws-cli:latest
+    entrypoint: [""]
+  dependencies:
+    - build_lambda_functions
+  script:
+    # - echo "🚀 Deploying Lambda functions..."
+    # - |
+    #   for zip_file in backend/build_zips/*.zip; do
+    #     function_name=$(basename "$zip_file" .zip)
+    #     echo "🔄 Updating $function_name"
+    #     aws lambda update-function-code \
+    #       --function-name "$function_name" \
+    #       --zip-file "fileb://$zip_file" \
+    #       --region "$AWS_DEFAULT_REGION"
+    #     echo "✅ Updated $function_name"
+    #   done
+    # - echo "🎉 All Lambda functions deployed!"
   only:
     - backend
 
@@ -91,6 +115,5 @@ test_backend_lambda:
     - echo "Invoking Lambda function 'userInfo' - POST user..."
     - aws lambda invoke --function-name userInfo --payload fileb://tests/payloads/userInfo/saveUser.json saveUser_output.json --log-type Tail
     - cat saveUser_output.json
-
   only:
     - backend
