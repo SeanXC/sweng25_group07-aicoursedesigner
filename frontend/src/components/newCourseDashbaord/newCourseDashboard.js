@@ -26,24 +26,22 @@ const Tabs = ({ activeTab, setActiveTab }) => {
   );
 };
 
-const Content = ({ activeTab, selectedWeek }) => {
-  console.log("newCourseDashboard.js - Current selectedWeek:", selectedWeek);
+const Content = ({ activeTab, selectedWeek, selectedTopic }) => {
   return (
     <div className="content">
-      {activeTab === "Translation" && (
-        <Translation selectedWeek={selectedWeek} />
-      )}
-      {activeTab === "Roleplay" && <CourseRoleplay />}
-      {activeTab === "Chatbot" && <Chatbot />}
+      {activeTab === "Translation" && <Translation selectedWeek={selectedWeek} />}
+      {activeTab === "Roleplay" && <CourseRoleplay selectedWeek={selectedWeek} selectedTopic={selectedTopic} />}
+      {activeTab === "Chatbot" && <Chatbot selectedWeek={selectedWeek} selectedTopic={selectedTopic} />}
     </div>
   );
 };
 
-const CourseRoleplay = () => (
+const CourseRoleplay = ({ selectedWeek, selectedTopic }) => (
   <div className="roleplay">
-    <Roleplay />
+    <Roleplay selectedWeek={selectedWeek} selectedTopic={selectedTopic} />
   </div>
 );
+
 
 export function Translation({ selectedWeek }) {
   const [phraseData, setPhraseData] = useState([]);
@@ -119,11 +117,18 @@ export function Translation({ selectedWeek }) {
 
 export default function CourseDashboard() {
   const [activeTab, setActiveTab] = useState("Translation");
-  const [selectedWeek, setSelectedWeek] = useState(1);
+  const [selectedWeek, setSelectedWeek] = useState(null);
+  const [selectedTopic, setSelectedTopic] = useState("");
   const { courseData } = useCourseData(); //gets you the course data
   console.log("Course Data:", courseData);
   console.log("Week Descriptions:");
   //fetchPhrases(selectedWeek, courseData)
+
+const handleWeekSelection = (weekData) => {
+  console.log("Selected Week:", weekData);
+  setSelectedWeek(weekData.week);
+  setSelectedTopic(weekData.topic);
+};
 
   return (
     <div>
@@ -132,10 +137,12 @@ export default function CourseDashboard() {
         <div className="main-content">
           <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
           <div className="main">
-            <Content activeTab={activeTab} selectedWeek={selectedWeek} />
+            <Content activeTab={activeTab} selectedWeek={selectedWeek}   selectedTopic={selectedTopic} />
           </div>
         </div>
-        <SideBarWeeks setSelectedWeek={setSelectedWeek} />
+        <SideBarWeeks onWeekSelect={handleWeekSelection} selectedWeek={selectedWeek} />
+
+
       </div>
     </div>
   );
