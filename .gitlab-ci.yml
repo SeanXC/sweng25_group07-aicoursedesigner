@@ -69,6 +69,7 @@ deploy_lambda:
   dependencies:
     - build_lambda_functions
   script:
+    - echo "🚫 Deploy step is currently disabled."
     # - echo "🚀 Deploying Lambda functions..."
     # - |
     #   for zip_file in backend/build_zips/*.zip; do
