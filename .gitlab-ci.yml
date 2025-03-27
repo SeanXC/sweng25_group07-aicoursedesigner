@@ -36,25 +36,24 @@ build_lambda_functions:
     - npm -v
   script:
     - apt-get update && apt-get install -y zip
-    - echo "📦 Zipping Lambda functions..."
+    - echo "📦 Zipping selected Lambda functions..."
     - export ZIP_OUTPUT_DIR="$CI_PROJECT_DIR/backend/build_zips"
     - mkdir -p "$ZIP_OUTPUT_DIR"
     - cd backend/src/handlers
     - |
-      for dir in */; do
+      for dir in generateChat generateCompletion generatePhrases userInfo; do
         if [ -f "$dir/index.mjs" ]; then
           echo "📦 Installing dependencies and zipping $dir"
           cd "$dir"
-          if [ -f "package.json" ]; then
-            npm install --omit=dev
-          fi
-          zip -q -r9 "$ZIP_OUTPUT_DIR/${dir%/}.zip" ./*
+          [ -f "package.json" ] && npm install --omit=dev
+          zip -q -r9 "$ZIP_OUTPUT_DIR/${dir}.zip" ./*
           cd ..
         fi
       done
   artifacts:
     paths:
       - backend/build_zips/
+
 
 deploy_lambda:
   stage: deploy

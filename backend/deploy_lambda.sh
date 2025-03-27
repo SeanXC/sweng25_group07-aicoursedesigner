@@ -4,19 +4,22 @@ set -e
 
 zip_dir="backend/build_zips"
 region="${AWS_DEFAULT_REGION:-eu-west-1}"
+functions=("generateChat" "generateCompletion" "generatePhrases" "userInfo")
 
-echo "🚀 Deploying Lambda functions from $zip_dir"
+echo "🚀 Deploying selected Lambda functions from $zip_dir"
 
-for zip_file in "$zip_dir"/*.zip; do
-  function_name=$(basename "$zip_file" .zip)
-  echo "🔄 Updating Lambda function: $function_name"
-
-  aws lambda update-function-code \
-    --function-name "$function_name" \
-    --zip-file "fileb://$zip_file" \
-    --region "$region"
-
-  echo "✅ Updated $function_name"
+for fn in "${functions[@]}"; do
+  zip_file="$zip_dir/${fn}.zip"
+  if [ -f "$zip_file" ]; then
+    echo "🔄 Updating Lambda function: $fn"
+    aws lambda update-function-code \
+      --function-name "$fn" \
+      --zip-file "fileb://$zip_file" \
+      --region "$region"
+    echo "✅ Updated $fn"
+  else
+    echo "⚠️  Zip not found for $fn, skipping..."
+  fi
 done
 
-echo "🎉 All Lambda functions deployed successfully!"
+echo "🎉 Selected Lambda functions deployed successfully!"
