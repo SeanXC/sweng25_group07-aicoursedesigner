@@ -4,6 +4,7 @@ import carlosImg from "../../images/nuala12.svg";
 import anaImg from "../../images/nuala21.svg";
 import CarlosCelebrating from "../../images/nuala_12_celebrating.svg";
 import AnaCelebrating from "../../images/nuala_21_celebrating.svg";
+import { useCourseData } from "../Context/CourseDataContext";
 
 export default function Roleplay() {
   const [conversationData, setConversationData] = useState([]);
@@ -15,11 +16,17 @@ export default function Roleplay() {
   const [topic, setTopic] = useState(""); // Store the topic input
   const [weekTarget, setWeekTarget] = useState(""); // Store the week target input
 
+  const { courseData } = useCourseData();
+  const userLanguage = courseData.targetLang;  // Directly use the value from context
+  const userDifficulty = courseData.difficulty;  // Directly use the value from context
+
+
   const fetchRoleplay = async () => {
     if (!topic || !weekTarget) {
       setError("Please enter both a topic and a week target before generating a roleplay.");
       return;
     }
+
 
     try {
       setLoading(true);
@@ -37,8 +44,8 @@ export default function Roleplay() {
             },
             body: JSON.stringify({
               email: "user@example1.com",
-              userLevel: "beginner",
-              language: "spanish",
+              userLevel: {userDifficulty},
+              language: {userLanguage},
               topic: topic,
               weekTarget: parseInt(weekTarget), // Use the weekTarget state
               outline: {

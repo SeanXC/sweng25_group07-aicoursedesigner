@@ -3,7 +3,7 @@ import "../Home/Home.css";
 import { fetchUserData } from '../UserProfile/fetchUserData'; 
 import { useNavigate } from "react-router-dom";
 import NavBar from "../NavBar/NavBar";
-import { useCourseData } from "../Context/CourseDataContext"; 
+import { useCourseData } from "../Context/CourseDataContext"; // Import the context hook
 
 export default function HomeDashboard() {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ export default function HomeDashboard() {
   const [userDifficulty, setUserDifficulty] = useState("");
   const [duration, setDuration] = useState(5);
 
-  const { setCourseData } = useCourseData(); 
+  const { setCourseData } = useCourseData();  // Access setCourseData to update global state
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -29,12 +29,13 @@ export default function HomeDashboard() {
     fetchUserProfile();
   }, []);
 
+  // Form submission handler
   async function formSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
     const values = Object.fromEntries(formData.entries());
     const userEmail = sessionStorage.getItem("email") || "testuser@email.com";
-    
+
     const courseData = {
       email: userEmail,
       courseName: values.courseName,
@@ -51,6 +52,7 @@ export default function HomeDashboard() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-api-key": process.env.REACT_APP_API_KEY,
         },
         body: JSON.stringify(courseData),
       });
@@ -58,7 +60,11 @@ export default function HomeDashboard() {
       if (response.ok) {
         const responseBody = await response.json();
         console.log("Response Body:", responseBody);
+
+        // **Set the course data in global context**
         setCourseData(responseBody);
+
+        
         navigate('/courseDashboard');
       } else {
         console.error("Error generating course:", response.statusText);
@@ -89,7 +95,7 @@ export default function HomeDashboard() {
                   <div>
                     <p>Difficulty:</p>
                     <select name="difficulty" style={{ width: "100%", padding: "8px", fontSize: "16px" }}>
-                    <option hidden value={userDifficulty}>{userDifficulty}</option>
+                      <option hidden value={userDifficulty}>{userDifficulty}</option>
                       <option value="A1">A1</option>
                       <option value="A2">A2</option>
                       <option value="B1">B1</option>
@@ -101,7 +107,7 @@ export default function HomeDashboard() {
                   <div>
                     <p>Learn:</p>
                     <select name="language" style={{ width: "100%", padding: "8px", fontSize: "16px" }}>
-                    <option hidden value={userLanguage}>{userLanguage}</option>
+                      <option hidden value={userLanguage}>{userLanguage}</option>
                       <option value="Spanish">Spanish</option>
                       <option value="English">English</option>
                       <option value="French">French</option>
@@ -113,7 +119,7 @@ export default function HomeDashboard() {
                   <div>
                     <p>Speakers Of:</p>
                     <select name="nativeLanguage" style={{ width: "100%", padding: "8px", fontSize: "16px" }}>
-                    <option value="English">English</option>
+                      <option value="English">English</option>
                       <option value="Spanish">Spanish</option>
                       <option value="French">French</option>
                       <option value="Italian">Italian</option>

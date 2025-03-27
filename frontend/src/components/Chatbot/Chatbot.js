@@ -2,6 +2,8 @@ import React, { useState, useRef } from "react";
 import axios from 'axios';
 import micImage from './microphone-342.svg';
 import "./Chatbot.css";
+import { useCourseData } from "../Context/CourseDataContext";
+
 export default function Chatbot() {
   const [inputText, setInputText] = useState("");
   const [messages, setMessages] = useState([
@@ -16,6 +18,11 @@ export default function Chatbot() {
     setInputText(event.target.value);
   };
 
+  const { courseData } = useCourseData();
+  const userLanguage = courseData.targetLang;  // Directly use the value from context
+  const userDifficulty = courseData.difficulty;  // Directly use the value from context
+
+
   const handleSendMessage = async () => {
     setMessages([
       ...messages,
@@ -23,12 +30,53 @@ export default function Chatbot() {
     ]);
     setInputText("");
 
+
+
     const requestBody = {
-      email: "test@email.com",  
-      userLevel: "Intermediate",  
-      language: "Spanish",  
-      topic: "Travel",  
-      userMsg: inputText,  
+  "email": "test@email.com",
+  "userLevel": {userDifficulty},
+  "language": {userLanguage},
+  "languageTag": "fr-FR",
+  "topic": "Travel",
+  "userMsg": "",
+  "weekTarget": 1,
+  "outline": {
+    "course_title": "French for Travelers",
+    "weeks": [
+      {
+        "week": 1,
+        "title": "Basic Greetings and Introductions",
+        "objectives": [
+          "Use basic French greetings",
+          "Introduce yourself in French"
+        ],
+        "main_content": [
+          "Bonjour, Salut, Comment ça va",
+          "Je m'appelle..., Je suis de..."
+        ],
+        "activities": [
+          "Role-play greetings",
+          "Practice dialogues"
+        ]
+      },
+      {
+        "week": 2,
+        "title": "Ordering Food",
+        "objectives": [
+          "Order food and drinks",
+          "Understand menu vocabulary"
+        ],
+        "main_content": [
+          "Je voudrais..., L'addition, s'il vous plaît",
+          "Types of food and beverages"
+        ],
+        "activities": [
+          "Menu simulation",
+          "Ordering practice"
+        ]
+      }
+    ]
+  }  
     };
 
     try {
@@ -75,7 +123,7 @@ export default function Chatbot() {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = 'es-ES';
+    recognition.lang = 'fr-FR';
     recognition.interimResults = true;
     recognition.continuous = true;
 
@@ -104,7 +152,7 @@ export default function Chatbot() {
 
   const speakText = (text) => {
     const speech = new SpeechSynthesisUtterance(text);
-    speech.lang = 'es-ES';
+    speech.lang = 'fr-FR';
     window.speechSynthesis.speak(speech);
   };
 
@@ -136,9 +184,6 @@ export default function Chatbot() {
         >
           <img src={micImage} alt="microphone" />
         </div>
-
-        {/* Dummy Circle Button */}
-        <div className="dummy-circle-button" onClick={() => alert("Dummy button clicked!")}></div>
       </div>
     </div>
   );
