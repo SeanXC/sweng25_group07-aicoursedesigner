@@ -120,6 +120,8 @@ deploy_lambda:
     entrypoint: [""]
   dependencies:
     - build_lambda_functions
+  before_script:
+    - rm -f .git/index.lock .git/config.lock .git/shallow.lock
   script:
     - echo "🚫 Deploy step is currently disabled."
     # - echo "🚀 Deploying Lambda functions..."
@@ -134,6 +136,13 @@ deploy_lambda:
     #     echo "✅ Updated $function_name"
     #   done
     # - echo "🎉 All Lambda functions deployed!"
+
+
+    # image: node:20
+    # before_script:
+    #   - npm install -g aws-cli
+    #   - aws --version
+
   only:
     - main
 
