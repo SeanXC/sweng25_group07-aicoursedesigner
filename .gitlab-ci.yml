@@ -1,22 +1,22 @@
 stages:
   - install
   - build
+  - deploy
   - test
 
 variables:
   NODE_ENV: test
   AWS_DEFAULT_REGION: eu-west-1
 
-before_script:
-  - rm -f .git/index.lock .git/config.lock .git/shallow.lock
-  - node -v
-  - npm -v
-
-install_dependencies:
+install_backend:
   stage: install
   tags:
     - docker
   image: node:20
+  before_script:
+    - rm -f .git/index.lock .git/config.lock .git/shallow.lock
+    - node -v
+    - npm -v
   script:
     - echo "📦 Installing root dependencies..."
     - npm install
@@ -37,6 +37,9 @@ build_lambda_functions:
   tags:
     - docker
   image: node:20
+  before_script:
+    - node -v
+    - npm -v
   script:
     - apt-get update && apt-get install -y zip
     - echo "📦 Zipping Lambda functions..."
@@ -56,7 +59,30 @@ build_lambda_functions:
     paths:
       - backend/build_zips/
 
-
+deploy_lambda:
+  stage: deploy
+  tags:
+    - docker
+  image:
+    name: amazon/aws-cli:latest
+    entrypoint: [""]
+  dependencies:
+    - build_lambda_functions
+  script:
+    - echo "🚀 Deploying Lambda functions..."
+    - |
+      for zip_file in backend/build_zips/*.zip; do
+        function_name=$(basename "$zip_file" .zip)
+        echo "🔄 Updating $function_name"
+        aws lambda update-function-code \
+          --function-name "$function_name" \
+          --zip-file "fileb://$zip_file" \
+          --region "$AWS_DEFAULT_REGION"
+        echo "✅ Updated $function_name"
+      done
+    - echo "🎉 All Lambda functions deployed!"
+  only:
+    - backend
 
 test_backend_lambda:
   stage: test
@@ -89,6 +115,5 @@ test_backend_lambda:
     - echo "Invoking Lambda function 'userInfo' - POST user..."
     - aws lambda invoke --function-name userInfo --payload fileb://tests/payloads/userInfo/saveUser.json saveUser_output.json --log-type Tail
     - cat saveUser_output.json
-
   only:
     - backend
