@@ -7,26 +7,32 @@ import AnaCelebrating from "../../images/nuala_21_celebrating.svg";
 import { useCourseData } from "../Context/CourseDataContext";
 import { useUserProfile } from "../Context/UserProfileContext";
 
-export default function Roleplay() {
+export default function Roleplay({ selectedWeek, selectedTopic }) {
   const [conversationData, setConversationData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [hasGenerated, setHasGenerated] = useState(false);
 
-  const [topic, setTopic] = useState("Default Topic"); // Default topic value
-  const [weekTarget, setWeekTarget] = useState("1"); // Default week target value
+  // Local state for topic and weekTarget
+  const [topic, setTopic] = useState("Default Topic");
+  const [weekTarget, setWeekTarget] = useState("1");
 
   const { courseData } = useCourseData();
   const { userEmail, userLanguage, userDifficulty } = useUserProfile();
 
-  // Check if courseData is available and set topic and weekTarget accordingly
+  // Update topic and weekTarget based on selectedWeek/selectedTopic props if provided.
+  // Otherwise, fall back to courseData's first week.
   useEffect(() => {
-    if (courseData && courseData.body && courseData.body.generatedOutline && courseData.body.generatedOutline.weeks.length > 0) {
-      const firstWeek = courseData.body.generatedOutline.weeks[0]; // Get first week
-      setTopic(firstWeek.topic); // Set topic
-      setWeekTarget(firstWeek.week.toString()); // Set week target as a string
+    if (selectedWeek && selectedTopic) {
+      setTopic(selectedTopic);
+      setWeekTarget(selectedWeek.toString());
+    } else if (courseData && courseData.body && courseData.body.generatedOutline && courseData.body.generatedOutline.weeks.length > 0) {
+      const firstWeek = courseData.body.generatedOutline.weeks[0];
+      setTopic(firstWeek.topic);
+      setWeekTarget(firstWeek.week.toString());
     }
-  }, [courseData]); // Re-run when courseData changes
+  }, [selectedWeek, selectedTopic, courseData]);
+  
 
   const fetchRoleplay = async () => {
     console.log("fetchRoleplay triggered");
@@ -50,11 +56,11 @@ export default function Roleplay() {
           userLevel: userDifficulty,
           language: userLanguage,
           topic: topic,
-          weekTarget: parseInt(weekTarget), // Use the weekTarget state
+          weekTarget: parseInt(weekTarget),
           outline: {
             weeks: [
               {
-                week: parseInt(weekTarget), // Ensure you're passing the correct weekTarget
+                week: parseInt(weekTarget),
                 title: topic,
                 objectives: [`Learn about ${topic}`, "Practice key phrases"],
                 main_content: [`Vocabulary related to ${topic}`, "Common phrases", "Grammar tips"],
@@ -63,7 +69,7 @@ export default function Roleplay() {
             ],
           },
         };
-        console.log("Request Body:", JSON.stringify(requestBody)); // Log the request body here
+        console.log("Request Body:", JSON.stringify(requestBody, null, 2));
 
         const response = await fetch(
           "https://ed86wj91pe.execute-api.eu-west-1.amazonaws.com/prod/generate-roleplay",
@@ -101,7 +107,6 @@ export default function Roleplay() {
       <header className="header">Home Dashboard</header>
       <main className="roleplay-container">
         {error && <div className="error">{error}</div>}
-
         {!hasGenerated ? (
           <div className="topic-input-container">
             <h2>Generate Roleplay</h2>
@@ -110,11 +115,8 @@ export default function Roleplay() {
               <p>Feeling creative today? Let’s dive into a roleplay session!</p>
               <img src={CarlosCelebrating} alt="Carlos Celebrating" className="celebration-image right" />
             </div>
-
-            {/* Show topic and week from state */}
             <h2>Topic: {topic}</h2>
             <h2>Week Target: {weekTarget}</h2>
-
             <button onClick={fetchRoleplay} disabled={loading}>
               {loading ? "Loading..." : "Generate Roleplay"}
             </button>
@@ -128,7 +130,6 @@ export default function Roleplay() {
                 <div className="dialogue">
                   {Object.keys(conversation).map((key, index) => {
                     const isCarlos = index % 2 === 0;
-
                     return (
                       <div key={index} className={`dialogue-line ${isCarlos ? "carlos" : "ana"}`}>
                         {!isCarlos && <img src={anaImg} alt="Ana" className="speaker-image" />}
@@ -143,13 +144,11 @@ export default function Roleplay() {
                 </div>
               </div>
             ))}
-
             <div className="button-container">
               <button onClick={fetchRoleplay} disabled={loading}>
                 {loading ? "Loading..." : hasGenerated ? "Generate Another" : "Generate Roleplay"}
               </button>
             </div>
-
             <button className="change-topic-btn" onClick={() => setHasGenerated(false)}>
               Change Topic
             </button>

@@ -1,15 +1,12 @@
-import React, { useState, useRef } from "react";
-import axios from 'axios';
-import micImage from './microphone-342.svg';
+import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
+import micImage from "./microphone-342.svg";
 import "./Chatbot.css";
 import { useCourseData } from "../Context/CourseDataContext";
 import { useUserProfile } from "../Context/UserProfileContext";
 
-
-export default function Chatbot() {
-
+export default function Chatbot({ selectedWeek, selectedTopic }) {
   const [inputText, setInputText] = useState("");
-
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hi! How can I assist you today?" }
   ]);
@@ -31,53 +28,58 @@ export default function Chatbot() {
     Portuguese: "pt-PT",
     English: "en-US",
   };
-  
+
   const { courseData } = useCourseData();
-  const {userEmail, userLanguage, userDifficulty } = useUserProfile();
+  const { userEmail, userLanguage, userDifficulty } = useUserProfile();
 
-  const genOutline = courseData?.body?.generatedOutline || {}; 
+  // Get the generated outline from courseData
+  const genOutline = courseData?.body?.generatedOutline || {};
 
-  if (Array.isArray(genOutline.weeks)) {
-      genOutline.weeks.map((week) => {
-          console.log("Week:", week);
-      });
-  } else {
-      console.error("genOutline.weeks is not an array:", genOutline.weeks);
-  }
-  console.log ("Outline", genOutline)
+  console.log("Outline", genOutline);
+  console.log("UserProfileContext:", { userLanguage, userDifficulty, userEmail });
 
   // Dynamically set the languageTag based on userLanguage
-  const languageTag = languageTags[userLanguage] || "en-US"; // Default to "en-US" if no match
+  const languageTag = languageTags[userLanguage] || "en-US";
+  console.log("Selected language tag:", languageTag);
 
-  console.log("UserProfileContext:", { userLanguage, userDifficulty, userEmail });
-  console.log("Selected language tag:", languageTag);  // Debugging log
+  // Use selectedWeek and selectedTopic from props if available; otherwise, use defaults.
+  const topicToUse = selectedTopic || "Travel";
+  const weekTargetToUse = selectedWeek || 1;
+
+  // When the selected week or topic changes, reset the conversation.
+  useEffect(() => {
+    // Reset messages and clear input/transcript when week/topic changes
+    setMessages([{ sender: "bot", text: "Hi! How can I assist you today?" }]);
+    setInputText("");
+    setTranscript("");
+  }, [selectedWeek, selectedTopic]);
 
   const handleSendMessage = async () => {
-
-    setMessages([
-      ...messages,
-      { sender: "user", text: inputText },
+    // Append the user's message to the chat messages
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { sender: "user", text: inputText }
     ]);
+    const messageForRequest = inputText; // Save current input before clearing it
     setInputText("");
 
     const requestBody = {
       email: userEmail,
-      userLevel: "Intermediate",  // Fixed the syntax for userDifficulty
-      language: userLanguage,     // Fixed the syntax for userLanguage
-      languageTag: languageTag,   // Set languageTag dynamically
-      topic: "Travel",
-      userMsg: inputText,         // Use the user input as the message
-      weekTarget: 1,
-      outline: genOutline
-
-
+      userLevel: userDifficulty, 
+      language: userLanguage,
+      languageTag: languageTag,
+      topic: topicToUse,
+      userMsg: messageForRequest,
+      weekTarget: weekTargetToUse,
+      outline: genOutline,
     };
+
     console.log("Sending request body:", requestBody);
     console.log("Type of genOutline:", typeof genOutline, genOutline);
 
     try {
       const response = await axios.post(
-        'https://xoo613pdgk.execute-api.eu-west-1.amazonaws.com/chat/generate-chat',  
+        'https://xoo613pdgk.execute-api.eu-west-1.amazonaws.com/chat/generate-chat',
         requestBody,
         {
           headers: {
@@ -89,17 +91,14 @@ export default function Chatbot() {
 
       const botResponse = response.data.body.response;
 
-      setMessages([
-        ...messages,
-        { sender: "user", text: inputText },
+      setMessages((prevMessages) => [
+        ...prevMessages,
         { sender: "bot", text: botResponse }
       ]);
-      
+
       speakText(botResponse);
-      
     } catch (error) {
       console.error("Error sending message:", error.response?.data || error.message);
-
     }
   };
 
@@ -120,7 +119,7 @@ export default function Chatbot() {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = languageTag;  // Dynamically set the language for speech recognition
+    recognition.lang = languageTag;
     recognition.interimResults = true;
     recognition.continuous = true;
 
@@ -149,7 +148,7 @@ export default function Chatbot() {
 
   const speakText = (text) => {
     const speech = new SpeechSynthesisUtterance(text);
-    speech.lang = languageTag;  // Dynamically set the language for speech synthesis
+    speech.lang = languageTag;
     window.speechSynthesis.speak(speech);
   };
 
@@ -174,7 +173,6 @@ export default function Chatbot() {
           className="chat-input"
         />
         <button className="send-button" onClick={handleSendMessage}>Send</button>
-        
         <div
           className={`mic-button ${isRecording ? "recording" : ""}`}
           onClick={toggleMic}

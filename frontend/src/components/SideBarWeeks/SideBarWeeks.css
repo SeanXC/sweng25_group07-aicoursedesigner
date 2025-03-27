@@ -5,14 +5,22 @@
     background-color: #f4f4f4;
     padding: 15px;
     margin-left: auto;
-}
-
-.weeks {
+  }
+  
+  /* Style for the current week display */
+  .current-week {
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #8300A1;
+  }
+  
+  .weeks {
     padding: 8px;
-
-}
-
-.week-box {
+  }
+  
+  .week-box {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 10px;
@@ -20,13 +28,19 @@
     background: white;
     height: 100px;
     cursor: pointer;
-
-}
-
-.week-box.active {
-    border-color: #8300A1;
-}
-
-.week-box:hover {
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+  }
+  
+  .week-box:hover {
     background: #ddd;
-}
+  }
+  
+  /* Highlight the selected week */
+  .week-box.selected {
+    border-color: #8300A1;
+    background-color: #8300A1;
+    color: #fff;
+    transform: scale(0.98);
+  }
+  
