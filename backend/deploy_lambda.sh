@@ -4,7 +4,7 @@ set -e
 
 zip_dir="backend/build_zips"
 region="${AWS_DEFAULT_REGION:-eu-west-1}"
-functions=("generateChat" "generateCompletion" "generatePhrases" "userInfo")
+functions=("generateChat" "generateCompletion" "generateRoleplay" "generatePhrases" "userInfo")
 
 echo "🚀 Deploying selected Lambda functions from $zip_dir"
 

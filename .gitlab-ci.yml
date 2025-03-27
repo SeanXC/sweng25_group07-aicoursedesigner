@@ -41,7 +41,7 @@ build_lambda_functions:
     - mkdir -p "$ZIP_OUTPUT_DIR"
     - cd backend/src/handlers
     - |
-      for dir in generateChat generateCompletion generatePhrases userInfo; do
+      for dir in generateChat generateCompletion generateRoleplay generatePhrases userInfo; do
         if [ -f "$dir/index.mjs" ]; then
           echo "📦 Installing dependencies and zipping $dir"
           cd "$dir"
