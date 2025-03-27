@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useCourseData } from "../Context/CourseDataContext";
 import "./SideBarWeeks.css";
-import {Translation} from "../newCourseDashbaord/newCourseDashboard";
 
 export default function SideBarWeeks({ setSelectedWeek }) {
   const { courseData } = useCourseData(); //gets you the course data
@@ -12,9 +11,6 @@ export default function SideBarWeeks({ setSelectedWeek }) {
     console.log("Side bar Clicked Week:", week);
     console.log("side bar Week topic: ", week.topic);
   };
-  //   if (!courseData || !courseData.body || !courseData.body.generatedOutline) {
-  //     return <div className="sidebar">Loading...</div>;
-  //   }
 
   return (
     <div className="sidebar">

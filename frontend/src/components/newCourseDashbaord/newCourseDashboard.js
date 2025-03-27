@@ -30,7 +30,9 @@ const Content = ({ activeTab, selectedWeek }) => {
   console.log("newCourseDashboard.js - Current selectedWeek:", selectedWeek);
   return (
     <div className="content">
-      {activeTab === "Translation" && <Translation selectedWeek={selectedWeek} />}
+      {activeTab === "Translation" && (
+        <Translation selectedWeek={selectedWeek} />
+      )}
       {activeTab === "Roleplay" && <CourseRoleplay />}
       {activeTab === "Chatbot" && <Chatbot />}
     </div>
@@ -43,38 +45,71 @@ const CourseRoleplay = () => (
   </div>
 );
 
-// const SideBar = () => (
+export function Translation({ selectedWeek }) {
+  const [phraseData, setPhraseData] = useState([]);
+  const { courseData } = useCourseData();
+  //console.log("going into fetch", courseData.body.generatedOutline.weeks);
+  useEffect(() => {
+    async function fetchPhrases(week, courseData) {
+      try {
+        const response = await fetch(
+          "https://t6xifz4k94.execute-api.eu-west-1.amazonaws.com/test/generate-phrases",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: "user@example.com",
+              userLevel: "A2",
+              language: "Spanish",
+              topic: "Spanish Greetings",
+              weekTarget: week,
+              outline: {
+                course_title: "Spanish Course for English Speakers (B1)",
+                weeks: [
+                  {
+                    week: 1,
+                    title: "Introduction to Spanish Language",
+                    objectives: [
+                      "Understanding the basics of Spanish",
+                      "Learning common Spanish phrases",
+                    ],
+                    main_content: [
+                      "Introduction to Spanish alphabet",
+                      "Introduction to common Spanish phrases",
+                    ],
+                    activities: [
+                      "Listening exercises",
+                      "Pronunciation practice",
+                    ],
+                  },
+                ],
+              },
+            }),
+          }
+        );
 
-//   <div className="sidebar">
-//     {["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"].map((week) => (
-//       <div className="weeks">
-//         <div key={week} className="week-box">
-//           <p>
-//             <b>{week}</b>
-//           </p>
-//           <p>Course Content</p>
-//         </div>
-//       </div>
-//     ))}
-//   </div>
-// );
+        const responseData = await response.json();
+        setPhraseData(responseData.phrases);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
 
-// const Test = () =>(
-//   console.log("I hate react")
-// );
+    if (selectedWeek) {
+      fetchPhrases(selectedWeek, courseData);
+    }
+  }, [selectedWeek, courseData]);
 
-export function Translation(props) {
-  console.log("Week: ", props.selectedWeek);
+  //console.log("above return in translate",phraseData); //,phraseData[1].Spanish
   return (
     <div className="outside-card">
       <div className="card">
-        {props.selectedWeek === 1 && <p className="word">Hola</p>}
-        {props.selectedWeek === 2 && <p className="word">Uno</p>}
-        {props.selectedWeek === 3 && <p className="word">Madre</p>}
-        {props.selectedWeek === 4 && <p className="word">Pan</p>}
-        {props.selectedWeek === 5 && <p className="word">Derecha</p>}
+        {/* <span>{phraseData[1].Spanish}</span> */}
       </div>
-      <br></br>
+      <br />
+      <br />
       <label className="answerText">
         Enter the word in English: <input name="answer" />
       </label>
@@ -82,21 +117,13 @@ export function Translation(props) {
   );
 }
 
-// const Chatbot = () => (
-//   <div>
-//     <p>Chatbot coming soon!</p>
-//   </div>
-// );
-
 export default function CourseDashboard() {
-  // if(selectedWeek===1){
-  //   console.log("YIPPEE");
-  // }
   const [activeTab, setActiveTab] = useState("Translation");
   const [selectedWeek, setSelectedWeek] = useState(1);
   const { courseData } = useCourseData(); //gets you the course data
   console.log("Course Data:", courseData);
   console.log("Week Descriptions:");
+  //fetchPhrases(selectedWeek, courseData)
 
   return (
     <div>
