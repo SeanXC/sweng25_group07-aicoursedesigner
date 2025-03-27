@@ -57,7 +57,7 @@ export default function HomeDashboard() {
       difficulty: values.difficulty || userDifficulty,
       targetLang: selectedLanguage,
       nativeLang: values.nativeLanguage,
-      duration: duration,
+      duration: Number(duration),
     };
     console.log("Selected Language:", selectedLanguage);
 
@@ -150,7 +150,13 @@ export default function HomeDashboard() {
                   </div>
                   <div>
                     <p>Duration: {duration} weeks</p>
-                    <input type="range" min="1" max="12" value={duration} onChange={(e) => setDuration(e.target.value)} />
+                    <input 
+                      type="range" 
+                      min="1" 
+                      max="12" 
+                      value={duration} 
+                      onChange={(e) => setDuration(Number(e.target.value))} 
+                    />
                   </div>
                   <div>
                     <button type="submit">Submit</button>
@@ -164,3 +170,4 @@ export default function HomeDashboard() {
     </div>
   );
 }
+
