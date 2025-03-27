@@ -5,15 +5,18 @@ import { useNavigate } from "react-router-dom";
 import NavBar from "../NavBar/NavBar";
 import { useCourseData } from "../Context/CourseDataContext"; // Import the context hook
 
+import { useUserProfile } from "../Context/UserProfileContext";
+
+
 export default function HomeDashboard() {
   const navigate = useNavigate();
+  const { setUserEmail } = useUserProfile(); // Access setUserEmail to update the email state
   const [showCourse, setShowCourse] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [userLanguage, setUserLanguage] = useState("");
-  const [userDifficulty, setUserDifficulty] = useState("");
   const [duration, setDuration] = useState(5);
 
   const { setCourseData } = useCourseData();  // Access setCourseData to update global state
+  const { userLanguage, setUserLanguage, userDifficulty, setUserDifficulty } = useUserProfile();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -21,13 +24,18 @@ export default function HomeDashboard() {
       if (userEmail) {
         const userData = await fetchUserData(userEmail);
         if (userData) {
+          console.log("Fetched user data:", userData);  // Debug log
+          setUserEmail(userEmail);
           setUserLanguage(userData.languages || "");
           setUserDifficulty(userData.proficiency || "");
         }
       }
     };
     fetchUserProfile();
-  }, []);
+  }, [setUserLanguage, setUserDifficulty]);
+
+  // Debug logs for checking context values
+  console.log("UserProfile Context: ", { userLanguage, userDifficulty });
 
   // Form submission handler
   async function formSubmit(e) {
@@ -36,18 +44,25 @@ export default function HomeDashboard() {
     const values = Object.fromEntries(formData.entries());
     const userEmail = sessionStorage.getItem("email") || "testuser@email.com";
 
+     // Set user language to selected language (if it exists), otherwise fall back to current userLanguage
+  const selectedLanguage = values.language || userLanguage;
+  setUserLanguage(selectedLanguage);  // Update the context with the selected language
+
+
     const courseData = {
       email: userEmail,
       courseName: values.courseName,
       courseDesc: values.courseDesc,
       difficulty: values.difficulty || userDifficulty,
-      targetLang: values.language || userLanguage,
+      targetLang: selectedLanguage,
       nativeLang: values.nativeLanguage,
       duration: duration,
     };
+    console.log("Selected Language:", selectedLanguage);
+
+    console.log("Form Data:", courseData);  // Debug log
 
     try {
-      console.log("Request Body:", JSON.stringify(courseData));
       const response = await fetch("https://ycuzxyk9xj.execute-api.eu-west-1.amazonaws.com/dev/generate", {
         method: "POST",
         headers: {
@@ -59,12 +74,11 @@ export default function HomeDashboard() {
 
       if (response.ok) {
         const responseBody = await response.json();
-        console.log("Response Body:", responseBody);
+        console.log("Response Body:", responseBody);  // Debug log
 
         // **Set the course data in global context**
         setCourseData(responseBody);
 
-        
         navigate('/courseDashboard');
       } else {
         console.error("Error generating course:", response.statusText);
@@ -95,7 +109,7 @@ export default function HomeDashboard() {
                   <div>
                     <p>Difficulty:</p>
                     <select name="difficulty" style={{ width: "100%", padding: "8px", fontSize: "16px" }}>
-                      <option hidden value={userDifficulty}>{userDifficulty}</option>
+                      <option hidden value={userDifficulty}>{userDifficulty || "Select Difficulty"}</option>
                       <option value="A1">A1</option>
                       <option value="A2">A2</option>
                       <option value="B1">B1</option>
@@ -107,7 +121,7 @@ export default function HomeDashboard() {
                   <div>
                     <p>Learn:</p>
                     <select name="language" style={{ width: "100%", padding: "8px", fontSize: "16px" }}>
-                      <option hidden value={userLanguage}>{userLanguage}</option>
+                      <option hidden value={userLanguage}>{userLanguage || "Select Language"}</option>
                       <option value="Spanish">Spanish</option>
                       <option value="English">English</option>
                       <option value="French">French</option>

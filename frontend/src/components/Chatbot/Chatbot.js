@@ -3,9 +3,13 @@ import axios from 'axios';
 import micImage from './microphone-342.svg';
 import "./Chatbot.css";
 import { useCourseData } from "../Context/CourseDataContext";
+import { useUserProfile } from "../Context/UserProfileContext";
+
 
 export default function Chatbot() {
+
   const [inputText, setInputText] = useState("");
+
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hi! How can I assist you today?" }
   ]);
@@ -18,10 +22,27 @@ export default function Chatbot() {
     setInputText(event.target.value);
   };
 
+  // Mapping of languages to speech recognition tags
+  const languageTags = {
+    Spanish: "es-ES",
+    French: "fr-FR",
+    Italian: "it-IT",
+    German: "de-DE",
+    Portuguese: "pt-PT",
+    English: "en-US",
+  };
+  
   const { courseData } = useCourseData();
-  const userLanguage = courseData.targetLang;  // Directly use the value from context
-  const userDifficulty = courseData.difficulty;  // Directly use the value from context
+  const { userLanguage, userDifficulty } = useUserProfile();
 
+  const genOutline = courseData.body.generatedOutline
+  console.log ("Outline", genOutline)
+
+  // Dynamically set the languageTag based on userLanguage
+  const languageTag = languageTags[userLanguage] || "en-US"; // Default to "en-US" if no match
+
+  console.log("UserProfileContext:", { userLanguage, userDifficulty });
+  console.log("Selected language tag:", languageTag);  // Debugging log
 
   const handleSendMessage = async () => {
     setMessages([
@@ -30,55 +51,17 @@ export default function Chatbot() {
     ]);
     setInputText("");
 
-
-
     const requestBody = {
-  "email": "test@email.com",
-  "userLevel": {userDifficulty},
-  "language": {userLanguage},
-  "languageTag": "fr-FR",
-  "topic": "Travel",
-  "userMsg": "",
-  "weekTarget": 1,
-  "outline": {
-    "course_title": "French for Travelers",
-    "weeks": [
-      {
-        "week": 1,
-        "title": "Basic Greetings and Introductions",
-        "objectives": [
-          "Use basic French greetings",
-          "Introduce yourself in French"
-        ],
-        "main_content": [
-          "Bonjour, Salut, Comment ça va",
-          "Je m'appelle..., Je suis de..."
-        ],
-        "activities": [
-          "Role-play greetings",
-          "Practice dialogues"
-        ]
-      },
-      {
-        "week": 2,
-        "title": "Ordering Food",
-        "objectives": [
-          "Order food and drinks",
-          "Understand menu vocabulary"
-        ],
-        "main_content": [
-          "Je voudrais..., L'addition, s'il vous plaît",
-          "Types of food and beverages"
-        ],
-        "activities": [
-          "Menu simulation",
-          "Ordering practice"
-        ]
-      }
-    ]
-  }  
+      email: "irontakeout@gmail.com",
+      userLevel: "Intermediate",  // Fixed the syntax for userDifficulty
+      language: userLanguage,     // Fixed the syntax for userLanguage
+      languageTag: languageTag,   // Set languageTag dynamically
+      topic: "Travel",
+      userMsg: inputText,         // Use the user input as the message
+      weekTarget: 1,
+      outline: genOutline
     };
-
+    console.log("Sending request body:", requestBody);
     try {
       const response = await axios.post(
         'https://xoo613pdgk.execute-api.eu-west-1.amazonaws.com/chat/generate-chat',  
@@ -102,7 +85,8 @@ export default function Chatbot() {
       speakText(botResponse);
       
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error("Error sending message:", error.response?.data || error.message);
+
     }
   };
 
@@ -123,7 +107,7 @@ export default function Chatbot() {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = 'fr-FR';
+    recognition.lang = languageTag;  // Dynamically set the language for speech recognition
     recognition.interimResults = true;
     recognition.continuous = true;
 
@@ -152,7 +136,7 @@ export default function Chatbot() {
 
   const speakText = (text) => {
     const speech = new SpeechSynthesisUtterance(text);
-    speech.lang = 'fr-FR';
+    speech.lang = languageTag;  // Dynamically set the language for speech synthesis
     window.speechSynthesis.speak(speech);
   };
 
