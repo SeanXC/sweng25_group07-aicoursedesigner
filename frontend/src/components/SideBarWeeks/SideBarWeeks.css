@@ -1,0 +1,32 @@
+.sidebar {
+    width: 350px;
+    overflow-y: auto;
+    height: calc(100vh - 60px);
+    background-color: #f4f4f4;
+    padding: 15px;
+    margin-left: auto;
+}
+
+.weeks {
+    padding: 8px;
+
+}
+
+.week-box {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    text-align: center;
+    background: white;
+    height: 100px;
+    cursor: pointer;
+
+}
+
+.week-box.active {
+    border-color: #8300A1;
+}
+
+.week-box:hover {
+    background: #ddd;
+}
