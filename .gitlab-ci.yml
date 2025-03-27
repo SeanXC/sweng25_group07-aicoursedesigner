@@ -118,15 +118,31 @@ test_backend_lambda:
     - cat saveUser_output.json
 
     - echo "Invoking AWS Lambda function 'generateChat'..."
-    - aws lambda invoke --function-name generateChat --payload fileb://tests/payloads/generateChat/generateChat.json generateChat.json --log-type Tail
+    - aws lambda invoke --function-name generateChat --payload fileb://tests/payloads/generateChat/generateChat.json generateChat_output.json --log-type Tail
     - cat generateChat_output.json
 
+    - echo "Invoking AWS Lambda function 'generateChatMissingFields'..."
+    - aws lambda invoke --function-name generateChat --payload fileb://tests/payloads/generateChat/generateChatMissingFields.json generateChatMissingFields_output.json --log-type Tail
+    - cat generateChatMissingFields_output.json
+
+    - echo "Invoking AWS Lambda function 'generateChatInvalidWeek'..."
+    - aws lambda invoke --function-name generateChat --payload fileb://tests/payloads/generateChat/generateChatInvalidWeek.json generateChatInvalidWeek_output.json --log-type Tail
+    - cat generateChatInvalidWeek_output.json
+
+    - echo "Invoking AWS Lambda function 'generateChatMissingMsg'..."
+    - aws lambda invoke --function-name generateChat --payload fileb://tests/payloads/generateChat/generateChatMissingMsg.json generateChatMissingMsg_output.json --log-type Tail
+    - cat generateChatMissingMsg_output.json
+
+    - echo "Invoking AWS Lambda function 'generateChatDiffLanguage'..."
+    - aws lambda invoke --function-name generateChat --payload fileb://tests/payloads/generateChat/generateChatDiffLanguage.json generateChatDiffLanguage_output.json --log-type Tail
+    - cat generateChatDiffLanguage_output.json
+
     - echo "Invoking AWS Lambda function 'getChatHistory'..."
-    - aws lambda invoke --function-name getChatHistory --payload fileb://tests/payloads/generateChat/getChatHistory.json getChatHistory.json --log-type Tail
+    - aws lambda invoke --function-name generateChat --payload fileb://tests/payloads/generateChat/getChatHistory.json getChatHistory_output.json --log-type Tail
     - cat getChatHistory_output.json
 
     - echo "Invoking AWS Lambda function 'saveChatMessage'..."
-    - aws lambda invoke --function-name saveChatMessage --payload fileb://tests/payloads/generateChat/saveChatMessage.json saveChatMessage.json --log-type Tail
+    - aws lambda invoke --function-name generateChat --payload fileb://tests/payloads/generateChat/saveChatMessage.json saveChatMessage_output.json --log-type Tail
     - cat saveChatMessage_output.json
   only:
     - backend
