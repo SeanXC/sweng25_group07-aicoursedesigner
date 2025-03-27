@@ -1,0 +1,6 @@
+{
+    "httpMethod": "PUT",
+    "path": "/save-roleplay",
+    "body": "{ \"email\": \"user@example.com\", \"conversation\": { \"person1\": \"Hola! ¿Cómo estás?\", \"person2\": \"¡Hola! Estoy bien, gracias. ¿Y tú?\", \"person1\": \"Quisiera ordenar comida, por favor.\", \"person2\": \"Por supuesto, ¿qué le gustaría comer?\" }, \"language\": \"Spanish\", \"topic\": \"Ordering Food at a Restaurant\", \"weekTarget\": 1 }"
+  }
+  

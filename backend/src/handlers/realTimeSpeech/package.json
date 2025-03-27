@@ -1,10 +1,10 @@
 {
-    "name": "generateRoleplay",
+    "name": "realTimeSpeech",
     "version": "1.0.0",
     "main": "index.mjs",
     "type": "module",
     "scripts": {
-        "deploy": "npm install && zip -r function.zip . && aws lambda update-function-code --function-name generateRoleplay --zip-file fileb://function.zip"
+        "deploy": "npm install && zip -r function.zip . && aws lambda update-function-code --function-name generatePhrases --zip-file fileb://function.zip"
     },
     "dependencies": {
         "@aws-sdk/client-dynamodb": "^3.738.0",
@@ -15,7 +15,9 @@
         "cors": "^2.8.5",
         "dotenv": "^16.4.7",
         "express": "^4.21.2",
-        "generateRoleplay": "file:",
-        "openai": "^4.82.0"
+        "generatePhrases": "file:",
+        "openai": "^4.82.0",
+        "outlineCustomizer": "file:",
+        "realTimeSpeech": "file:"
     }
 }

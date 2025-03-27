@@ -2,8 +2,14 @@ import React, { useState, useRef } from "react";
 import axios from 'axios';
 import micImage from './microphone-342.svg';
 import "./Chatbot.css";
+import { useCourseData } from "../Context/CourseDataContext";
+import { useUserProfile } from "../Context/UserProfileContext";
+
+
 export default function Chatbot() {
+
   const [inputText, setInputText] = useState("");
+
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hi! How can I assist you today?" }
   ]);
@@ -16,7 +22,38 @@ export default function Chatbot() {
     setInputText(event.target.value);
   };
 
+  // Mapping of languages to speech recognition tags
+  const languageTags = {
+    Spanish: "es-ES",
+    French: "fr-FR",
+    Italian: "it-IT",
+    German: "de-DE",
+    Portuguese: "pt-PT",
+    English: "en-US",
+  };
+  
+  const { courseData } = useCourseData();
+  const {userEmail, userLanguage, userDifficulty } = useUserProfile();
+
+  const genOutline = courseData?.body?.generatedOutline || {}; 
+
+  if (Array.isArray(genOutline.weeks)) {
+      genOutline.weeks.map((week) => {
+          console.log("Week:", week);
+      });
+  } else {
+      console.error("genOutline.weeks is not an array:", genOutline.weeks);
+  }
+  console.log ("Outline", genOutline)
+
+  // Dynamically set the languageTag based on userLanguage
+  const languageTag = languageTags[userLanguage] || "en-US"; // Default to "en-US" if no match
+
+  console.log("UserProfileContext:", { userLanguage, userDifficulty, userEmail });
+  console.log("Selected language tag:", languageTag);  // Debugging log
+
   const handleSendMessage = async () => {
+
     setMessages([
       ...messages,
       { sender: "user", text: inputText },
@@ -24,12 +61,19 @@ export default function Chatbot() {
     setInputText("");
 
     const requestBody = {
-      email: "test@email.com",  
-      userLevel: "Intermediate",  
-      language: "Spanish",  
-      topic: "Travel",  
-      userMsg: inputText,  
+      email: userEmail,
+      userLevel: "Intermediate",  // Fixed the syntax for userDifficulty
+      language: userLanguage,     // Fixed the syntax for userLanguage
+      languageTag: languageTag,   // Set languageTag dynamically
+      topic: "Travel",
+      userMsg: inputText,         // Use the user input as the message
+      weekTarget: 1,
+      outline: genOutline
+
+
     };
+    console.log("Sending request body:", requestBody);
+    console.log("Type of genOutline:", typeof genOutline, genOutline);
 
     try {
       const response = await axios.post(
@@ -54,7 +98,8 @@ export default function Chatbot() {
       speakText(botResponse);
       
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error("Error sending message:", error.response?.data || error.message);
+
     }
   };
 
@@ -75,7 +120,7 @@ export default function Chatbot() {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = 'es-ES';
+    recognition.lang = languageTag;  // Dynamically set the language for speech recognition
     recognition.interimResults = true;
     recognition.continuous = true;
 
@@ -104,7 +149,7 @@ export default function Chatbot() {
 
   const speakText = (text) => {
     const speech = new SpeechSynthesisUtterance(text);
-    speech.lang = 'es-ES';
+    speech.lang = languageTag;  // Dynamically set the language for speech synthesis
     window.speechSynthesis.speak(speech);
   };
 
@@ -136,9 +181,6 @@ export default function Chatbot() {
         >
           <img src={micImage} alt="microphone" />
         </div>
-
-        {/* Dummy Circle Button */}
-        <div className="dummy-circle-button" onClick={() => alert("Dummy button clicked!")}></div>
       </div>
     </div>
   );
