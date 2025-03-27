@@ -2,18 +2,61 @@ stages:
   - install
   - build
   - test
-  - deploy
 
 variables:
   NODE_ENV: test
+  AWS_DEFAULT_REGION: eu-west-1
 
 before_script:
   - rm -f .git/index.lock .git/config.lock .git/shallow.lock
   - node -v
   - npm -v
-  - mkdir -p ~/.ssh
-  - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-  - chmod 600 ~/.ssh/id_rsa
+
+install_dependencies:
+  stage: install
+  tags:
+    - docker
+  image: node:20
+  script:
+    - echo "📦 Installing root dependencies..."
+    - npm install
+    - echo "📦 Installing handler dependencies..."
+    - cd backend/src/handlers
+    - |
+      for dir in */; do
+        if [ -f "$dir/package.json" ]; then
+          echo "📦 Installing in $dir"
+          cd "$dir"
+          npm install --omit=dev
+          cd ..
+        fi
+      done
+
+build_lambda_functions:
+  stage: build
+  tags:
+    - docker
+  image: node:20
+  script:
+    - apt-get update && apt-get install -y zip
+    - echo "📦 Zipping Lambda functions..."
+    - export ZIP_OUTPUT_DIR="$CI_PROJECT_DIR/backend/build_zips"
+    - mkdir -p "$ZIP_OUTPUT_DIR"
+    - cd backend/src/handlers
+    - |
+      for dir in */; do
+        if [ -f "$dir/index.mjs" ]; then
+          echo "📦 Zipping $dir"
+          cd "$dir"
+          zip -q -r9 "$ZIP_OUTPUT_DIR/${dir%/}.zip" ./*
+          cd ..
+        fi
+      done
+  artifacts:
+    paths:
+      - backend/build_zips/
+
+
 
 test_backend_lambda:
   stage: test

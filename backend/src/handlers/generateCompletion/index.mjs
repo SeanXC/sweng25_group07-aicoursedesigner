@@ -1,16 +1,14 @@
-import OpenAI from "openai";
-import dotenv from "dotenv";
-import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-
-const ssmClient = new SSMClient({ region: "eu-west-1" });
-const client = new DynamoDBClient({ region: "eu-west-1" });
-const dynamodb = DynamoDBDocumentClient.from(client);
+import { SSMClient } from "@aws-sdk/client-ssm";
 
 import { getCompletion } from "./getCompletion.mjs";
 import { saveCourseOutline } from "./saveCompletion.mjs";
 import { getCourseOutlineHistory } from "./getHistory.mjs";
+
+const ssmClient = new SSMClient({ region: "eu-west-1" });
+const client = new DynamoDBClient({ region: "eu-west-1" });
+const dynamodb = DynamoDBDocumentClient.from(client);
 
 export async function handler(event) {
   const headers = {
@@ -74,15 +72,15 @@ export async function handler(event) {
     }
 
     if (httpMethod === "GET") {
-      const { email } = queryStringParameters || {};
-      if (!email) {
+      const { email, course_title } = queryStringParameters || {};
+      if (!email || !course_title) {
         return {
           statusCode: 400,
           headers,
-          body: JSON.stringify({ error: "Email is required" }),
+          body: JSON.stringify({ success: false, error: "Email and course_title are required" }),
         };
       }
-      const result = await getCourseOutlineHistory(email);
+      const result = await getCourseOutlineHistory(email, course_title);
       return {
         statusCode: 200,
         headers,

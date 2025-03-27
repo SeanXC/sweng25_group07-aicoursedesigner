@@ -4,12 +4,23 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 const client = new DynamoDBClient({ region: "eu-west-1" });
 const dynamodb = DynamoDBDocumentClient.from(client);
 
-async function getCourseOutlineHistory(email) {
+/**
+ * Query course outline by email and course_title using FilterExpression (since timestamp is sort key).
+ * @param {string} email - User's email
+ * @param {string} course_title - Course title
+ */
+async function getCourseOutlineHistory(email, course_title) {
+  if (!email || !course_title) {
+    return { success: false, error: "Email and course_title are required" };
+  }
+
   const params = {
     TableName: "courseOutlines",
     KeyConditionExpression: "email = :email",
+    FilterExpression: "course_title = :course_title",
     ExpressionAttributeValues: {
       ":email": email,
+      ":course_title": course_title,
     },
     ScanIndexForward: false,
   };
