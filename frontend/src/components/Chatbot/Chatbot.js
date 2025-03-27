@@ -33,18 +33,27 @@ export default function Chatbot() {
   };
   
   const { courseData } = useCourseData();
-  const { userLanguage, userDifficulty } = useUserProfile();
+  const {userEmail, userLanguage, userDifficulty } = useUserProfile();
 
-  const genOutline = courseData.body.generatedOutline
+  const genOutline = courseData?.body?.generatedOutline || {}; 
+
+  if (Array.isArray(genOutline.weeks)) {
+      genOutline.weeks.map((week) => {
+          console.log("Week:", week);
+      });
+  } else {
+      console.error("genOutline.weeks is not an array:", genOutline.weeks);
+  }
   console.log ("Outline", genOutline)
 
   // Dynamically set the languageTag based on userLanguage
   const languageTag = languageTags[userLanguage] || "en-US"; // Default to "en-US" if no match
 
-  console.log("UserProfileContext:", { userLanguage, userDifficulty });
+  console.log("UserProfileContext:", { userLanguage, userDifficulty, userEmail });
   console.log("Selected language tag:", languageTag);  // Debugging log
 
   const handleSendMessage = async () => {
+
     setMessages([
       ...messages,
       { sender: "user", text: inputText },
@@ -52,7 +61,7 @@ export default function Chatbot() {
     setInputText("");
 
     const requestBody = {
-      email: "irontakeout@gmail.com",
+      email: userEmail,
       userLevel: "Intermediate",  // Fixed the syntax for userDifficulty
       language: userLanguage,     // Fixed the syntax for userLanguage
       languageTag: languageTag,   // Set languageTag dynamically
@@ -60,8 +69,12 @@ export default function Chatbot() {
       userMsg: inputText,         // Use the user input as the message
       weekTarget: 1,
       outline: genOutline
+
+
     };
     console.log("Sending request body:", requestBody);
+    console.log("Type of genOutline:", typeof genOutline, genOutline);
+
     try {
       const response = await axios.post(
         'https://xoo613pdgk.execute-api.eu-west-1.amazonaws.com/chat/generate-chat',  

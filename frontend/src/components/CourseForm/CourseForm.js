@@ -8,6 +8,7 @@ import { useCourseData } from "../Context/CourseDataContext"; // Import the cont
 import { useUserProfile } from "../Context/UserProfileContext";
 
 
+
 export default function HomeDashboard() {
   const navigate = useNavigate();
   const { setUserEmail } = useUserProfile(); // Access setUserEmail to update the email state
@@ -108,7 +109,11 @@ export default function HomeDashboard() {
                   </div>
                   <div>
                     <p>Difficulty:</p>
-                    <select name="difficulty" style={{ width: "100%", padding: "8px", fontSize: "16px" }}>
+                    <select
+                    name="difficulty"
+                    value={userDifficulty} 
+                    onChange={(e) => setUserDifficulty(e.target.value)} 
+                    style={{ width: "100%", padding: "8px", fontSize: "16px" }}>
                       <option hidden value={userDifficulty}>{userDifficulty || "Select Difficulty"}</option>
                       <option value="A1">A1</option>
                       <option value="A2">A2</option>
@@ -120,7 +125,9 @@ export default function HomeDashboard() {
                   </div>
                   <div>
                     <p>Learn:</p>
-                    <select name="language" style={{ width: "100%", padding: "8px", fontSize: "16px" }}>
+                    <select name="language" value={userLanguage} 
+                    onChange={(e) => setUserLanguage(e.target.value)} 
+                    style={{ width: "100%", padding: "8px", fontSize: "16px" }}>
                       <option hidden value={userLanguage}>{userLanguage || "Select Language"}</option>
                       <option value="Spanish">Spanish</option>
                       <option value="English">English</option>
