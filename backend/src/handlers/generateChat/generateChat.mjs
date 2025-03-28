@@ -35,7 +35,9 @@ async function generateChat(email, userLevel, language, languageTag, topic, user
   const weekDetails = outline.weeks.find(week => week.week === weekTarget);
   if (!weekDetails) return { error: `Week ${weekTarget} not found in the outline` };
 
-  if (!conversation[email]) {
+  const convoKey = `${email}::${topic}::${weekTarget}`;
+
+  if (!conversation[convoKey]) {
     const systemMessage = {
       role: "system",
       content: `You are a ${language} (${languageTag}) language partner helping the user practice on the topic "${topic}".
@@ -48,13 +50,13 @@ Focus on:
 - Staying within the topic context
 
 Objectives:
-- ${weekDetails.objectives.join("\n- ")}
+- ${Array.isArray(weekDetails.objectives) ? weekDetails.objectives.join("\n- ") : "No objectives provided"}
 
 Main Content:
-- ${weekDetails.main_content.join("\n- ")}
+- ${Array.isArray(weekDetails.main_content) ? weekDetails.main_content.join("\n- ") : "No main content provided"}
 
 Suggested Activities:
-- ${weekDetails.activities.join("\n- ")}
+- ${Array.isArray(weekDetails.activities) ? weekDetails.activities.join("\n- ") : "No activities provided"}
 
 Respond ONLY in this JSON format (no markdown or backticks):
 {
@@ -62,19 +64,19 @@ Respond ONLY in this JSON format (no markdown or backticks):
 }`,
     };
 
-    conversation[email] = [systemMessage];
+    conversation[convoKey] = [systemMessage];
     await saveChatMessage(email, systemMessage.role, systemMessage.content, language, languageTag, topic, weekTarget);
   }
 
   if (userMsg) {
     const userMessage = { role: "user", content: userMsg };
-    conversation[email].push(userMessage);
+    conversation[convoKey].push(userMessage);
     await saveChatMessage(email, userMessage.role, userMessage.content, language, languageTag, topic, weekTarget);
   }
 
   const response = await openai.chat.completions.create({
     model: "gpt-4o",
-    messages: conversation[email],
+    messages: conversation[convoKey],
     temperature: 0.7,
   });
 
@@ -89,7 +91,7 @@ Respond ONLY in this JSON format (no markdown or backticks):
   try {
     const parsed = JSON.parse(cleaned);
     const assistantMessage = { role: "assistant", content: parsed.response };
-    conversation[email].push(assistantMessage);
+    conversation[convoKey].push(assistantMessage);
     await saveChatMessage(email, assistantMessage.role, parsed.response, language, languageTag, topic, weekTarget);
 
     return {
