@@ -1,8 +1,11 @@
-import React, { useState, useRef } from "react";
-import axios from 'axios';
-import micImage from './microphone-342.svg';
+import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
+import micImage from "./microphone-342.svg";
 import "./Chatbot.css";
-export default function Chatbot() {
+import { useCourseData } from "../Context/CourseDataContext";
+import { useUserProfile } from "../Context/UserProfileContext";
+
+export default function Chatbot({ selectedWeek, selectedTopic }) {
   const [inputText, setInputText] = useState("");
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hi! How can I assist you today?" }
@@ -16,24 +19,67 @@ export default function Chatbot() {
     setInputText(event.target.value);
   };
 
+  // Mapping of languages to speech recognition tags
+  const languageTags = {
+    Spanish: "es-ES",
+    French: "fr-FR",
+    Italian: "it-IT",
+    German: "de-DE",
+    Portuguese: "pt-PT",
+    English: "en-US",
+  };
+
+  const { courseData } = useCourseData();
+  const { userEmail, userLanguage, userDifficulty } = useUserProfile();
+
+  // Get the generated outline from courseData
+  const genOutline = courseData?.body?.generatedOutline || {};
+
+  console.log("Outline", genOutline);
+  console.log("UserProfileContext:", { userLanguage, userDifficulty, userEmail });
+
+  // Dynamically set the languageTag based on userLanguage
+  const languageTag = languageTags[userLanguage] || "en-US";
+  console.log("Selected language tag:", languageTag);
+
+  // Use selectedWeek and selectedTopic from props if available; otherwise, use defaults.
+  const topicToUse = selectedTopic || "Travel";
+  const weekTargetToUse = selectedWeek || 1;
+
+  // When the selected week or topic changes, reset the conversation.
+  useEffect(() => {
+    // Reset messages and clear input/transcript when week/topic changes
+    setMessages([{ sender: "bot", text: "Hi! How can I assist you today?" }]);
+    setInputText("");
+    setTranscript("");
+  }, [selectedWeek, selectedTopic]);
+
   const handleSendMessage = async () => {
-    setMessages([
-      ...messages,
-      { sender: "user", text: inputText },
+    // Append the user's message to the chat messages
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { sender: "user", text: inputText }
     ]);
+    const messageForRequest = inputText; // Save current input before clearing it
     setInputText("");
 
     const requestBody = {
-      email: "test@email.com",  
-      userLevel: "Intermediate",  
-      language: "Spanish",  
-      topic: "Travel",  
-      userMsg: inputText,  
+      email: userEmail,
+      userLevel: userDifficulty, 
+      language: userLanguage,
+      languageTag: languageTag,
+      topic: topicToUse,
+      userMsg: messageForRequest,
+      weekTarget: weekTargetToUse,
+      outline: genOutline,
     };
+
+    console.log("Sending request body:", requestBody);
+    console.log("Type of genOutline:", typeof genOutline, genOutline);
 
     try {
       const response = await axios.post(
-        'https://xoo613pdgk.execute-api.eu-west-1.amazonaws.com/chat/generate-chat',  
+        'https://xoo613pdgk.execute-api.eu-west-1.amazonaws.com/chat/generate-chat',
         requestBody,
         {
           headers: {
@@ -45,16 +91,14 @@ export default function Chatbot() {
 
       const botResponse = response.data.body.response;
 
-      setMessages([
-        ...messages,
-        { sender: "user", text: inputText },
+      setMessages((prevMessages) => [
+        ...prevMessages,
         { sender: "bot", text: botResponse }
       ]);
-      
+
       speakText(botResponse);
-      
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error("Error sending message:", error.response?.data || error.message);
     }
   };
 
@@ -75,7 +119,7 @@ export default function Chatbot() {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = 'es-ES';
+    recognition.lang = languageTag;
     recognition.interimResults = true;
     recognition.continuous = true;
 
@@ -104,7 +148,7 @@ export default function Chatbot() {
 
   const speakText = (text) => {
     const speech = new SpeechSynthesisUtterance(text);
-    speech.lang = 'es-ES';
+    speech.lang = languageTag;
     window.speechSynthesis.speak(speech);
   };
 
@@ -129,16 +173,12 @@ export default function Chatbot() {
           className="chat-input"
         />
         <button className="send-button" onClick={handleSendMessage}>Send</button>
-        
         <div
           className={`mic-button ${isRecording ? "recording" : ""}`}
           onClick={toggleMic}
         >
           <img src={micImage} alt="microphone" />
         </div>
-
-        {/* Dummy Circle Button */}
-        <div className="dummy-circle-button" onClick={() => alert("Dummy button clicked!")}></div>
       </div>
     </div>
   );

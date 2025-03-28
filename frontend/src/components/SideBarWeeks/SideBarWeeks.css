@@ -1,0 +1,46 @@
+.sidebar {
+    width: 350px;
+    overflow-y: auto;
+    height: calc(100vh - 60px);
+    background-color: #f4f4f4;
+    padding: 15px;
+    margin-left: auto;
+  }
+  
+  /* Style for the current week display */
+  .current-week {
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #8300A1;
+  }
+  
+  .weeks {
+    padding: 8px;
+  }
+  
+  .week-box {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    text-align: center;
+    background: white;
+    height: 100px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+  }
+  
+  .week-box:hover {
+    background: #ddd;
+  }
+  
+  /* Highlight the selected week */
+  .week-box.selected {
+    border-color: #8300A1;
+    background-color: #8300A1;
+    color: #fff;
+    transform: scale(0.98);
+  }
+  

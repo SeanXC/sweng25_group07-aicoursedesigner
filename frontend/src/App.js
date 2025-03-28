@@ -14,6 +14,7 @@ import Chatbot from './components/Chatbot/Chatbot';
 import CourseDashboard from "./components/newCourseDashbaord/newCourseDashboard";
 import CompleteProfile from './components/ConfirmUser/completeProfile';
 import CourseDisplay from './components/courseDisplay/courseDisplay'
+import {CourseDataProvider}  from "./components/Context/CourseDataContext";
 
 function App() {
   const isAuthenticated = () => {
