@@ -1,0 +1,7 @@
+{
+    "httpMethod": "POST",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"email\": \"newtestuser@example.com\", \"courseName\": \"Spanish for Travelers\", \"courseDesc\": \"A practical Spanish course designed for travelers to communicate effectively in common travel situations.\", \"difficulty\": \"B1\", \"targetLang\": \"Spanish\", \"nativeLang\": \"English\", \"duration\": 4}"
+  }

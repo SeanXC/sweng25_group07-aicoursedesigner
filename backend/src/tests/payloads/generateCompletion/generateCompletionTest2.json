@@ -1,0 +1,7 @@
+{
+    "httpMethod": "POST",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"email\": \"studentlearner@example.com\", \"courseName\": \"Italian Grammar Essentials\", \"courseDesc\": \"A comprehensive course covering the fundamental rules of Italian grammar, including sentence structure, verb conjugation, and common expressions.\", \"difficulty\": \"C1\", \"targetLang\": \"Italian\", \"nativeLang\": \"English\", \"duration\": 6 }"
+  }

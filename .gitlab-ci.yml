@@ -220,5 +220,39 @@ test_backend_lambda:
     - echo "Invoking AWS Lambda function 'saveChatMessage'..."
     - aws lambda invoke --function-name generateChat --payload fileb://tests/payloads/generateChat/saveChatMessage.json saveChatMessage_output.json --log-type Tail
     - cat saveChatMessage_output.json
+
+
+    - echo "Invoking AWS Lambda function 'getCompletion'..."
+    - aws lambda invoke --function-name generateCompletion --payload fileb://tests/payloads/generateCompletion/generateCompletion.json generateCompletion_output.json --log-type Tail
+    - cat generateCompletion_output.json
+
+    - echo "Invoking AWS Lambda function 'getCompletion'..."
+    - aws lambda invoke --function-name generateCompletion --payload fileb://tests/payloads/generateCompletion/generateCompletionTest2.json generateCompletionTest2_output.json --log-type Tail
+    - cat generateCompletionTest2_output.json
+
+    - echo "Invoking AWS Lambda function 'getCompletion'..."
+    - aws lambda invoke --function-name generateCompletion --payload fileb://tests/payloads/generateCompletion/InvalidOutlineGeneration.json InvalidOutlineGeneration_output.json --log-type Tail
+    - cat InvalidOutlineGeneration_output.json
+
+    - echo "Invoking AWS Lambda function 'saveCourseOutline'..."
+    - aws lambda invoke --function-name generateCompletion --payload fileb://tests/payloads/generateCompletion/InvalidPutRequest.json InvalidPutRequest_output.json --log-type Tail
+    - cat InvalidPutRequest_output.json
+
+    - echo "Invoking AWS Lambda function 'saveCourseOutline'..."
+    - aws lambda invoke --function-name generateCompletion --payload fileb://tests/payloads/generateCompletion/InvalidSaveCompletion.json InvalidSaveCompletion_output.json --log-type Tail
+    - cat InvalidSaveCompletion_output.json
+
+    - echo "Invoking AWS Lambda function 'saveCourseOutline'..."
+    - aws lambda invoke --function-name generateCompletion --payload fileb://tests/payloads/generateCompletion/saveCompletion.json saveCompletion_output.json --log-type Tail
+    - cat saveCompletion_output.json
+
+    - echo "Invoking AWS Lambda function 'saveCourseOutline'..."
+    - aws lambda invoke --function-name generateCompletion --payload fileb://tests/payloads/generateCompletion/validPutRequest.json validPutRequest_output.json --log-type Tail
+    - cat validPutRequest_output.json
+
+
+
+
+
   only:
     - main
