@@ -1,0 +1,9 @@
+{
+    "httpMethod": "GET",
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "queryStringParameters": {
+      "course_title": "Spanish for Travelers"
+    }
+}

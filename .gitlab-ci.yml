@@ -250,9 +250,21 @@ test_backend_lambda:
     - aws lambda invoke --function-name generateCompletion --payload fileb://tests/payloads/generateCompletion/validPutRequest.json validPutRequest_output.json --log-type Tail
     - cat validPutRequest_output.json
 
+    - echo "Invoking AWS Lambda function 'getCourseOutlineHistory'..."
+    - aws lambda invoke --function-name generateCompletion --payload fileb://tests/payloads/generateCompletion/getOutlineEmailOnly.json getOutlineEmailOnly_output.json --log-type Tail
+    - cat getOutlineEmailOnly_output.json
 
+    - echo "Invoking AWS Lambda function 'getCourseOutlineHistory'..."
+    - aws lambda invoke --function-name generateCompletion --payload fileb://tests/payloads/generateCompletion/getOutlineEmailTitle.json getOutlineEmailTitle_output.json --log-type Tail
+    - cat getOutlineEmailTitle_output.json
 
+    - echo "Invoking AWS Lambda function 'getCourseOutlineHistory'..."
+    - aws lambda invoke --function-name generateCompletion --payload fileb://tests/payloads/generateCompletion/getRequestNoCoursesFound.json getRequestNoCoursesFound_output.json --log-type Tail
+    - cat getRequestNoCoursesFound_output.json
 
+    - echo "Invoking AWS Lambda function 'getCourseOutlineHistory'..."
+    - aws lambda invoke --function-name generateCompletion --payload fileb://tests/payloads/generateCompletion/InvalidGetRequest.json InvalidGetRequest_output.json --log-type Tail
+    - cat InvalidGetRequest_output.json
 
   only:
     - main

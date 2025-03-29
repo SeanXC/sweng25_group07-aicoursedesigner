@@ -1,0 +1,10 @@
+{
+    "httpMethod": "GET",
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "queryStringParameters": {
+      "email": "newtestuser@example.com",
+      "course_title": "Italian Grammar Essentials"
+    }
+}
