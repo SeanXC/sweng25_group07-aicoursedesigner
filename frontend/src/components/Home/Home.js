@@ -22,11 +22,6 @@ export default function HomeDashboard() {
             <button className="home-button">Generate Course</button>
           </Link>
 
-          <Link to="/connectaws">
-            <button className="home-button connect-aws-button">
-              Connect AWS
-            </button>
-          </Link>
         </div>
         </div>
       </div>
