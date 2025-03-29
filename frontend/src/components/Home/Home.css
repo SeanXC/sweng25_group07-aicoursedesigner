@@ -88,12 +88,6 @@ input {
     height: calc(100vh - 60px);
 }
 
-.connect-aws-button {
-    position: absolute;
-    right: 20px;
-    bottom: 20px;
-}
-
 .text {
     font-size: 19px;
     font-weight: bold;
