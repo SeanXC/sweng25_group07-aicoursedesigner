@@ -4,7 +4,6 @@ import { fetchUserData } from '../UserProfile/fetchUserData';
 import { useNavigate } from "react-router-dom";
 import NavBar from "../NavBar/NavBar";
 import { useCourseData } from "../Context/CourseDataContext"; // Import the context hook
-
 import { useUserProfile } from "../Context/UserProfileContext";
 
 
@@ -77,9 +76,9 @@ export default function HomeDashboard() {
         const responseBody = await response.json();
         console.log("Response Body:", responseBody);  // Debug log
 
-        // **Set the course data in global context**
-        setCourseData(responseBody);
 
+        // Set the course data in global context (with course name here)
+        setCourseData({ ...responseBody, courseName: values.courseName });
         navigate('/courseDashboard');
       } else {
         console.error("Error generating course:", response.statusText);
