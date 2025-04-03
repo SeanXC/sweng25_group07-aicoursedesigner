@@ -6,8 +6,11 @@ import "./SideBarWeeks.css";
 export default function SideBarWeeks({ onWeekSelect, selectedWeek }) {
   const { courseData, setCourseData } = useCourseData();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const weeks = courseData?.body?.generatedOutline?.weeks || [];
+  const weeks = courseData?.body?.generatedOutline?.weeks || courseData?.weeks || [];
   const [newTopic, setNewTopic] = useState("");
+  
+  
+
 
   const handleWeekClick = (weekData) => {
     onWeekSelect(weekData);

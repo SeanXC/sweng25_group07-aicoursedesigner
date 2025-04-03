@@ -31,6 +31,7 @@ export default function HomeDashboard() {
         if (data.success) {
           // Save course titles and timestamps to the state
           setCourses(data.courseDetails || []); // Assuming 'courseDetails' includes course_title and timestamp
+          console.log ("Course details", data.courseDetails)
         } else {
           console.error("Error fetching courses:", data.error);
         }
@@ -132,11 +133,6 @@ export default function HomeDashboard() {
           <button className="home-button">Generate Course</button>
         </Link>
 
-        <Link to="/connectaws">
-          <button className="home-button connect-aws-button">
-            Connect AWS
-          </button>
-        </Link>
       </div>
     </div>
   );
