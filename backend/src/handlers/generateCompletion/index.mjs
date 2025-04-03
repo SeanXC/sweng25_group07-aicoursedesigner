@@ -73,21 +73,25 @@ export async function handler(event) {
 
     if (httpMethod === "GET") {
       const { email, course_title } = queryStringParameters || {};
-      if (!email || !course_title) {
+
+      // Check if email is provided
+      if (!email) {
         return {
           statusCode: 400,
           headers,
-          body: JSON.stringify({ success: false, error: "Email and course_title are required" }),
+          body: JSON.stringify({ success: false, error: "Email is required" }),
         };
       }
-      const result = await getCourseOutlineHistory(email, course_title);
+
+      // If course_title is not provided, handle it as optional
+      const result = await getCourseOutlineHistory(email, course_title);  // Pass course_title as optional
       return {
         statusCode: 200,
         headers,
         body: JSON.stringify(result),
       };
     }
-
+    
     return {
       statusCode: 405,
       headers,

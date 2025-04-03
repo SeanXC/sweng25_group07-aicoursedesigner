@@ -75,10 +75,10 @@ Target language: ${userInput.targetLang},
 Language used: ${userInput.nativeLang}, 
 Duration: ${userInput.duration} weeks.
 
-Make sure that each session contains detailed objectives, structured lesson content, and practical activities suitable for learners at this level. Each topic should be engaging and progressively build on prior knowledge.`;
+Make sure that each session contains detailed objectives, structured lesson content, and practical activities suitable for learners at this level. Each week's topic ("topic_of_the_week") should be a **situational theme**, such as "ordering food in a restaurant", "asking for directions", or "booking a hotel room". Avoid abstract grammatical topics—focus on practical, real-life contexts that build progressively on prior knowledge.`;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-3.5-turbo-0125",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
     });
