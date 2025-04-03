@@ -4,6 +4,13 @@ body {
     font-family: 'Montserrat';
 }
 
+.flashcard-progress {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
 .logo {
     height: 30px;
     width: auto;

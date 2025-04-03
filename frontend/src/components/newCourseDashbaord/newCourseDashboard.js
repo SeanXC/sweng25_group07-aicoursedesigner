@@ -116,6 +116,10 @@ export function Translation({ selectedWeek, selectedTopic }) {
 
   return (
     <div className="flashcard-carousel">
+      <div className="flashcard-progress">
+        {phraseData.length > 0 ? `${currentIndex + 1}/${phraseData.length}` : "0/0"}
+      </div>
+  
       <div className="flashcard-container" onClick={() => setFlipped(!flipped)}>
         <div className={`flashcard ${flipped ? 'flipped' : ''}`}>
           <div className="flashcard-front">
@@ -126,6 +130,7 @@ export function Translation({ selectedWeek, selectedTopic }) {
           </div>
         </div>
       </div>
+      
       <button className="next-button" onClick={nextFlashcard}>Next</button>
     </div>
   );
