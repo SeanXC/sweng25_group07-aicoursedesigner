@@ -53,7 +53,8 @@ export default function Chatbot({ selectedWeek, selectedTopic }) {
     setInputText("");
   }, [selectedWeek, selectedTopic]);
 
-  const handleSendMessage = async (message = inputText) => {
+  const handleSendMessage = async (message) => {
+    message = typeof message === "string"?message:inputText;
     if(!message.trim()) return;
 
     // Append the user's message to the chat messages
@@ -196,7 +197,7 @@ export default function Chatbot({ selectedWeek, selectedTopic }) {
           className="chat-input"
           disabled={realTimeSpeech.current}
         />
-        <button className="send-button" onClick={handleSendMessage} disabled={realTimeSpeech.current}>Send</button>
+        <button className="send-button" onClick={() => handleSendMessage()} disabled={realTimeSpeech.current}>Send</button>
         <div
           className={`mic-button ${isRecording ? "recording" : ""}`}
           onClick={toggleMic}
