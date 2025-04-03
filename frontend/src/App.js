@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import HomeDashboard from './components/Home/Home';  // Importing HomeDashboard from Home.js
-import ConnectAWS from './components/AWSButton/AWSButton';
 import UserLogin from "./components/UserLogin/UserLogin";
 import CourseForm from './components/CourseForm/CourseForm';
 import ConfirmUserPage from './components/ConfirmUser/confirmUser';
@@ -27,8 +26,6 @@ function App() {
       {
       <Routes>
         <Route path="/" element={<HomeDashboard />} />
-
-        <Route path="/connectaws" element={<ConnectAWS />} />
         <Route path="/login" element={<UserLogin />} />
         <Route path="/confirmUser" element={<ConfirmUserPage />} />
         <Route path="/courseform" element={<CourseForm />} />

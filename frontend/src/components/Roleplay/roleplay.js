@@ -104,7 +104,7 @@ export default function Roleplay({ selectedWeek, selectedTopic }) {
 
   return (
     <div className="layout">
-      <header className="header">Home Dashboard</header>
+      {/* <header className="header">Home Dashboard</header> */}
       <main className="roleplay-container">
         {error && <div className="error">{error}</div>}
         {!hasGenerated ? (
