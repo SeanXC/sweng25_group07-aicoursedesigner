@@ -45,24 +45,6 @@ body {
     width: 300px auto;
 }
 
-.outside-card {
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    max-width: 200px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
-
-.card {
-    border: 2px solid #8300A1;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    max-width: 200px;
-}
-
 .word {
     font-size: 24px;
     font-weight: bold;
@@ -148,3 +130,69 @@ input {
     position: relative;
 }
 
+.flashcard-container {
+    width: 28rem; 
+    height: 18rem; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+    cursor: pointer;
+    margin-bottom: 1rem; 
+  }
+  
+  .flashcard {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+    border: 2px solid #8300A1; 
+    background-color: white; 
+    border-radius: 0.5rem; 
+  }
+
+  .flashcard.flipped {
+    transform: rotateY(180deg);
+  }
+  
+  .flashcard-front,
+  .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #8300A1; 
+    backface-visibility: hidden;
+  }
+  
+  .flashcard-front {
+    background-color: white;
+    color: #8300A1;
+  }
+  
+  .flashcard-back {
+    background-color: white;
+    color: #8300A1;
+    transform: rotateY(180deg);
+  }
+  
+  .next-button {
+    background-color: #8300A1;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .next-button:hover {
+    background-color: #6a0077;
+  }
+  

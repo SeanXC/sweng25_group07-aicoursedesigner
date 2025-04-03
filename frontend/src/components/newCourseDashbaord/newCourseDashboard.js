@@ -5,6 +5,7 @@ import NavBar from "../NavBar/NavBar";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import SideBarWeeks from "../../components/SideBarWeeks/SideBarWeeks";
 import { useCourseData } from "../Context/CourseDataContext";
+import { useUserProfile } from "../Context/UserProfileContext";
 // import { handleWeekClick } from "..SideBarWeeks"
 
 const Tabs = ({ activeTab, setActiveTab }) => {
@@ -29,7 +30,7 @@ const Tabs = ({ activeTab, setActiveTab }) => {
 const Content = ({ activeTab, selectedWeek, selectedTopic }) => {
   return (
     <div className="content">
-      {activeTab === "Translation" && <Translation selectedWeek={selectedWeek} />}
+      {activeTab === "Translation" && <Translation selectedWeek={selectedWeek} selectedTopic={selectedTopic}/>}
       {activeTab === "Roleplay" && <CourseRoleplay selectedWeek={selectedWeek} selectedTopic={selectedTopic} />}
       {activeTab === "Chatbot" && <Chatbot selectedWeek={selectedWeek} selectedTopic={selectedTopic} />}
     </div>
@@ -43,10 +44,40 @@ const CourseRoleplay = ({ selectedWeek, selectedTopic }) => (
 );
 
 
-export function Translation({ selectedWeek }) {
+export function Translation({ selectedWeek, selectedTopic }) {
   const [phraseData, setPhraseData] = useState([]);
   const { courseData } = useCourseData();
-  //console.log("going into fetch", courseData.body.generatedOutline.weeks);
+  const { userEmail, userLanguage, userDifficulty } = useUserProfile();
+  const [flipped, setFlipped] = useState(true);
+  
+
+  // for the flashcard carousel
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentPhrase, setCurrentPhrase] = useState({});
+
+  const nextFlashcard = () => {
+    console.log('are we clicking next?')
+    if (currentIndex < phraseData.length - 1) {
+      setCurrentPhrase(phraseData[currentIndex + 1]);
+      setCurrentIndex(currentIndex + 1);
+      setFlipped(true); //start on the language side of the card
+    } else {
+      setCurrentPhrase(phraseData[0]);
+      setCurrentIndex(0); // Loop back to the first flashcard
+      setFlipped(true);
+    }
+  };
+
+  function formatWeeks(weeks) {
+    return weeks.map(week => ({
+      week: week.week,
+      title: week.topic, 
+      objectives: week.sessions.flatMap(session => session.objectives),
+      main_content: week.sessions.flatMap(session => session.main_content),
+      activities: week.sessions.flatMap(session => session.activities)
+  }));
+  }
+
   useEffect(() => {
     async function fetchPhrases(week, courseData) {
       try {
@@ -58,31 +89,13 @@ export function Translation({ selectedWeek }) {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              email: "user@example.com",
-              userLevel: "A2",
-              language: "Spanish",
-              topic: "Spanish Greetings",
+              email: userEmail,
+              userLevel: userDifficulty,
+              language: userLanguage,
+              topic: selectedTopic,
               weekTarget: week,
               outline: {
-                course_title: "Spanish Course for English Speakers (B1)",
-                weeks: [
-                  {
-                    week: 1,
-                    title: "Introduction to Spanish Language",
-                    objectives: [
-                      "Understanding the basics of Spanish",
-                      "Learning common Spanish phrases",
-                    ],
-                    main_content: [
-                      "Introduction to Spanish alphabet",
-                      "Introduction to common Spanish phrases",
-                    ],
-                    activities: [
-                      "Listening exercises",
-                      "Pronunciation practice",
-                    ],
-                  },
-                ],
+                weeks: formatWeeks(courseData.body.generatedOutline.weeks),
               },
             }),
           }
@@ -90,6 +103,7 @@ export function Translation({ selectedWeek }) {
 
         const responseData = await response.json();
         setPhraseData(responseData.phrases);
+        setCurrentPhrase(responseData.phrases[0])
       } catch (error) {
         console.error("Error:", error);
       }
@@ -98,22 +112,25 @@ export function Translation({ selectedWeek }) {
     if (selectedWeek) {
       fetchPhrases(selectedWeek, courseData);
     }
-  }, [selectedWeek, courseData]);
+  }, [selectedWeek, courseData, selectedTopic, userDifficulty, userEmail, userLanguage]);
 
-  //console.log("above return in translate",phraseData); //,phraseData[1].Spanish
   return (
-    <div className="outside-card">
-      <div className="card">
-        {/* <span>{phraseData[1].Spanish}</span> */}
+    <div className="flashcard-carousel">
+      <div className="flashcard-container" onClick={() => setFlipped(!flipped)}>
+        <div className={`flashcard ${flipped ? 'flipped' : ''}`}>
+          <div className="flashcard-front">
+            {currentPhrase.english}
+          </div>
+          <div className="flashcard-back">
+            {currentPhrase[userLanguage]}
+          </div>
+        </div>
       </div>
-      <br />
-      <br />
-      <label className="answerText">
-        Enter the word in English: <input name="answer" />
-      </label>
+      <button className="next-button" onClick={nextFlashcard}>Next</button>
     </div>
   );
 }
+
 
 export default function CourseDashboard() {
   const [activeTab, setActiveTab] = useState("Translation");
@@ -122,7 +139,6 @@ export default function CourseDashboard() {
   const { courseData } = useCourseData(); //gets you the course data
   console.log("Course Data:", courseData);
   console.log("Week Descriptions:");
-  //fetchPhrases(selectedWeek, courseData)
 
 const handleWeekSelection = (weekData) => {
   console.log("Selected Week:", weekData);
