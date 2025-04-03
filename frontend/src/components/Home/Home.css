@@ -199,3 +199,79 @@ input {
     width: 40px;
     margin-top: 0.5rem;
 }
+/* "View Created Courses" Button */
+.view-courses-button {
+    position: relative;
+    top: 30px; /* Adjust to lower the button */
+    left: 20px;
+    background-color: #8300A1;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.view-courses-button:hover {
+    background-color: #650080;
+}
+
+/* Sidebar for displaying created courses */
+.course-sidebar {
+    position: absolute;
+    top: 60px; /* Adjust for navbar height */
+    left: 0; /* Align the sidebar to the left of the screen */
+    width: 250px;
+    height: calc(100vh - 30px); /* Ensure the sidebar takes up the full height minus the navbar */
+    background-color: #f8f8f8;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    transition: left 0.3s ease-in-out;
+    overflow-y: auto; /* Enables vertical scrolling if content overflows */
+}
+
+
+/* "Hide Courses" Button inside the sidebar */
+.hide-courses-button {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #e74c3c;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.hide-courses-button:hover {
+    background-color: #c0392b;
+}
+
+.course-sidebar h2 {
+    font-size: 18px;
+    color: #212353;
+    margin-bottom: 15px;
+}
+
+.course-item {
+    background: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.course-item:hover {
+    border: 2px solid #8300A1; /* Add border on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Optionally, enhance shadow for hover effect */
+}
+.home-container.show-sidebar .content {
+    margin-left: 260px; /* Adjust main content when sidebar is visible */
+}

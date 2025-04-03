@@ -14,6 +14,17 @@ body {
     flex-direction: row;
 }
 
+.course-title {
+    position: absolute;  /* Position it at the top */
+    top: -10px;  /* Space from the top of the screen */
+    left: 50%;  /* Center horizontally */
+    transform: translateX(-50%);  /* Adjust so that it’s exactly in the center */
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fdfdfd;
+    text-align: center;
+}
+
 
 .logo {
     font-size: 24px;

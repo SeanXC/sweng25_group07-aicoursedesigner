@@ -5,12 +5,10 @@ import NavBar from "../NavBar/NavBar";
 import Chatbot from "../../components/Chatbot/Chatbot";
 import SideBarWeeks from "../../components/SideBarWeeks/SideBarWeeks";
 import { useCourseData } from "../Context/CourseDataContext";
-// import { handleWeekClick } from "..SideBarWeeks"
 
 const Tabs = ({ activeTab, setActiveTab }) => {
   const tabs = ["Translation", "Roleplay", "Chatbot"];
 
-  //const selectedWeek
   return (
     <div className="tabs">
       {tabs.map((tab) => (
@@ -42,11 +40,10 @@ const CourseRoleplay = ({ selectedWeek, selectedTopic }) => (
   </div>
 );
 
-
 export function Translation({ selectedWeek }) {
   const [phraseData, setPhraseData] = useState([]);
   const { courseData } = useCourseData();
-  //console.log("going into fetch", courseData.body.generatedOutline.weeks);
+
   useEffect(() => {
     async function fetchPhrases(week, courseData) {
       try {
@@ -100,7 +97,6 @@ export function Translation({ selectedWeek }) {
     }
   }, [selectedWeek, courseData]);
 
-  //console.log("above return in translate",phraseData); //,phraseData[1].Spanish
   return (
     <div className="outside-card">
       <div className="card">
@@ -119,30 +115,30 @@ export default function CourseDashboard() {
   const [activeTab, setActiveTab] = useState("Translation");
   const [selectedWeek, setSelectedWeek] = useState(null);
   const [selectedTopic, setSelectedTopic] = useState("");
-  const { courseData } = useCourseData(); //gets you the course data
-  console.log("Course Data:", courseData);
-  console.log("Week Descriptions:");
-  //fetchPhrases(selectedWeek, courseData)
+  const { courseData } = useCourseData(); // Gets course data
 
-const handleWeekSelection = (weekData) => {
-  console.log("Selected Week:", weekData);
-  setSelectedWeek(weekData.week);
-  setSelectedTopic(weekData.topic);
-};
+  const handleWeekSelection = (weekData) => {
+    console.log("Selected Week:", weekData);
+    setSelectedWeek(weekData.week);
+    setSelectedTopic(weekData.topic);
+  };
 
   return (
     <div>
       <NavBar />
       <div className="dashboard-container">
+        {/* Display the course title at the top */}
+        <div className="course-title">
+          <h1>{courseData.courseName || courseData.course_title}</h1> {/* This assumes course title is stored in `courseData.course_title` */}
+        </div>
+
         <div className="main-content">
           <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
           <div className="main">
-            <Content activeTab={activeTab} selectedWeek={selectedWeek}   selectedTopic={selectedTopic} />
+            <Content activeTab={activeTab} selectedWeek={selectedWeek} selectedTopic={selectedTopic} />
           </div>
         </div>
         <SideBarWeeks onWeekSelect={handleWeekSelection} selectedWeek={selectedWeek} />
-
-
       </div>
     </div>
   );
