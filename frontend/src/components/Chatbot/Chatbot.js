@@ -11,9 +11,9 @@ export default function Chatbot({ selectedWeek, selectedTopic }) {
     { sender: "bot", text: "Hi! How can I assist you today?" }
   ]);
   const [isRecording, setIsRecording] = useState(false);
-  const [transcript, setTranscript] = useState("");
 
   const recognitionRef = useRef(null);
+  let realTimeSpeech = useRef(false);
 
   const handleInputChange = (event) => {
     setInputText(event.target.value);
@@ -51,16 +51,17 @@ export default function Chatbot({ selectedWeek, selectedTopic }) {
     // Reset messages and clear input/transcript when week/topic changes
     setMessages([{ sender: "bot", text: "Hi! How can I assist you today?" }]);
     setInputText("");
-    setTranscript("");
   }, [selectedWeek, selectedTopic]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (message) => {
+    message = typeof message === "string"?message:inputText;
+    if(!message.trim()) return;
+
     // Append the user's message to the chat messages
     setMessages((prevMessages) => [
       ...prevMessages,
-      { sender: "user", text: inputText }
+      { sender: "user", text: message }
     ]);
-    const messageForRequest = inputText; // Save current input before clearing it
     setInputText("");
 
     const requestBody = {
@@ -69,7 +70,7 @@ export default function Chatbot({ selectedWeek, selectedTopic }) {
       language: userLanguage,
       languageTag: languageTag,
       topic: topicToUse,
-      userMsg: messageForRequest,
+      userMsg: message,
       weekTarget: weekTargetToUse,
       outline: genOutline,
     };
@@ -114,22 +115,37 @@ export default function Chatbot({ selectedWeek, selectedTopic }) {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
         setIsRecording(false);
+        realTimeSpeech.current = false;
       }
       return;
     }
 
+    realTimeSpeech.current = true;
+    startMic();
+  };
+
+  const startMic = () => {
+    if(!SpeechRecognition) return;
+
     const recognition = new SpeechRecognition();
     recognition.lang = languageTag;
     recognition.interimResults = true;
-    recognition.continuous = true;
+    recognition.continuous = false;
+
+    let finalTranscript = "";
 
     recognition.onresult = (event) => {
-      let currentTranscript = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        currentTranscript += event.results[i][0].transcript;
+      let currentTranscript = "";
+      for(let i=0; i<event.results.length; i++){
+        let transcript = event.results[i][0].transcript;
+        if(event.results[i].isFinal){
+          finalTranscript += transcript + " ";
+        } else{
+          currentTranscript += transcript + " ";
+        }
       }
-      setTranscript(currentTranscript);
-      setInputText(currentTranscript);
+
+      setInputText(finalTranscript + currentTranscript);
     };
 
     recognition.onerror = (event) => {
@@ -139,6 +155,9 @@ export default function Chatbot({ selectedWeek, selectedTopic }) {
 
     recognition.onend = () => {
       setIsRecording(false);
+      if(finalTranscript.trim()){
+        handleSendMessage(finalTranscript.trim());
+      }
     };
 
     recognition.start();
@@ -149,6 +168,11 @@ export default function Chatbot({ selectedWeek, selectedTopic }) {
   const speakText = (text) => {
     const speech = new SpeechSynthesisUtterance(text);
     speech.lang = languageTag;
+    speech.onend = () => {
+      if(realTimeSpeech.current){
+        startMic();
+      }
+    };
     window.speechSynthesis.speak(speech);
   };
 
@@ -169,10 +193,11 @@ export default function Chatbot({ selectedWeek, selectedTopic }) {
           type="text"
           value={inputText}
           onChange={handleInputChange}
-          placeholder="Type here"
+          placeholder={realTimeSpeech.current?"Speak now...":"Type here"}
           className="chat-input"
+          disabled={realTimeSpeech.current}
         />
-        <button className="send-button" onClick={handleSendMessage}>Send</button>
+        <button className="send-button" onClick={() => handleSendMessage()} disabled={realTimeSpeech.current}>Send</button>
         <div
           className={`mic-button ${isRecording ? "recording" : ""}`}
           onClick={toggleMic}

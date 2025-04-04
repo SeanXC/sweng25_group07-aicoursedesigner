@@ -76,6 +76,11 @@
   box-sizing: border-box;
 }
 
+.chat-input:disabled {
+  background-color: #f5f5f5;
+  color: #777
+}
+
 /* Send Button */
 .send-button {
   background-color: #8300A1;
@@ -88,8 +93,13 @@
   transition: background-color 0.3s ease;
 }
 
-.send-button:hover {
+.send-button:hover:not(:disabled) {
   background-color: #5c0071;
+}
+
+.send-button:disabled {
+  background-color: #939393;
+  cursor: not-allowed;
 }
 
 /* Mic Button */
