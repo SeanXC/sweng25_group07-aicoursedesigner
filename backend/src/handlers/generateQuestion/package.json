@@ -1,0 +1,27 @@
+{
+    "name": "generateQuestion",
+    "version": "1.0.0",
+    "description": "Generate AI comprehension questions from roleplay conversations and check user answers",
+    "main": "index.mjs",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "AI",
+        "question generation",
+        "comprehension",
+        "language learning",
+        "chatbot"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@aws-sdk/client-dynamodb": "^3.738.0",
+        "@aws-sdk/client-ssm": "^3.744.0",
+        "@aws-sdk/lib-dynamodb": "^3.738.0",
+        "dotenv": "^16.4.7",
+        "generateQuestion": "file:",
+        "openai": "^4.82.0"
+    }
+}

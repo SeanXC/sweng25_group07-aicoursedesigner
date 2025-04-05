@@ -1,5 +1,7 @@
 # Ignore node_modules only inside backend
 /backend/node_modules/
+/backend/layers/nodejs/node_modules/
+/backend/layers/**/*.zip
 
 # Ignore all environment files
 .env

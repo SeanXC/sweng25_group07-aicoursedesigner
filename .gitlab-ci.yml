@@ -54,6 +54,39 @@ install_backend:
         fi
       done
 
+upload_lambda_layer:
+  stage: build
+  image:
+    name: node:20
+  script:
+    - echo "📦 Building Lambda Layer..."
+    - cd backend/layers
+    - zip -r layer.zip nodejs
+  artifacts:
+    paths:
+      - backend/layers/layer.zip
+  tags:
+    - docker
+
+publish_lambda_layer:
+  stage: deploy
+  image:
+    name: amazon/aws-cli:latest
+    entrypoint: [""]
+  dependencies:
+    - upload_lambda_layer
+  script:
+    - echo "🚀 Uploading Lambda Layer..."
+    - aws lambda publish-layer-version \
+        --layer-name common-dependencies \
+        --zip-file fileb://backend/layers/layer.zip \
+        --compatible-runtimes nodejs20.x \
+        --region $AWS_DEFAULT_REGION
+  only:
+    - backend_CI
+  tags:
+    - docker
+
 build_frontend:
   image: node:20
   stage: build
@@ -107,7 +140,7 @@ deploy_frontend:
     - cd frontend
     - mv build public
   only:
-    - main
+    - backend_CI
   tags:
     - docker
 
@@ -123,28 +156,11 @@ deploy_lambda:
   before_script:
     - rm -f .git/index.lock .git/config.lock .git/shallow.lock
   script:
-    - echo "🚫 Deploy step is currently disabled."
-    # - echo "🚀 Deploying Lambda functions..."
-    # - |
-    #   for zip_file in backend/build_zips/*.zip; do
-    #     function_name=$(basename "$zip_file" .zip)
-    #     echo "🔄 Updating $function_name"
-    #     aws lambda update-function-code \
-    #       --function-name "$function_name" \
-    #       --zip-file "fileb://$zip_file" \
-    #       --region "$AWS_DEFAULT_REGION"
-    #     echo "✅ Updated $function_name"
-    #   done
-    # - echo "🎉 All Lambda functions deployed!"
-
-
-    # image: node:20
-    # before_script:
-    #   - npm install -g aws-cli
-    #   - aws --version
-
+    - echo "🚀 Deploying Lambda functions..."
+    - chmod +x backend/deploy_lambda.sh
+    - ./backend/deploy_lambda.sh
   only:
-    - main
+    - backend_CI
 
 test_frontend:
   image: node:20
@@ -221,7 +237,6 @@ test_backend_lambda:
     - aws lambda invoke --function-name generateChat --payload fileb://tests/payloads/generateChat/saveChatMessage.json saveChatMessage_output.json --log-type Tail
     - cat saveChatMessage_output.json
 
-
     - echo "Invoking AWS Lambda function 'getCompletion'..."
     - aws lambda invoke --function-name generateCompletion --payload fileb://tests/payloads/generateCompletion/generateCompletion.json generateCompletion_output.json --log-type Tail
     - cat generateCompletion_output.json
@@ -267,4 +282,4 @@ test_backend_lambda:
     - cat InvalidGetRequest_output.json
 
   only:
-    - main
+    - backend_CI
