@@ -1,10 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import  newCourseDashboard  from 'components/newCourseDashboard/newCourseDashboard';
+import newCourseDashboard from '../components/newCourseDashboard/newCourseDashboard';
 import { CourseDataProvider } from '../components/Context/CourseDataContext';
 
 describe('newCourseDashboard Component', () => {
-
   it('render the new Course Dashboard and the 3 buttons', () => {
     render(
       <CourseDataProvider>
