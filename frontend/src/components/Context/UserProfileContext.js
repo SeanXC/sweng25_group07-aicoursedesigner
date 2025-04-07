@@ -1,23 +1,40 @@
-// UserProfileContext.js
-import React, { createContext, useContext, useState } from 'react';
+// Context/UserProfileContext.js
+import React, { createContext, useContext, useState, useEffect } from "react";
 
-// Creating the context
 const UserProfileContext = createContext();
 
-// Custom hook to use the UserProfileContext
-export const useUserProfile = () => {
-  return useContext(UserProfileContext);
-};
+export function UserProfileProvider({ children }) {
+  const [userEmail, setUserEmail] = useState("");
+  const [userLanguage, setUserLanguage] = useState("");
+  const [userDifficulty, setUserDifficulty] = useState("");
 
-// Provider component that wraps the application
-export const UserProfileProvider = ({ children }) => {
-  const [userLanguage, setUserLanguage] = useState('');
-  const [userDifficulty, setUserDifficulty] = useState('');
-  const [userEmail, setUserEmail] = useState('');  // Add email state
+  useEffect(() => {
+    const storedEmail = sessionStorage.getItem("email");
+    const storedLanguage = sessionStorage.getItem("language");
+    const storedDifficulty = sessionStorage.getItem("difficulty");
+
+    if (storedEmail) setUserEmail(storedEmail);
+    if (storedLanguage) setUserLanguage(storedLanguage);
+    if (storedDifficulty) setUserDifficulty(storedDifficulty);
+  }, []);
+
+  const setUserProfile = ({ userEmail, userLanguage, userDifficulty }) => { // adding session storage to allow home.js and newCourseDashboard to load correclty 
+    setUserEmail(userEmail);
+    setUserLanguage(userLanguage);
+    setUserDifficulty(userDifficulty);
+
+    sessionStorage.setItem("email", userEmail);
+    sessionStorage.setItem("language", userLanguage);
+    sessionStorage.setItem("difficulty", userDifficulty);
+  };
 
   return (
-    <UserProfileContext.Provider value={{ userLanguage, setUserLanguage, userDifficulty, setUserDifficulty, userEmail, setUserEmail }}>
+    <UserProfileContext.Provider
+      value={{ userEmail, userLanguage, userDifficulty, setUserProfile }}
+    >
       {children}
     </UserProfileContext.Provider>
   );
-};
+}
+
+export const useUserProfile = () => useContext(UserProfileContext);

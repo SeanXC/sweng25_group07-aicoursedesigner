@@ -82,21 +82,27 @@ export default function UserLogin() {
     >
       {/* Logo Image */}
       <div
-        style={{
-          width: "100%",
-          textAlign: "center",
-          position: "absolute",
-          top: "25px",
-          right: "500px",
-        }}
-      >
-        <img
-          src={logoImage}
-          alt="Logo"
-          style={{ width: "200px", borderRadius: "10px" }}
-          onClick={handleImageClick}
-        />
-      </div>
+  style={{
+    width: "100%",
+    textAlign: "center",
+    position: "absolute",
+    top: "25px",
+    right: "500px",
+  }}
+>
+  <img
+    src={logoImage}
+    alt="Logo"
+    style={{
+      width: "200px",
+      borderRadius: "10px",
+      cursor: "pointer",
+    }}
+    onClick={handleImageClick}
+    role="button"
+    tabIndex="0"
+  />
+</div>
 
       {/* Login or Signup Form */}
       <div
@@ -249,49 +255,7 @@ export default function UserLogin() {
             gap: "0.05rem",
           }}
         >
-          <button
-            style={{
-              backgroundColor: "white",
-              color: "black",
-              padding: "0.05rem 1.2rem",
-              borderRadius: "8px",
-              border: "groove",
-              cursor: "pointer",
-              margin: "0.5rem 0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <img
-              src={googleLogo}
-              alt="Google"
-              style={{ width: "40px", marginRight: "1px" }}
-            />
-            Continue with Google
-          </button>
 
-          <button
-            style={{
-              backgroundColor: "white",
-              color: "black",
-              padding: "0.05rem 1.2rem",
-              borderRadius: "8px",
-              border: "groove",
-              cursor: "pointer",
-              margin: "0.5rem 0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <img
-              src={appleLogo}
-              alt="Apple"
-              style={{ width: "40px", marginRight: "2px" }}
-            />
-            Continue with Apple
-          </button>
         </div>
       </div>
     </div>
