@@ -13,7 +13,7 @@ export default function HomeDashboard() {
   const [loading, setLoading] = useState(false);
   const userEmail = sessionStorage.getItem("email");
   const navigate = useNavigate();
-  const { userLanguage, setUserLanguage, userDifficulty, setUserDifficulty, setUserProfile } = useUserProfile(); 
+  const {setUserProfile } = useUserProfile(); 
   const { setCourseData } = useCourseData();
 
   useEffect(() => {
