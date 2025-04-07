@@ -70,21 +70,29 @@ export function Translation({ selectedWeek, selectedTopic }) {
     return weeks.map(week => ({
       week: week.week,
       title: week.topic,
-      objectives: week.sessions.flatMap(session => session.objectives),
-      main_content: week.sessions.flatMap(session => session.main_content),
-      activities: week.sessions.flatMap(session => session.activities),
+      objectives: week.sessions?.flatMap(session => session.objectives) || [],
+      main_content: week.sessions?.flatMap(session => session.main_content) || [],
+      activities: week.sessions?.flatMap(session => session.activities) || [],
     }));
   }
-
+  
   useEffect(() => {
     async function fetchPhrases(week, courseData) {
       try {
-        setLoading(true); // for loading circle
-    
-        const outlineWeeks = courseData.body?.generatedOutline
-          ? formatWeeks(courseData.body.generatedOutline)
-          : formatWeeks(courseData.weeks); // checks to see if the request is coming from past course view or if freshly generated 
-    
+        setLoading(true);
+  
+        // Check if courseData has a "body" (API Gateway format)
+        const rawWeeks = courseData.body?.generatedOutline?.weeks 
+          || courseData.generatedOutline?.weeks
+          || courseData.weeks;
+  
+        if (!rawWeeks) {
+          console.error("No weeks found in courseData");
+          return;
+        }
+  
+        const outlineWeeks = formatWeeks(rawWeeks);
+  
         const requestBody = {
           email: userEmail,
           userLevel: userDifficulty,
@@ -93,7 +101,7 @@ export function Translation({ selectedWeek, selectedTopic }) {
           weekTarget: week,
           outline: { weeks: outlineWeeks },
         };
-    
+  
         const response = await fetch(
           "https://t6xifz4k94.execute-api.eu-west-1.amazonaws.com/test/generate-phrases",
           {
@@ -102,21 +110,22 @@ export function Translation({ selectedWeek, selectedTopic }) {
             body: JSON.stringify(requestBody),
           }
         );
+  
         const responseData = await response.json();
         setPhraseData(responseData.phrases);
         setCurrentPhrase(responseData.phrases[0]);
       } catch (error) {
         console.error("Error:", error);
       } finally {
-        setLoading(false);  // stop loading screen 
+        setLoading(false);
       }
     }
-    
   
     if (selectedWeek && courseData) {
       fetchPhrases(selectedWeek, courseData);
     }
   }, [selectedWeek, courseData, selectedTopic, userDifficulty, userEmail, userLanguage]);
+  
   
   if (loading) {
     return (

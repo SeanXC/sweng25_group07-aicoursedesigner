@@ -8,14 +8,13 @@ import { useUserProfile } from "../Context/UserProfileContext";
 
 export default function HomeDashboard() {
   const navigate = useNavigate();
-  const { setUserEmail } = useUserProfile();
   const [showCourse, setShowCourse] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [duration, setDuration] = useState(5);
   const [loading, setLoading] = useState(false); // Loading state
 
   const { setCourseData } = useCourseData();
-  const { userLanguage, setUserLanguage, userDifficulty, setUserDifficulty } = useUserProfile();
+  const { userLanguage, userDifficulty, setUserProfile } = useUserProfile();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -23,14 +22,16 @@ export default function HomeDashboard() {
       if (userEmail) {
         const userData = await fetchUserData(userEmail);
         if (userData) {
-          setUserEmail(userEmail);
-          setUserLanguage(userData.languages || "");
-          setUserDifficulty(userData.proficiency || "");
+          setUserProfile({
+            userEmail,
+            userLanguage: userData.languages || "",
+            userDifficulty: userData.proficiency || "",
+          });
         }
       }
     };
     fetchUserProfile();
-  }, [setUserLanguage, setUserDifficulty]);
+  }, [setUserProfile]);
 
   async function formSubmit(e) {
     e.preventDefault();
@@ -41,7 +42,6 @@ export default function HomeDashboard() {
     const userEmail = sessionStorage.getItem("email") || "testuser@email.com";
 
     const selectedLanguage = values.language || userLanguage;
-    setUserLanguage(selectedLanguage);
 
     const courseData = {
       email: userEmail,
@@ -66,6 +66,11 @@ export default function HomeDashboard() {
       if (response.ok) {
         const responseBody = await response.json();
         setCourseData({ ...responseBody, courseName: values.courseName });
+        setUserProfile({
+          userEmail,
+          userLanguage: selectedLanguage,
+          userDifficulty: values.difficulty || userDifficulty,
+        });
         navigate("/courseDashboard");
       } else {
         console.error("Error generating course:", response.statusText);
@@ -107,7 +112,11 @@ export default function HomeDashboard() {
                 <select
                   name="difficulty"
                   value={userDifficulty}
-                  onChange={(e) => setUserDifficulty(e.target.value)}
+                  onChange={(e) => setUserProfile({
+                    userEmail: sessionStorage.getItem("email"),
+                    userLanguage,
+                    userDifficulty: e.target.value,
+                  })}
                   style={{ width: "100%", padding: "8px", fontSize: "16px" }}
                 >
                   <option hidden value={userDifficulty}>
@@ -125,7 +134,11 @@ export default function HomeDashboard() {
                 <select
                   name="language"
                   value={userLanguage}
-                  onChange={(e) => setUserLanguage(e.target.value)}
+                  onChange={(e) => setUserProfile({
+                    userEmail: sessionStorage.getItem("email"),
+                    userLanguage: e.target.value,
+                    userDifficulty,
+                  })}
                   style={{ width: "100%", padding: "8px", fontSize: "16px" }}
                 >
                   <option hidden value={userLanguage}>
