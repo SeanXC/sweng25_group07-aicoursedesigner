@@ -82,21 +82,27 @@ export default function UserLogin() {
     >
       {/* Logo Image */}
       <div
-        style={{
-          width: "100%",
-          textAlign: "center",
-          position: "absolute",
-          top: "25px",
-          right: "500px",
-        }}
-      >
-        <img
-          src={logoImage}
-          alt="Logo"
-          style={{ width: "200px", borderRadius: "10px" }}
-          onClick={handleImageClick}
-        />
-      </div>
+  style={{
+    width: "100%",
+    textAlign: "center",
+    position: "absolute",
+    top: "25px",
+    right: "500px",
+  }}
+>
+  <img
+    src={logoImage}
+    alt="Logo"
+    style={{
+      width: "200px",
+      borderRadius: "10px",
+      cursor: "pointer",
+    }}
+    onClick={handleImageClick}
+    role="button"
+    tabIndex="0"
+  />
+</div>
 
       {/* Login or Signup Form */}
       <div

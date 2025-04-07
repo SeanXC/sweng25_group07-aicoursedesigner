@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useCourseData } from "../Context/CourseDataContext";
+import { useUserProfile } from "../Context/UserProfileContext"; // Ensure this is imported
 import "./Home.css";
 import NualasImage from "../../images/nualas.svg";
 import NavBar from "../NavBar/NavBar";
+import { fetchUserData } from "../UserProfile/fetchUserData";  // Import the fetchUserData function
 
 export default function HomeDashboard() {
   const [showCourses, setShowCourses] = useState(false);
@@ -11,7 +13,43 @@ export default function HomeDashboard() {
   const [loading, setLoading] = useState(false);
   const userEmail = sessionStorage.getItem("email");
   const navigate = useNavigate();
+  const { userLanguage, setUserLanguage, userDifficulty, setUserDifficulty, setUserProfile } = useUserProfile(); 
   const { setCourseData } = useCourseData();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!userEmail) {
+        console.error("User email not found in session storage.");
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+       
+        const userData = await fetchUserData(userEmail);
+        console.log ("Userdata home", userData)
+
+        if (userData) {
+          
+          setUserProfile({
+            userEmail,
+            userLanguage: userData.languages || "", 
+            userDifficulty: userData.proficiency || "", 
+          });
+          console.log ("User Info!")
+        } else {
+          console.error("Error fetching user profile.");
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [userEmail, setUserProfile]); 
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -31,7 +69,7 @@ export default function HomeDashboard() {
         if (data.success) {
           // Save course titles and timestamps to the state
           setCourses(data.courseDetails || []); // Assuming 'courseDetails' includes course_title and timestamp
-          console.log ("Course details", data.courseDetails)
+          console.log("Course details", data.courseDetails);
         } else {
           console.error("Error fetching courses:", data.error);
         }
@@ -49,30 +87,36 @@ export default function HomeDashboard() {
 
   const handleCourseClick = async (courseTitle) => {
     if (!userEmail || !courseTitle) return;
-
+  
     setLoading(true);
-
+  
     try {
       const response = await fetch(
         `https://ycuzxyk9xj.execute-api.eu-west-1.amazonaws.com/dev/get?email=${userEmail}&course_title=${encodeURIComponent(courseTitle)}`
       );
       const data = await response.json();
-
+  
       if (data.success && data.history.length > 0) {
         const courseOutline = data.history[0];
-
-        // Update the context with the course data, including weeks
+  
+        // refreshing user profile just in case
+        const userData = await fetchUserData(userEmail);
+        setUserProfile({
+          userEmail,
+          userLanguage: userData.languages || "",
+          userDifficulty: userData.proficiency || "",
+        });
+  
         setCourseData({
           course_title: courseOutline.course_title,
           learning_outcomes: courseOutline.learning_outcomes,
-          weeks: courseOutline.weeks, // Now using the correct weeks structure
+          weeks: courseOutline.weeks,
           difficulty: courseOutline.difficulty,
           description: courseOutline.description,
           target_language: courseOutline.target_language,
           language_used: courseOutline.language_used,
         });
-
-        // Navigate to the course dashboard
+  
         navigate("/courseDashboard");
       } else {
         console.error("Error fetching course outline:", data.error);
@@ -83,6 +127,7 @@ export default function HomeDashboard() {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className={`home-container ${showCourses ? "show-sidebar" : ""}`}>
@@ -132,7 +177,6 @@ export default function HomeDashboard() {
         <Link to="/courseform">
           <button className="home-button">Generate Course</button>
         </Link>
-
       </div>
     </div>
   );

@@ -49,21 +49,19 @@ export function Translation({ selectedWeek, selectedTopic }) {
   const { courseData } = useCourseData();
   const { userEmail, userLanguage, userDifficulty } = useUserProfile();
   const [flipped, setFlipped] = useState(true);
-  
-
-  // for the flashcard carousel
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentPhrase, setCurrentPhrase] = useState({});
+  const [loading, setLoading] = useState(false);
+
 
   const nextFlashcard = () => {
-    console.log('are we clicking next?')
     if (currentIndex < phraseData.length - 1) {
       setCurrentPhrase(phraseData[currentIndex + 1]);
       setCurrentIndex(currentIndex + 1);
-      setFlipped(true); //start on the language side of the card
+      setFlipped(true);
     } else {
       setCurrentPhrase(phraseData[0]);
-      setCurrentIndex(0); // Loop back to the first flashcard
+      setCurrentIndex(0);
       setFlipped(true);
     }
   };
@@ -71,70 +69,83 @@ export function Translation({ selectedWeek, selectedTopic }) {
   function formatWeeks(weeks) {
     return weeks.map(week => ({
       week: week.week,
-      title: week.topic, 
+      title: week.topic,
       objectives: week.sessions.flatMap(session => session.objectives),
       main_content: week.sessions.flatMap(session => session.main_content),
-      activities: week.sessions.flatMap(session => session.activities)
-  }));
+      activities: week.sessions.flatMap(session => session.activities),
+    }));
   }
 
   useEffect(() => {
     async function fetchPhrases(week, courseData) {
       try {
+        setLoading(true); // for loading circle
+    
+        const outlineWeeks = courseData.body?.generatedOutline
+          ? formatWeeks(courseData.body.generatedOutline)
+          : formatWeeks(courseData.weeks); // checks to see if the request is coming from past course view or if freshly generated 
+    
+        const requestBody = {
+          email: userEmail,
+          userLevel: userDifficulty,
+          language: userLanguage,
+          topic: selectedTopic,
+          weekTarget: week,
+          outline: { weeks: outlineWeeks },
+        };
+    
         const response = await fetch(
           "https://t6xifz4k94.execute-api.eu-west-1.amazonaws.com/test/generate-phrases",
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: userEmail,
-              userLevel: userDifficulty,
-              language: userLanguage,
-              topic: selectedTopic,
-              weekTarget: week,
-              outline: {
-                weeks: formatWeeks(courseData.body.generatedOutline.weeks),
-              },
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestBody),
           }
         );
-
         const responseData = await response.json();
         setPhraseData(responseData.phrases);
-        setCurrentPhrase(responseData.phrases[0])
+        setCurrentPhrase(responseData.phrases[0]);
       } catch (error) {
         console.error("Error:", error);
+      } finally {
+        setLoading(false);  // stop loading screen 
       }
     }
-
-    if (selectedWeek) {
+    
+  
+    if (selectedWeek && courseData) {
       fetchPhrases(selectedWeek, courseData);
     }
   }, [selectedWeek, courseData, selectedTopic, userDifficulty, userEmail, userLanguage]);
+  
+  if (loading) {
+    return (
+      <div className="flashcard-loading">
+        <div className="spinner" />
+        <p>Loading phrases...</p>
+      </div>
+    );
+  }
+
 
   return (
     <div className="flashcard-carousel">
       <div className="flashcard-progress">
         {phraseData.length > 0 ? `${currentIndex + 1}/${phraseData.length}` : "0/0"}
       </div>
-  
+
       <div className="flashcard-container" onClick={() => setFlipped(!flipped)}>
-        <div className={`flashcard ${flipped ? 'flipped' : ''}`}>
-          <div className="flashcard-front">
-            {currentPhrase.english}
-          </div>
-          <div className="flashcard-back">
-            {currentPhrase[userLanguage]}
-          </div>
+        <div className={`flashcard ${flipped ? "flipped" : ""}`}>
+          <div className="flashcard-front">{currentPhrase.english}</div>
+          <div className="flashcard-back">{currentPhrase[userLanguage]}</div>
         </div>
       </div>
-      
+
       <button className="next-button" onClick={nextFlashcard}>Next</button>
     </div>
   );
 }
+
 
 
 export default function CourseDashboard() {
