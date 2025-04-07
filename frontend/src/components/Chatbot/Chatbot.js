@@ -97,7 +97,9 @@ export default function Chatbot({ selectedWeek, selectedTopic }) {
         { sender: "bot", text: botResponse }
       ]);
 
-      speakText(botResponse);
+      if(realTimeSpeech.current){
+        speakText(botResponse);
+      }
     } catch (error) {
       console.error("Error sending message:", error.response?.data || error.message);
     }
