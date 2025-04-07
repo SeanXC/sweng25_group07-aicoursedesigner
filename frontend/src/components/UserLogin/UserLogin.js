@@ -249,49 +249,7 @@ export default function UserLogin() {
             gap: "0.05rem",
           }}
         >
-          <button
-            style={{
-              backgroundColor: "white",
-              color: "black",
-              padding: "0.05rem 1.2rem",
-              borderRadius: "8px",
-              border: "groove",
-              cursor: "pointer",
-              margin: "0.5rem 0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <img
-              src={googleLogo}
-              alt="Google"
-              style={{ width: "40px", marginRight: "1px" }}
-            />
-            Continue with Google
-          </button>
 
-          <button
-            style={{
-              backgroundColor: "white",
-              color: "black",
-              padding: "0.05rem 1.2rem",
-              borderRadius: "8px",
-              border: "groove",
-              cursor: "pointer",
-              margin: "0.5rem 0",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <img
-              src={appleLogo}
-              alt="Apple"
-              style={{ width: "40px", marginRight: "2px" }}
-            />
-            Continue with Apple
-          </button>
         </div>
       </div>
     </div>
