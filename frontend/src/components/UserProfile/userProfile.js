@@ -155,7 +155,7 @@ export default function LanguageTeacherProfile() {
         <img
           src={logoImage}
           alt="Logo"
-          style={{ width: "200px", borderRadius: "10px" }}
+          style={{ width: "200px", borderRadius: "10px" , cursor: "pointer" }}
           onClick={() => navigate("/")}
         />
       </div>

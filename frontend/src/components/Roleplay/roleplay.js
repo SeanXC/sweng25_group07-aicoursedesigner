@@ -16,6 +16,9 @@ export default function Roleplay({ selectedWeek, selectedTopic }) {
   const [hasGenerated, setHasGenerated] = useState(false);
   const [hasGeneratedQuestion, setHasGeneratedQuestion] = useState(false);
 
+  const [userAnswer, setUserAnswer] = useState("");
+  const [isCorrect, setIsCorrect] = useState(null);
+
   // Local state for topic and weekTarget
   const [topic, setTopic] = useState("Default Topic");
   const [weekTarget, setWeekTarget] = useState("1");
@@ -23,8 +26,6 @@ export default function Roleplay({ selectedWeek, selectedTopic }) {
   const { courseData } = useCourseData();
   const { userEmail, userLanguage, userDifficulty } = useUserProfile();
 
-  // Update topic and weekTarget based on selectedWeek/selectedTopic props if provided.
-  // Otherwise, fall back to courseData's first week.
   useEffect(() => {
     if (selectedWeek && selectedTopic) {
       setTopic(selectedTopic);
@@ -60,16 +61,14 @@ export default function Roleplay({ selectedWeek, selectedTopic }) {
     console.log("Week Target:", weekTarget);
 
     if (!topic || !weekTarget) {
-      setError(
-        "Please enter both a topic and a week target before generating a roleplay."
-      );
+      setError("Please enter both a topic and a week target before generating a roleplay.");
       return;
     }
 
     try {
       setLoading(true);
       setError("");
-      setConversationData([]); // Clear existing conversation data
+      setConversationData([]);
       const conversations = [];
 
       for (let i = 0; i < 3; i++) {
@@ -85,37 +84,25 @@ export default function Roleplay({ selectedWeek, selectedTopic }) {
                 week: parseInt(weekTarget),
                 title: topic,
                 objectives: [`Learn about ${topic}`, "Practice key phrases"],
-                main_content: [
-                  `Vocabulary related to ${topic}`,
-                  "Common phrases",
-                  "Grammar tips",
-                ],
+                main_content: [`Vocabulary related to ${topic}`, "Common phrases", "Grammar tips"],
                 activities: [`Roleplay about ${topic}`, "Practice exercises"],
               },
             ],
           },
         };
-        console.log("Request Body:", JSON.stringify(requestBody, null, 2));
 
         const response = await fetch(
           "https://ed86wj91pe.execute-api.eu-west-1.amazonaws.com/prod/generate-roleplay",
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(requestBody),
           }
         );
 
-        console.log("Roleplay response", response);
         const responseData = await response.json();
 
-        if (
-          responseData.body &&
-          responseData.body.success &&
-          responseData.body.conversation
-        ) {
+        if (responseData.body && responseData.body.success && responseData.body.conversation) {
           conversations.push(responseData.body.conversation);
         } else {
           setError(responseData.body?.error || `Error in request ${i + 1}`);
@@ -135,21 +122,19 @@ export default function Roleplay({ selectedWeek, selectedTopic }) {
   };
 
   const fetchQuestion = async () => {
-    console.log("fetchRoleplay triggered");
+    console.log("fetchQuestion triggered");
     console.log("Topic:", topic);
     console.log("Week Target:", weekTarget);
 
     if (!topic || !weekTarget) {
-      setError(
-        "Please enter both a topic and a week target before generating a question."
-      );
+      setError("Please enter both a topic and a week target before generating a question.");
       return;
     }
 
     try {
       setLoadingQ(true);
       setError("");
-      setQuestionData([]); // Clear existing question
+      setQuestionData([]);
       const requestBody = {
         email: userEmail,
         userLevel: userDifficulty,
@@ -163,66 +148,47 @@ export default function Roleplay({ selectedWeek, selectedTopic }) {
               week: parseInt(weekTarget),
               title: topic,
               objectives: [`Learn about ${topic}`, "Practice key phrases"],
-              main_content: [
-                `Vocabulary related to ${topic}`,
-                "Common phrases",
-                "Grammar tips",
-              ],
+              main_content: [`Vocabulary related to ${topic}`, "Common phrases", "Grammar tips"],
               activities: [`Roleplay about ${topic}`, "Practice exercises"],
             },
           ],
         },
         conversations: conversationData,
       };
-      console.log(
-        "Question Request Body:",
-        JSON.stringify(requestBody, null, 2)
-      );
 
       const response = await fetch(
         "https://mrr625wq65.execute-api.eu-west-1.amazonaws.com/dev/generate-question",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(requestBody),
         }
       );
 
-      console.log("Question response", response);
       const responseData = await response.json();
 
       setQuestionData(responseData);
       setHasGeneratedQuestion(true);
+      setUserAnswer("");
+      setIsCorrect(null);
     } catch (err) {
       setError(err.message || "Something went wrong!");
     } finally {
       setLoadingQ(false);
     }
   };
-  // console.log(conversationData);
 
   return (
     <div className="layout">
-      {/* <header className="header">Home Dashboard</header> */}
       <main className="roleplay-container">
         {error && <div className="error">{error}</div>}
         {!hasGenerated ? (
           <div className="topic-input-container">
             <h2>Generate Roleplay</h2>
             <div className="creative-message">
-              <img
-                src={AnaCelebrating}
-                alt="Ana Celebrating"
-                className="celebration-image left"
-              />
+              <img src={AnaCelebrating} alt="Ana Celebrating" className="celebration-image left" />
               <p>Feeling creative today? Let’s dive into a roleplay session!</p>
-              <img
-                src={CarlosCelebrating}
-                alt="Carlos Celebrating"
-                className="celebration-image right"
-              />
+              <img src={CarlosCelebrating} alt="Carlos Celebrating" className="celebration-image right" />
             </div>
             <h2>Topic: {topic}</h2>
             <h2>Week Target: {weekTarget}</h2>
@@ -240,38 +206,20 @@ export default function Roleplay({ selectedWeek, selectedTopic }) {
                   {Object.keys(conversation).map((key, index) => {
                     const isCarlos = index % 2 === 0;
                     return (
-                      <div
-                        key={index}
-                        className={`dialogue-line ${
-                          isCarlos ? "carlos" : "ana"
-                        }`}
-                      >
-                        {!isCarlos && (
-                          <img
-                            src={anaImg}
-                            alt="Ana"
-                            className="speaker-image"
-                          />
-                        )}
+                      <div key={index} className={`dialogue-line ${isCarlos ? "carlos" : "ana"}`}>
+                        {!isCarlos && <img src={anaImg} alt="Ana" className="speaker-image" />}
                         <div className="dialogue-text">
-                          <b className="speaker">
-                            {isCarlos ? "Carlos" : "Ana"}:{" "}
-                          </b>
+                          <b className="speaker">{isCarlos ? "Carlos" : "Ana"}: </b>
                           <span>{conversation[key]}</span>
                         </div>
-                        {isCarlos && (
-                          <img
-                            src={carlosImg}
-                            alt="Carlos"
-                            className="speaker-image"
-                          />
-                        )}
+                        {isCarlos && <img src={carlosImg} alt="Carlos" className="speaker-image" />}
                       </div>
                     );
                   })}
                 </div>
               </div>
             ))}
+
             {!hasGeneratedQuestion ? (
               <div>
                 <button onClick={fetchQuestion} disabled={loadingQ}>
@@ -282,8 +230,25 @@ export default function Roleplay({ selectedWeek, selectedTopic }) {
               <div>
                 <h3>{questionData.question}</h3>
                 <br />
+                <input
+                  placeholder="Type your answer here"
+                  value={userAnswer}
+                  onChange={(e) => setUserAnswer(e.target.value)}
+                />
+                <button
+                  onClick={() => {
+                    const correctAnswer = questionData.answer?.trim().toLowerCase();
+                    const userInput = userAnswer.trim().toLowerCase();
+                    console.log("Correct Answer:", correctAnswer);
+                    console.log("User Input:", userInput);
+                    setIsCorrect(userInput === correctAnswer);
+                  }}
+                >
+                  Submit Answer
+                </button>
+                {isCorrect === true && <p style={{ color: "green" }}>✅ Correct!</p>}
+                {isCorrect === false && <p style={{ color: "red" }}>❌ Try again!</p>}
                 <br />
-                <input placeholder="Type your answer here"></input>
                 <button onClick={fetchQuestion} disabled={loadingQ}>
                   {loadingQ ? "Loading..." : "Generate Another Question"}
                 </button>
@@ -292,17 +257,10 @@ export default function Roleplay({ selectedWeek, selectedTopic }) {
 
             <div className="button-container">
               <button onClick={fetchRoleplay} disabled={loading}>
-                {loading
-                  ? "Loading..."
-                  : hasGenerated
-                  ? "Generate Another"
-                  : "Generate Roleplay"}
+                {loading ? "Loading..." : hasGenerated ? "Generate Another" : "Generate Roleplay"}
               </button>
             </div>
-            <button
-              className="change-topic-btn"
-              onClick={() => setHasGenerated(false)}
-            >
+            <button className="change-topic-btn" onClick={() => setHasGenerated(false)}>
               Change Topic
             </button>
           </>
